@@ -1,0 +1,1146 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Ecological niche models of plant species exploited by Epipalaeolithic foragers in Badia (c.~14500 BP)},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Ecological niche models of plant species exploited by Epipalaeolithic
+foragers in \emph{Badia} (c.~14500 BP)}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{longtable}
+
+\begin{document}
+\maketitle
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(}\StringTok{"tidyverse"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Registered S3 methods overwritten by 'ggplot2':
+##   method         from 
+##   [.quosures     rlang
+##   c.quosures     rlang
+##   print.quosures rlang
+\end{verbatim}
+
+\begin{verbatim}
+## -- Attaching packages ------------------------------------------------------------------------------------------ tidyverse 1.2.1 --
+\end{verbatim}
+
+\begin{verbatim}
+## v ggplot2 3.1.1     v purrr   0.3.2
+## v tibble  2.1.2     v dplyr   0.8.1
+## v tidyr   0.8.3     v stringr 1.4.0
+## v readr   1.3.1     v forcats 0.4.0
+\end{verbatim}
+
+\begin{verbatim}
+## -- Conflicts --------------------------------------------------------------------------------------------- tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(}\StringTok{"magrittr"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'magrittr'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:purrr':
+## 
+##     set_names
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:tidyr':
+## 
+##     extract
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(}\StringTok{"sf"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Linking to GEOS 3.7.1, GDAL 2.3.2, PROJ 5.2.0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(}\StringTok{"raster"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: sp
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'raster'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:magrittr':
+## 
+##     extract
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:dplyr':
+## 
+##     select
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:tidyr':
+## 
+##     extract
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(}\StringTok{"broom"}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(}\StringTok{"dismo"}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(}\StringTok{"rnaturalearth"}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(}\StringTok{"gt"}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(}\StringTok{"BadiaPaleoFloraSDM"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Species distribution models (SDM) or ecological niche models (ENM) use
+data on the observed occurrences of a taxon to construct a statistical
+model of its ecological niche. These models are generally then used to
+predict the distribution of the species in another context, e.g.~a
+region where empirical occurrence data is not available, or under past
+or future climate regimes. We will attempt to model the ecological
+niches of six key plant taxa for prehistoric foragers. We will use
+occurrence data from Israel and Palestine, which are well-studied, to
+predict the distribution of these taxa across the rest of the Southern
+Levant.
+
+First, we define our regions of interest:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sw_asia <-}\StringTok{ }\KeywordTok{extent}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{30}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{25}\NormalTok{, }\DecValTok{40}\NormalTok{))}
+\NormalTok{s_levant <-}\StringTok{ }\KeywordTok{extent}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{34}\NormalTok{, }\DecValTok{39}\NormalTok{, }\DecValTok{29}\NormalTok{, }\DecValTok{34}\NormalTok{))}
+\NormalTok{palestine <-}\StringTok{ }\KeywordTok{ne_countries}\NormalTok{(}\DataTypeTok{scale =} \DecValTok{10}\NormalTok{, }\DataTypeTok{country =} \KeywordTok{c}\NormalTok{(}\StringTok{"Israel"}\NormalTok{, }\StringTok{"Palestine"}\NormalTok{),}
+             \DataTypeTok{returnclass =} \StringTok{"sf"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{st_union}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }\KeywordTok{st_sf}\NormalTok{()}
+
+\NormalTok{land <-}\StringTok{ }\KeywordTok{read_sf}\NormalTok{(}\StringTok{"data/raw_data/ne/ne_10m_land.shp"}\NormalTok{)[,}\StringTok{"featurecla"}\NormalTok{] }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{st_crop}\NormalTok{(sw_asia)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## although coordinates are longitude/latitude, st_intersection assumes that they are planar
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: attribute variables are assumed to be spatially constant
+## throughout all geometries
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rivers <-}\StringTok{ }\KeywordTok{read_sf}\NormalTok{(}\StringTok{"data/raw_data/ne/ne_10m_rivers_lake_centerlines_scale_rank.shp"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{st_crop}\NormalTok{(s_levant)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## although coordinates are longitude/latitude, st_intersection assumes that they are planar
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: attribute variables are assumed to be spatially constant
+## throughout all geometries
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{water <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{(}\KeywordTok{read_sf}\NormalTok{(}\StringTok{"data/raw_data/ne/ne_10m_ocean.shp"}\NormalTok{)[,}\StringTok{"featurecla"}\NormalTok{],}
+               \KeywordTok{read_sf}\NormalTok{(}\StringTok{"data/raw_data/ne/ne_10m_lakes.shp"}\NormalTok{)[,}\StringTok{"featurecla"}\NormalTok{]) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{st_crop}\NormalTok{(sw_asia)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## although coordinates are longitude/latitude, st_intersection assumes that they are planar
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: attribute variables are assumed to be spatially constant
+## throughout all geometries
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{basemap <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{() }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_sf}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ land, }\DataTypeTok{fill =}\StringTok{"grey"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_sf}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ palestine, }\DataTypeTok{fill =} \StringTok{"lightgrey"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_sf}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ rivers, }\DataTypeTok{colour =} \StringTok{"white"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_sf}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ water, }\DataTypeTok{fill =} \StringTok{"white"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{coord_sf}\NormalTok{(}\DataTypeTok{xlim =} \KeywordTok{c}\NormalTok{(}\KeywordTok{xmin}\NormalTok{(s_levant), }\KeywordTok{xmax}\NormalTok{(s_levant)),}
+           \DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\KeywordTok{ymin}\NormalTok{(s_levant), }\KeywordTok{ymax}\NormalTok{(s_levant)))}
+\NormalTok{basemap}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{analysis_files/figure-latex/regions-1.pdf}
+
+\hypertarget{occurrence-data}{%
+\subsection{Occurrence data}\label{occurrence-data}}
+
+First we download species occurrence data from GBIF
+(\url{https://gbif.org}). This may change, so we cache the result used
+in the published analysis in \texttt{derived\_data} and only redownload
+if the cached version is missing.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Download or read data from GBIF}
+\NormalTok{gbif_path <-}\StringTok{ }\NormalTok{here}\OperatorTok{::}\KeywordTok{here}\NormalTok{(}\StringTok{"analysis/data/raw_data/gbif"}\NormalTok{)}
+\NormalTok{occ <-}\StringTok{ }\KeywordTok{bind_rows}\NormalTok{(}
+  \KeywordTok{fetch_gbif}\NormalTok{(}\StringTok{"Hordeum"}\NormalTok{, }\StringTok{"spontaneum*"}\NormalTok{, }\DataTypeTok{ext =}\NormalTok{ sw_asia, gbif_path),}
+  \KeywordTok{fetch_gbif}\NormalTok{(}\StringTok{"Bolboschoenus"}\NormalTok{, }\StringTok{"glaucus*"}\NormalTok{, }\DataTypeTok{ext =}\NormalTok{ sw_asia, gbif_path),    }
+  \KeywordTok{fetch_gbif}\NormalTok{(}\StringTok{"Bolboschoenus"}\NormalTok{, }\StringTok{"maritimus*"}\NormalTok{, }\DataTypeTok{ext =}\NormalTok{ sw_asia, gbif_path),    }
+  \KeywordTok{fetch_gbif}\NormalTok{(}\StringTok{"Scirpus"}\NormalTok{, }\StringTok{"maritimus*"}\NormalTok{, }\DataTypeTok{ext =}\NormalTok{ sw_asia, gbif_path),}
+  \KeywordTok{fetch_gbif}\NormalTok{(}\StringTok{"Triticum"}\NormalTok{, }\StringTok{"urartu*"}\NormalTok{, }\DataTypeTok{ext =}\NormalTok{ sw_asia, gbif_path),}
+  \KeywordTok{fetch_gbif}\NormalTok{(}\StringTok{"Triticum"}\NormalTok{, }\StringTok{"dicoccoides*"}\NormalTok{, }\DataTypeTok{ext =}\NormalTok{ sw_asia, gbif_path),}
+  \KeywordTok{fetch_gbif}\NormalTok{(}\StringTok{"Stipa"}\NormalTok{, }\StringTok{"*"}\NormalTok{, }\DataTypeTok{ext =}\NormalTok{ sw_asia, gbif_path),}
+  \KeywordTok{fetch_gbif}\NormalTok{(}\StringTok{"Zilla"}\NormalTok{, }\StringTok{"spinosa*"}\NormalTok{, }\DataTypeTok{ext =}\NormalTok{ sw_asia, gbif_path),}
+  \KeywordTok{fetch_gbif}\NormalTok{(}\StringTok{"Vitex"}\NormalTok{, }\StringTok{"*"}\NormalTok{, }\DataTypeTok{ext =}\NormalTok{ sw_asia, gbif_path),}
+  \KeywordTok{fetch_gbif}\NormalTok{(}\StringTok{"Fraxinus"}\NormalTok{, }\StringTok{"*"}\NormalTok{, }\DataTypeTok{ext =}\NormalTok{ sw_asia, gbif_path)}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Reading /home/joeroe/gdrive/Work/Lab/BadiaPaleoFloraSDM/analysis/data/raw_data/gbif/gbif_hordeum_spontaneum.csv
+\end{verbatim}
+
+\begin{verbatim}
+## Parsed with column specification:
+## cols(
+##   gbifID = col_double(),
+##   genus = col_character(),
+##   species = col_character(),
+##   lon = col_double(),
+##   lat = col_double(),
+##   basisOfRecord = col_character()
+## )
+\end{verbatim}
+
+\begin{verbatim}
+## Reading /home/joeroe/gdrive/Work/Lab/BadiaPaleoFloraSDM/analysis/data/raw_data/gbif/gbif_bolboschoenus_glaucus.csv
+\end{verbatim}
+
+\begin{verbatim}
+## Parsed with column specification:
+## cols(
+##   gbifID = col_double(),
+##   genus = col_character(),
+##   species = col_character(),
+##   lon = col_double(),
+##   lat = col_double(),
+##   basisOfRecord = col_character()
+## )
+\end{verbatim}
+
+\begin{verbatim}
+## Reading /home/joeroe/gdrive/Work/Lab/BadiaPaleoFloraSDM/analysis/data/raw_data/gbif/gbif_bolboschoenus_maritimus.csv
+\end{verbatim}
+
+\begin{verbatim}
+## Parsed with column specification:
+## cols(
+##   gbifID = col_double(),
+##   genus = col_character(),
+##   species = col_character(),
+##   lon = col_double(),
+##   lat = col_double(),
+##   basisOfRecord = col_character()
+## )
+\end{verbatim}
+
+\begin{verbatim}
+## Reading /home/joeroe/gdrive/Work/Lab/BadiaPaleoFloraSDM/analysis/data/raw_data/gbif/gbif_scirpus_maritimus.csv
+\end{verbatim}
+
+\begin{verbatim}
+## Parsed with column specification:
+## cols(
+##   gbifID = col_double(),
+##   genus = col_character(),
+##   species = col_character(),
+##   lon = col_double(),
+##   lat = col_double(),
+##   basisOfRecord = col_character()
+## )
+\end{verbatim}
+
+\begin{verbatim}
+## Reading /home/joeroe/gdrive/Work/Lab/BadiaPaleoFloraSDM/analysis/data/raw_data/gbif/gbif_triticum_urartu.csv
+\end{verbatim}
+
+\begin{verbatim}
+## Parsed with column specification:
+## cols(
+##   gbifID = col_double(),
+##   genus = col_character(),
+##   species = col_character(),
+##   lon = col_double(),
+##   lat = col_double(),
+##   basisOfRecord = col_character()
+## )
+\end{verbatim}
+
+\begin{verbatim}
+## Reading /home/joeroe/gdrive/Work/Lab/BadiaPaleoFloraSDM/analysis/data/raw_data/gbif/gbif_triticum_dicoccoides.csv
+\end{verbatim}
+
+\begin{verbatim}
+## Parsed with column specification:
+## cols(
+##   gbifID = col_double(),
+##   genus = col_character(),
+##   species = col_character(),
+##   lon = col_double(),
+##   lat = col_double(),
+##   basisOfRecord = col_character()
+## )
+\end{verbatim}
+
+\begin{verbatim}
+## Reading /home/joeroe/gdrive/Work/Lab/BadiaPaleoFloraSDM/analysis/data/raw_data/gbif/gbif_stipa.csv
+\end{verbatim}
+
+\begin{verbatim}
+## Parsed with column specification:
+## cols(
+##   gbifID = col_double(),
+##   genus = col_character(),
+##   species = col_character(),
+##   lon = col_double(),
+##   lat = col_double(),
+##   basisOfRecord = col_character()
+## )
+\end{verbatim}
+
+\begin{verbatim}
+## Reading /home/joeroe/gdrive/Work/Lab/BadiaPaleoFloraSDM/analysis/data/raw_data/gbif/gbif_zilla_spinosa.csv
+\end{verbatim}
+
+\begin{verbatim}
+## Parsed with column specification:
+## cols(
+##   gbifID = col_double(),
+##   genus = col_character(),
+##   species = col_character(),
+##   lon = col_double(),
+##   lat = col_double(),
+##   basisOfRecord = col_character()
+## )
+\end{verbatim}
+
+\begin{verbatim}
+## Reading /home/joeroe/gdrive/Work/Lab/BadiaPaleoFloraSDM/analysis/data/raw_data/gbif/gbif_vitex.csv
+\end{verbatim}
+
+\begin{verbatim}
+## Parsed with column specification:
+## cols(
+##   gbifID = col_double(),
+##   genus = col_character(),
+##   species = col_character(),
+##   lon = col_double(),
+##   lat = col_double(),
+##   basisOfRecord = col_character()
+## )
+\end{verbatim}
+
+\begin{verbatim}
+## Reading /home/joeroe/gdrive/Work/Lab/BadiaPaleoFloraSDM/analysis/data/raw_data/gbif/gbif_fraxinus.csv
+\end{verbatim}
+
+\begin{verbatim}
+## Parsed with column specification:
+## cols(
+##   gbifID = col_double(),
+##   genus = col_character(),
+##   species = col_character(),
+##   lon = col_double(),
+##   lat = col_double(),
+##   basisOfRecord = col_character()
+## )
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Code taxonomic groups for analysis}
+\NormalTok{occ }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{taxon =} \KeywordTok{case_when}\NormalTok{(genus }\OperatorTok{==}\StringTok{ "Hordeum"} \OperatorTok{~}\StringTok{ "Hordeum spontaneum"}\NormalTok{,}
+\NormalTok{                           genus }\OperatorTok{==}\StringTok{ "Bolboschoenus"} \OperatorTok{~}\StringTok{ "Bolboschoenus sp. (=Scirpus maritimus)"}\NormalTok{,}
+\NormalTok{                           species }\OperatorTok{==}\StringTok{ "Triticum urartu"} \OperatorTok{~}\StringTok{ "Triticum urartu"}\NormalTok{,}
+\NormalTok{                           species }\OperatorTok{==}\StringTok{ "Triticum dicoccoides"} \OperatorTok{~}\StringTok{ "Triticum dicoccoides"}\NormalTok{,}
+\NormalTok{                           genus }\OperatorTok{==}\StringTok{ "Stipa"} \OperatorTok{~}\StringTok{ "Stipa sp."}\NormalTok{,}
+\NormalTok{                           genus }\OperatorTok{==}\StringTok{ "Zilla"} \OperatorTok{~}\StringTok{ "Zilla spinosa"}\NormalTok{,}
+\NormalTok{                           genus }\OperatorTok{==}\StringTok{ "Vitex"} \OperatorTok{~}\StringTok{ "Vitex sp."}\NormalTok{,}
+\NormalTok{                           genus }\OperatorTok{==}\StringTok{ "Fraxinus"} \OperatorTok{~}\StringTok{ "Fraxinus sp."}\NormalTok{)) }\OperatorTok{%T>%}
+\StringTok{  }\NormalTok{\{}\ControlFlowTok{if}\NormalTok{(}\KeywordTok{any}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(.}\OperatorTok{$}\NormalTok{taxon))) }\KeywordTok{stop}\NormalTok{(}\StringTok{"Taxon contains missing values!"}\NormalTok{)\} ->}
+\StringTok{  }\NormalTok{occ}
+
+
+\CommentTok{# Remove duplicate records within analytic groups}
+\NormalTok{occ }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(taxon) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{distinct}\NormalTok{(lon, lat, }\DataTypeTok{.keep_all =} \OtherTok{TRUE}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ungroup}\NormalTok{() ->}
+\StringTok{  }\NormalTok{occ}
+
+\CommentTok{# Convert to sf}
+\NormalTok{occ }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{st_as_sf}\NormalTok{(}\DataTypeTok{coords =} \KeywordTok{c}\NormalTok{(}\StringTok{"lon"}\NormalTok{, }\StringTok{"lat"}\NormalTok{), }\DataTypeTok{crs =} \DecValTok{4326}\NormalTok{, }\DataTypeTok{remove =} \OtherTok{FALSE}\NormalTok{) ->}
+\StringTok{  }\NormalTok{occ}
+\end{Highlighting}
+\end{Shaded}
+
+It's interesting to map the current distribution of these plants.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(occ, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ lon, }\DataTypeTok{y =}\NormalTok{ lat)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_sf}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ occ, }\DataTypeTok{shape =} \DecValTok{1}\NormalTok{, }\DataTypeTok{size=}\FloatTok{0.5}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_sf}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ water, }\DataTypeTok{inherit.aes =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{fill =} \StringTok{"white"}\NormalTok{, }\DataTypeTok{colour =} \StringTok{"darkgrey"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\NormalTok{taxon)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{analysis_files/figure-latex/occurrence-map-1.pdf}
+
+\hypertarget{pseudo-absences}{%
+\subsection{Pseudo-absences}\label{pseudo-absences}}
+
+Occurrence data only tells us where a species is present; there is no
+definitive information on where the species is \emph{not} found. We
+therefore need to generate random background points or
+``pseudo-absences'' to feed to the model. There are several ways to do
+this. We follow the advice of Barbet-Massin et al.~(2012) for
+regression-based species distribution models and simply use a large
+(\textasciitilde10000) random sample of points.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{occ <-}\StringTok{ }\KeywordTok{as_tibble}\NormalTok{(occ)}
+\NormalTok{occ}\OperatorTok{$}\NormalTok{occurrence <-}\StringTok{ }\OtherTok{TRUE}
+\ControlFlowTok{for}\NormalTok{(taxon }\ControlFlowTok{in} \KeywordTok{unique}\NormalTok{(occ}\OperatorTok{$}\NormalTok{taxon)) \{}
+\NormalTok{  occ <-}\StringTok{ }\KeywordTok{bind_rows}\NormalTok{(occ, }\KeywordTok{generate_psabsences}\NormalTok{(palestine, }\DataTypeTok{taxon =}\NormalTok{ taxon,}
+                                            \DataTypeTok{occurrence =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{N =} \DecValTok{10000}\NormalTok{))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in bind_rows_(x, .id): Vectorizing 'sfc_POINT' elements may not
+## preserve their attributes
+
+## Warning in bind_rows_(x, .id): Vectorizing 'sfc_POINT' elements may not
+## preserve their attributes
+\end{verbatim}
+
+\begin{verbatim}
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in bind_rows_(x, .id): Vectorizing 'sfc_POINT' elements may not
+## preserve their attributes
+\end{verbatim}
+
+\begin{verbatim}
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in bind_rows_(x, .id): Vectorizing 'sfc_POINT' elements may not
+## preserve their attributes
+\end{verbatim}
+
+\begin{verbatim}
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in bind_rows_(x, .id): Vectorizing 'sfc_POINT' elements may not
+## preserve their attributes
+\end{verbatim}
+
+\begin{verbatim}
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in bind_rows_(x, .id): Vectorizing 'sfc_POINT' elements may not
+## preserve their attributes
+\end{verbatim}
+
+\begin{verbatim}
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in bind_rows_(x, .id): Vectorizing 'sfc_POINT' elements may not
+## preserve their attributes
+\end{verbatim}
+
+\begin{verbatim}
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in bind_rows_(x, .id): Vectorizing 'sfc_POINT' elements may not
+## preserve their attributes
+\end{verbatim}
+
+\begin{verbatim}
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+## although coordinates are longitude/latitude, st_intersects assumes that they are planar
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in bind_rows_(x, .id): Vectorizing 'sfc_POINT' elements may not
+## preserve their attributes
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{occ <-}\StringTok{ }\NormalTok{sf}\OperatorTok{::}\KeywordTok{st_as_sf}\NormalTok{(occ, }\DataTypeTok{crs =} \DecValTok{4326}\NormalTok{)}
+\KeywordTok{rm}\NormalTok{(taxon)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{environmental-data}{%
+\subsection{Environmental data}\label{environmental-data}}
+
+\hypertarget{bioclimatic-variables}{%
+\subsubsection{Bioclimatic variables}\label{bioclimatic-variables}}
+
+To construct the model, we'll use a standard set of ``bioclimatic''
+predicator variables. These sixteen variables are derived from monthly
+precipitation and temperate data:
+
+\captionsetup[table]{labelformat=empty,skip=1pt}
+\begin{longtable}{lll}
+\toprule
+biovar & definition & formula \\ 
+\midrule
+bio1 & Mean annual temperature &  \\ 
+bio2 & Mean diurnal range &  \\ 
+bio3 & Isothermality & (bio2 / bio7) * 100 \\ 
+bio4 & Temperature seasonality & sd(temp) * 100 \\ 
+bio5 & Maximum temperature of warmest month &  \\ 
+bio6 & Minimum temperature of coldest month &  \\ 
+bio7 & Annual temperature range & bio5 - bio6 \\ 
+bio8 & Mean temperature of wettest quarter &  \\ 
+bio9 & Mean temperature of driest quarter &  \\ 
+bio10 & Mean temperature of warmest quarter &  \\ 
+bio11 & Mean temperature of coldest quarter &  \\ 
+bio12 & Total annual precipitation &  \\ 
+bio13 & Precipitation of wettest month &  \\ 
+bio14 & Precipitation of driest month &  \\ 
+bio15 & Precipitation seasonality &  \\ 
+bio16 & Precipitation of wettest quarter &  \\ 
+\bottomrule
+\end{longtable}
+
+Here the climate data is from WorldClim 1.4
+(\url{http://www.worldclim.org}), a global dataset compiled from weather
+station records from the period 1960--1990. WorldClim has been widely
+used in ecological niche modelling. Other global climate datasets
+(e.g.~CHELSA, MERRAClim) and a newer version of WorldClim are now
+available, so it may be a good idea to investigate using these instead.
+The WorldClim data is large so again it is cached in the package's
+\texttt{derived\_data} directory.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# bioclim <- get_bioclim(s_levant, resolution = 0.5, cache_path = "data/derived_data")}
+\CommentTok{# Workaround for memory problems in Safawi}
+\KeywordTok{load}\NormalTok{(}\StringTok{"data/derived_data/bioclim.RData"}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(bioclim)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{analysis_files/figure-latex/bioclim-data-1.pdf}
+
+\hypertarget{soil-variables}{%
+\subsubsection{Soil variables}\label{soil-variables}}
+
+Velazco et al.~(2017) have shown that edaphic data, recently available
+on a global scale, is usefully combined with bioclimatic data in
+modelling plant niches.
+
+We use data from SoilGrids, a global map of soil characteristics derived
+from remote sensing classification at 1km resolution.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{soilgrids <-}\StringTok{ }\NormalTok{raster}\OperatorTok{::}\KeywordTok{stack}\NormalTok{(}\KeywordTok{list.files}\NormalTok{(}\StringTok{"data/raw_data/soilgrids"}\NormalTok{, }\StringTok{".*tif"}\NormalTok{, }\DataTypeTok{full.names =} \OtherTok{TRUE}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{terrain}{%
+\subsubsection{Terrain}\label{terrain}}
+
+There are also relevent aspects of the terrain that can be easily
+derived from a digital elevation model. We'll use NASA-JPL's SRTM v3 1
+arc-second resolution DEM.
+
+\hypertarget{selection-of-predictor-variables}{%
+\subsubsection{Selection of predictor
+variables}\label{selection-of-predictor-variables}}
+
+We reviewed existing floras to identify specific variables from these
+datasets that are relevant to the niche of our target taxa. The results
+are summarised below.
+
+\begin{verbatim}
+## Parsed with column specification:
+## cols(
+##   Taxon = col_character(),
+##   Factor = col_character(),
+##   Notes = col_character(),
+##   Reference = col_logical()
+## )
+\end{verbatim}
+
+\captionsetup[table]{labelformat=empty,skip=1pt}
+\begin{longtable}{llc}
+\toprule
+Factor & Notes & Reference \\ 
+\midrule
+\multicolumn{1}{l}{Triticum sp.} \\ 
+\midrule
+Precipitation & Adapted to dry conditions, at least 400 mm per annum for T. dicoccoides, or 300–350 mm for T. urartu and T. boeoticum. & NA \\ 
+Soil type & T. urartu and T. boeoticum prefer basalt calcareous soils. & NA \\ 
+Soil acidity & Found in acidic soils (limited distribution) & NA \\ 
+Terrain & 100 m asl to 1600–1650 m asl. T. dicoccoides grows on mountain slopes. & NA \\ 
+\midrule
+\multicolumn{1}{l}{Hordeum spontaneum} \\ 
+\midrule
+Precipitation & Adapted to dry conditions, at least 200–250 mm rainfall per annum. & NA \\ 
+Temperature & Not tolerant of cool conditions. & NA \\ 
+Soil type & Tolerant of poor calcareous soils. & NA \\ 
+Terrain & Grows on rocky limestone slopes, marly banks, and waste places, between 30 and 1650 m asl. & NA \\ 
+\midrule
+\multicolumn{1}{l}{Stipa sp.} \\ 
+\midrule
+Terrain & Grows on limestone mountain slopes between 400 and 2500 m asl. & NA \\ 
+\midrule
+\multicolumn{1}{l}{Vitex sp.} \\ 
+\midrule
+Water & Grows close to water resources, banks of streams and dry wadis & NA \\ 
+Terrain & No higher than 750 m asl, mostly on sandy groumd, alluvial soils, rocky areas, dry river beds. & NA \\ 
+\midrule
+\multicolumn{1}{l}{Zilla spinosa} \\ 
+\midrule
+Soil type & Sandy deserts, dry soils, stony ground. & NA \\ 
+\midrule
+\multicolumn{1}{l}{Bolboschoenus glaucus} \\ 
+\midrule
+Water & A wetland plant, it grows in the shores of the lakes, often underwater. The subspecies maritimus (sea club-rush) grows in freshwater or saline marshes with Typha, Juncus and Phragmites, stagnant swamps, water meadows with Orchis palustris, by streams and rivers, dried up river beds, soda lakes, thermal springs, saline and alluvial flats, beaches, edge o/irrigation ditches and rice fields. & NA \\ 
+Salinity & Some club rush like sea-club-rush can tolerate high salinity. & NA \\ 
+Terrain & Grows anywhere between 0 and 2000 m asl. & NA \\ 
+\midrule
+\multicolumn{1}{l}{Fraxinus sp.} \\ 
+\midrule
+Water & Along with rivers and streams. 400-1900 small, by streams often in comparatively dry and rocky places & NA \\ 
+Terrain & Mostly dryish, rocky places, in macchie, deciduous scrub or forest, Pinus brutia or P. nigra forests, or mixed forest, 650–1700 m asl. & NA \\ 
+\bottomrule
+\end{longtable}
+
+Based on these results, we made the following initial selection of
+predictor variables to build the models.
+
+\captionsetup[table]{labelformat=empty,skip=1pt}
+\begin{longtable}{llll}
+\toprule
+variable & units & source & code \\ 
+\midrule
+\multicolumn{1}{l}{Climate} \\ 
+\midrule
+Minimum temperature of coldest month & °C ×10 & WorldClim 1.4 & bio6 \\ 
+Total annual precipitation & mm & WorldClim 1.4 & bio12 \\ 
+Precipitation of wettest month & mm & WorldClim 1.4 & bio13 \\ 
+Precipitation of driest month & mm & WorldClim 1.4 & bio14 \\ 
+Precipitation seasonality & σ/μ & WorldClim 1.4 & bio15 \\ 
+\midrule
+\multicolumn{1}{l}{Soil} \\ 
+\midrule
+Organic carbon content & g per kg fine earth & SoilGrids250m & ORCDRC\_M\_sl2\_250m \\ 
+Coarse fragment content & \% volume & SoilGrids250m & CRFVOL\_M\_sl2\_250m \\ 
+Sand content & \% mass & SoilGrids250m & SNDPPT\_M\_sl2\_250m \\ 
+Acidity & pH ×10 in H2O & SoilGrids250m & PHIHOX\_M\_sl2\_250m \\ 
+Depth to bedrock & cm (up to 200 cm) & SoilGrids250m & BDRICM\_M\_250m \\ 
+\bottomrule
+\end{longtable}
+
+One aspect that we cannot easily incorporate into the models is the
+interaction between these taxa and other plant and animal species:
+cereal grasses grow best when they have no competition from perennial
+plants, \emph{Fraxinus} often grows in scrub or forest, and so on.
+
+We also lack data for soil salinity so far.
+
+\hypertarget{combining-predictor-variables}{%
+\subsubsection{Combining predictor
+variables}\label{combining-predictor-variables}}
+
+These datasets come with different resolutions. To use them all in the
+same analysis, we resample them all to the finest dataset (WorldClim, 30
+arc-seconds).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pred}\OperatorTok{$}\NormalTok{raster <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(pred}\OperatorTok{$}\NormalTok{raster, raster}\OperatorTok{::}\NormalTok{resample, }\DataTypeTok{y =}\NormalTok{ bioclim, }\DataTypeTok{method =} \StringTok{"ngb"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{model-construction}{%
+\subsection{Model construction}\label{model-construction}}
+
+We will model the ecological niche of each species using a generalised
+linear regression.
+
+First we extract the values of the predictor variables at each
+occurrence and pseudo-absence location:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# }\AlertTok{TODO}\CommentTok{: refactor to use pred}
+\NormalTok{bioclim }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{raster}\OperatorTok{::}\KeywordTok{extract}\NormalTok{(}\KeywordTok{as_Spatial}\NormalTok{(occ)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{\{}\KeywordTok{cbind}\NormalTok{(occ, .)\} }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{st_as_sf}\NormalTok{(}\DataTypeTok{crs =} \KeywordTok{st_crs}\NormalTok{(occ)) ->}
+\StringTok{  }\NormalTok{occ}
+
+\NormalTok{soilgrids }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{raster}\OperatorTok{::}\KeywordTok{extract}\NormalTok{(}\KeywordTok{as_Spatial}\NormalTok{(occ)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{\{}\KeywordTok{cbind}\NormalTok{(occ, .)\} }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{st_as_sf}\NormalTok{(}\DataTypeTok{crs =} \KeywordTok{st_crs}\NormalTok{(occ)) ->}
+\StringTok{  }\NormalTok{occ}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{species-response-curves}{%
+\subsubsection{Species response curves}\label{species-response-curves}}
+
+We can use species response curves to visualise the distribution of
+known occurrences in relation to these environmental gradients. This
+will also help us parameterise the ecological niche models.
+
+Species response curves are constructed with a simple logistic
+regression, fitting the probability of occurrence at a given location to
+The use of a linear regression assumes a unimodal response. We fit
+first, second, and third order polynomial models to each
+species/predictor combination and calculate the Akaike Information
+Criterion (AIC).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Summarise occurrences on a grid}
+\NormalTok{palestine }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{as_Spatial}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{raster}\OperatorTok{::}\KeywordTok{rasterize}\NormalTok{(bioclim) ->}
+\StringTok{  }\NormalTok{palestine_raster}
+
+\NormalTok{occ }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(occurrence }\OperatorTok{==}\StringTok{ }\OtherTok{TRUE}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(taxon) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{do}\NormalTok{(}\DataTypeTok{occ_grid =} \KeywordTok{raster_burn}\NormalTok{(., palestine_raster)) ->}
+\StringTok{  }\NormalTok{occ_grids}
+
+\CommentTok{# Fit poly(1:3) to each taxon/predictor combination}
+\KeywordTok{expand.grid}\NormalTok{(}\DataTypeTok{taxon =} \KeywordTok{unique}\NormalTok{(occ}\OperatorTok{$}\NormalTok{taxon),}
+            \DataTypeTok{predictor =}\NormalTok{ pred}\OperatorTok{$}\NormalTok{code,}
+            \DataTypeTok{polyn =} \DecValTok{1}\OperatorTok{:}\DecValTok{3}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(taxon, predictor, polyn) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{do}\NormalTok{(}
+    \CommentTok{# }\AlertTok{TODO}\CommentTok{: It works but I hate it.}
+    \DataTypeTok{fit =} \KeywordTok{model_response}\NormalTok{(}\KeywordTok{unlist}\NormalTok{(occ_grids[occ_grids}\OperatorTok{$}\NormalTok{taxon }\OperatorTok{==}\StringTok{ }\NormalTok{.}\OperatorTok{$}\NormalTok{taxon, }\StringTok{"occ_grid"}\NormalTok{])[[}\DecValTok{1}\NormalTok{]],}
+                         \KeywordTok{unlist}\NormalTok{(pred[pred}\OperatorTok{$}\NormalTok{code }\OperatorTok{==}\StringTok{ }\NormalTok{.}\OperatorTok{$}\NormalTok{predictor, }\StringTok{"raster"}\NormalTok{])[[}\DecValTok{1}\NormalTok{]],}
+\NormalTok{                         .}\OperatorTok{$}\NormalTok{polyn)}
+\NormalTok{  ) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{glance}\NormalTok{(fit) ->}\StringTok{ }
+\StringTok{  }\NormalTok{response_glm}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+\end{verbatim}
+
+The optimal model is the one with the lowest AIC.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{response_glm }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(taxon, predictor) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{optimum =}\NormalTok{ polyn }\OperatorTok{==}\StringTok{ }\KeywordTok{which.min}\NormalTok{(AIC)) ->}
+\StringTok{  }\NormalTok{response_glm}
+
+\CommentTok{# }\AlertTok{TODO}
+\CommentTok{# Re-fit and plot optimal }
+\CommentTok{# model_response(occ_grids$occ_grid[[1]], pred$raster[[1]], 2) %>% predict(data.frame(pred = -72:109, type = "response")) %>% plot()}
+\CommentTok{# Need to dplyrise this – see broom::augment()}
+\CommentTok{# response_glm %>% }
+\CommentTok{#   filter(optimum == TRUE) %>% }
+\CommentTok{#   slice(1:3) %>% }
+\CommentTok{#   do(}
+\CommentTok{#     fit = model_response(unlist(occ_grids[occ_grids$taxon == .$taxon, "occ_grid"])[[1]],}
+\CommentTok{#                          unlist(pred[pred$code == .$predictor,"raster"])[[1]],}
+\CommentTok{#                          .$polyn)}
+\CommentTok{#   ) }
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{model-fitting}{%
+\subsubsection{Model fitting}\label{model-fitting}}
+
+Now we can fit regression models combining all the predictor variables.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# }\AlertTok{TODO}\CommentTok{: use optimal polynomial order}
+\NormalTok{occ }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(taxon) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{remove_missing}\NormalTok{(}\DataTypeTok{vars =} \KeywordTok{c}\NormalTok{(}\StringTok{"bio1"}\NormalTok{, }\StringTok{"bio2"}\NormalTok{, }\StringTok{"bio3"}\NormalTok{, }\StringTok{"bio4"}\NormalTok{, }\StringTok{"bio5"}\NormalTok{, }\StringTok{"bio6"}\NormalTok{, }
+                          \StringTok{"bio7"}\NormalTok{, }\StringTok{"bio8"}\NormalTok{, }\StringTok{"bio9"}\NormalTok{, }\StringTok{"bio10"}\NormalTok{, }\StringTok{"bio11"}\NormalTok{, }\StringTok{"bio12"}\NormalTok{, }
+                          \StringTok{"bio13"}\NormalTok{, }\StringTok{"bio14"}\NormalTok{, }\StringTok{"bio15"}\NormalTok{, }\StringTok{"bio16"}\NormalTok{, }\StringTok{"bio17"}\NormalTok{, }\StringTok{"bio18"}\NormalTok{, }
+                          \StringTok{"bio19"}\NormalTok{, }\StringTok{"BDRICM_M_250m"}\NormalTok{, }\StringTok{"CRFVOL_M_sl2_250m"}\NormalTok{, }
+                          \StringTok{"ORCDRC_M_sl2_250m"}\NormalTok{, }\StringTok{"PHIHOX_M_sl2_250m"}\NormalTok{, }
+                          \StringTok{"SNDPPT_M_sl2_250m"}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{do}\NormalTok{(}\DataTypeTok{model =} \KeywordTok{glm}\NormalTok{(occurrence }\OperatorTok{~}\StringTok{ }
+\StringTok{                   }\KeywordTok{poly}\NormalTok{(bio6, }\DecValTok{2}\NormalTok{) }\OperatorTok{+}
+\StringTok{                   }\KeywordTok{poly}\NormalTok{(bio12, }\DecValTok{2}\NormalTok{) }\OperatorTok{+}
+\StringTok{                   }\KeywordTok{poly}\NormalTok{(bio13, }\DecValTok{2}\NormalTok{) }\OperatorTok{+}
+\StringTok{                   }\CommentTok{# poly(bio14, 2) +}
+\StringTok{                   }\KeywordTok{poly}\NormalTok{(bio15, }\DecValTok{2}\NormalTok{) }\OperatorTok{+}
+\StringTok{                   }\KeywordTok{poly}\NormalTok{(BDRICM_M_250m, }\DecValTok{2}\NormalTok{) }\OperatorTok{+}
+\StringTok{                   }\KeywordTok{poly}\NormalTok{(CRFVOL_M_sl2_250m, }\DecValTok{2}\NormalTok{) }\OperatorTok{+}
+\StringTok{                   }\KeywordTok{poly}\NormalTok{(ORCDRC_M_sl2_250m, }\DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{                   }\KeywordTok{poly}\NormalTok{(PHIHOX_M_sl2_250m, }\DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{                   }\KeywordTok{poly}\NormalTok{(SNDPPT_M_sl2_250m, }\DecValTok{2}\NormalTok{),}
+                 \DataTypeTok{data =}\NormalTok{ .)) ->}
+\StringTok{  }\NormalTok{models}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 3337 rows containing missing values.
+\end{verbatim}
+
+\hypertarget{predicting-occurrences}{%
+\subsection{Predicting occurrences}\label{predicting-occurrences}}
+
+\hypertarget{current-conditions}{%
+\subsubsection{Current conditions}\label{current-conditions}}
+
+We can now use the fitted models to predict the occurrence of the
+different taxa according to the predictor variables. Initially, we do
+this based on current conditions. This allows us to extrapolate from
+regions with good occurrence data (i.e.~Israel/Palestine) to those
+without. It also hints at what the distribution of the plant might be
+under ``ideal conditions'', without agriculture, grazing, etc.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{models }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{do}\NormalTok{(}\DataTypeTok{taxon =}\NormalTok{ .}\OperatorTok{$}\NormalTok{taxon,}
+     \DataTypeTok{model =}\NormalTok{ .}\OperatorTok{$}\NormalTok{model,}
+     \DataTypeTok{pred_current =}\NormalTok{ raster}\OperatorTok{::}\KeywordTok{predict}\NormalTok{(}\DataTypeTok{object =}\NormalTok{ raster}\OperatorTok{::}\KeywordTok{stack}\NormalTok{(pred}\OperatorTok{$}\NormalTok{raster),}
+                                    \DataTypeTok{model =}\NormalTok{ .}\OperatorTok{$}\NormalTok{model)) ->}
+\StringTok{  }\NormalTok{models}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{raster}\OperatorTok{::}\KeywordTok{stack}\NormalTok{(models}\OperatorTok{$}\NormalTok{pred_current) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{set_names}\NormalTok{(models}\OperatorTok{$}\NormalTok{taxon) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{plot}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{analysis_files/figure-latex/pred_current_plot-1.pdf}
+
+\hypertarget{binning}{%
+\subsubsection{Binning}\label{binning}}
+
+To more easily interpret these predictions, we could convert the raw
+probability scores into confidence intervals, based on the proportion of
+known occurrences it successfully predicts.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{raster}\OperatorTok{::}\KeywordTok{stack}\NormalTok{(models}\OperatorTok{$}\NormalTok{pred_current) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{set_names}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(}\StringTok{"pred_current_"}\NormalTok{, models}\OperatorTok{$}\NormalTok{taxon)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{raster}\OperatorTok{::}\KeywordTok{extract}\NormalTok{(}\KeywordTok{as_Spatial}\NormalTok{(occ)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\NormalTok{\{}\KeywordTok{cbind}\NormalTok{(occ, .)\} }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{st_as_sf}\NormalTok{(}\DataTypeTok{crs =} \KeywordTok{st_crs}\NormalTok{(occ)) ->}
+\StringTok{  }\NormalTok{occ2}
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}

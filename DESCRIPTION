@@ -1,0 +1,34 @@
+Package: BadiaPaleoFloraENM
+Title: Ecological Niche Modelling of Paleofauna in the *Badia*
+Version: 0.0.0.9000
+Authors@R:
+    person(given = "Joe",
+           family = "Roe",
+           role = c("aut", "cre"),
+           email = "jwg983@hum.ku.dk")
+Description: 
+License: MIT + file LICENSE
+ByteCompile: true
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    bookdown,
+    rnaturalearth,
+    dismo,
+    raster,
+    dplyr,
+    magrittr,
+    purrr,
+    readr,
+    tibble,
+    sf,
+    rgeos,
+    jsonlite,
+    rgdal,
+    lwgeom,
+    here,
+    stringr,
+    gdalUtils,
+    broom
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.1
