@@ -39,3 +39,13 @@ model_response <- function(occ, pred, polyn) {
 
   return(mod)
 }
+
+#' Convert log-odds to probability
+#'
+#' @param x Numeric. Vector of log-odds, e.g. output of a logistic regression.
+#'
+#' @return Vector of normalised probabilities.
+#' @export
+logit_to_p <- function(x) {
+  return(exp(x) / (1+exp(x)))
+}

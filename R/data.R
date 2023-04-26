@@ -117,6 +117,42 @@ get_bioclim <- function(extent, resolution = 0.5, cache_path = getwd(), quiet = 
   return(bio)
 }
 
+# PALEOCLIM DATA ----------------------------------------------------------
+
+#' Fetch PaleoClim data
+#'
+#' An interface to [rpaleoclim::paleoclim()] with caching.
+#'
+#' @param period      Character. Time period to fetch.
+#' @param resolution  Character. Resolution to fetch.
+#' @param ext         `Extent` object. Region to fetch.
+#' @param cache_file  Character. Path to cache data in .grd format.
+#' @param redownload  Logical. If `TRUE`, cached data will be ignored. Default: `FALSE`.
+#'
+#' @return
+#'
+#' `RasterStack` object.
+#'
+#' @details
+#'
+#' The raster is always read or re-read from the cached file to ensure consistency.
+#' See [rpaleoview::paleoview()] for more details.
+#'
+#' @export
+#'
+#' @examples
+fetch_paleoclim <- function(period, resolution, ext = NULL, cache_file, redownload = FALSE) {
+  if (!file.exists(cache_file) | redownload) {
+    message("Downloading ", period, ", ", resolution, ", from PaleoClim...")
+    rpaleoclim::paleoclim(period, resolution, region = ext) %>%
+      raster::writeRaster(cache_file, format = "raster")
+  }
+
+  message("Reading ", cache_file)
+  raster::stack(cache_file) %>%
+    return()
+}
+
 #' Merge Raster* objects (if necessary)
 #'
 #' Utility function for merging a list of Raster* objects. If passed a list of

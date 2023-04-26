@@ -2,24 +2,29 @@
 title: Ecological niche models of plant species exploited by Epipalaeolithic foragers
   in the *Badia* (c. 14500 BP)
 output:
+  pdf_document: 
+    latex_engine: xelatex
   html_document:
     df_print: paged
-  pdf_document:
-    latex_engine: xelatex
 ---
 
-## Dependencies
-
-```{r packages, warning=FALSE, message=FALSE}
+```{r packages, include=FALSE}
 library("tidyverse")
 library("magrittr")
 library("sf")
-library("raster")
+library("stars")
+library("parallel")
 library("broom")
 library("dismo")
 library("rnaturalearth")
 library("gt")
+library("viridis")
 library("BadiaPaleoFloraENM")
+```
+
+```{r defs, include=FALSE}
+latlong <- 4326
+utm37n <- 32637
 ```
 
 ## Introduction
@@ -31,39 +36,51 @@ We will use occurrence data from Israel and Palestine, which are well-studied, t
 
 First, we define our regions of interest:
 
-```{r regions, warning=FALSE, message=FALSE}
+```{r regions, include=FALSE}
 sw_asia <- extent(c(30, 50, 25, 40))
 s_levant <- extent(c(34, 39, 29, 34))
-palestine <- ne_countries(scale = 10, country = c("Israel", "Palestine"),
-             returnclass = "sf") %>% st_union() %>% st_sf()
 
-land <- read_sf("data/raw_data/ne/ne_10m_land.shp")[,"featurecla"] %>%
-  st_crop(sw_asia)
+ne_countries(scale = 10, country = c("Israel", "Palestine"), returnclass = "sf") %>% 
+  st_union() ->
+  palestine
+
+read_sf("data/raw_data/ne/ne_10m_land.shp")[,"featurecla"] %>%
+  st_crop(sw_asia) -> 
+  land
+
 rivers <- read_sf("data/raw_data/ne/ne_10m_rivers_lake_centerlines_scale_rank.shp") %>% 
   st_crop(s_levant)
+
 water <- rbind(read_sf("data/raw_data/ne/ne_10m_ocean.shp")[,"featurecla"],
-               read_sf("data/raw_data/ne/ne_10m_lakes.shp")[,"featurecla"]) %>% 
-  st_crop(sw_asia)
+               read_sf("data/raw_data/ne/ne_10m_lakes.shp")[,"featurecla"])
 ```
 
-```{r regions-map, echo=FALSE, results='hide'}
-basemap <- ggplot() + 
-  geom_sf(data = land, fill ="grey") +
-  geom_sf(data = palestine, fill = "lightgrey") + 
-  geom_sf(data = rivers, colour = "white") +
-  geom_sf(data = water, fill = "white") +
+```{r regions-map, echo=FALSE}
+ggplot() + 
+  geom_sf(data = palestine, fill = viridis(2)[2], colour = NA) +
+  geom_sf(data = rivers, colour = "#999999") +
+  geom_sf(data = water, fill = "#eeeeee", colour = "#999999") +
   coord_sf(xlim = c(xmin(s_levant), xmax(s_levant)),
-           ylim = c(ymin(s_levant), ymax(s_levant)))
-basemap
+           ylim = c(ymin(s_levant), ymax(s_levant))) +
+  theme_bw()
 ```
 
-## Occurrence data
+## Background
+
+### Plant exploitation in the Epipalaeolithic Southern Levant
+
+### Ecological niche modelling
+
+## Data
+
+### Occurrences
 
 First we download species occurrence data from GBIF (<https://gbif.org>).
 This may change, so we cache the result used in the published analysis in `derived_data` and only redownload if the cached version is missing.
 
-```{r occurrence-data, warning=FALSE, message=FALSE}
+```{r occurrence-data, include=FALSE}
 # Download or read data from GBIF
+# TODO: T. boeoticum ? (equate with T. urartu?)
 gbif_path <- here::here("analysis/data/raw_data/gbif")
 occ <- bind_rows(
   fetch_gbif("Hordeum", "spontaneum*", ext = sw_asia, gbif_path),
@@ -81,7 +98,7 @@ occ <- bind_rows(
 # Code taxonomic groups for analysis
 occ %>% 
   mutate(taxon = case_when(genus == "Hordeum" ~ "Hordeum spontaneum",
-                           genus == "Bolboschoenus" ~ "Bolboschoenus sp. (=Scirpus maritimus)",
+                           genus == "Bolboschoenus" ~ "Bolboschoenus sp.",
                            species == "Triticum urartu" ~ "Triticum urartu",
                            species == "Triticum dicoccoides" ~ "Triticum dicoccoides",
                            genus == "Stipa" ~ "Stipa sp.",
@@ -106,41 +123,55 @@ occ %>%
 ```
 
 It's interesting to map the current distribution of these plants.
-```{r occurrence-map, echo=FALSE, results='hide'}
+```{r occurrence-map, echo=FALSE}
 ggplot(occ, aes(x = lon, y = lat)) +
+  geom_sf(data = water, inherit.aes = FALSE, fill = "#eeeeee", colour = "#999999") +
   geom_sf(data = occ, shape = 1, size=0.5) +
-  geom_sf(data = water, inherit.aes = FALSE, fill = "white", colour = "darkgrey") +
-  facet_wrap(~taxon)
+  coord_sf(xlim = c(xmin(sw_asia), xmax(sw_asia)),
+           ylim = c(ymin(sw_asia), ymax(sw_asia))) +
+  facet_wrap(~taxon) +
+  theme_bw() +
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank())
 ```
 
-## Pseudo-absences
+### Pseudo-absences
 
 Occurrence data only tells us where a species is present;
 there is no definitive information on where the species is *not* found.
 We therefore need to generate random background points or "pseudo-absences" to feed to the model.
 There are several ways to do this. 
-We follow the advice of Barbet-Massin et al. (2012) for regression-based species distribution models and simply use a large (~10000) random sample of points.
+We follow the advice of Barbet-Massin et al. (2012) for regression-based species distribution models and use a large (~10000) random sample of points, weighted equally against the presences in the regression.
 
-```{r psabsences, warning=FALSE, message=FALSE}
+```{r psabsences, include=FALSE}
+n_psab <- 10000
+
 occ <- as_tibble(occ)
 occ$occurrence <- TRUE
 for(taxon in unique(occ$taxon)) {
   occ <- bind_rows(occ, generate_psabsences(palestine, taxon = taxon,
-                                            occurrence = FALSE, N = 10000))
+                                            occurrence = FALSE, N = n_psab))
 }
 occ <- sf::st_as_sf(occ, crs = 4326)
 rm(taxon)
+
+# Weights
+occ %>% 
+  group_by(taxon, occurrence) %>% 
+  mutate(weight = 1 + (n_psab / n() - 1)) ->
+  occ
 ```
 
-## Environmental data
+### Environmental data
 
-### Bioclimatic variables
+#### Current climate
 
 To construct the model, we'll use a standard set of "bioclimatic" predicator variables.
 These sixteen variables are derived from monthly precipitation and temperate data:
 
 ```{r bioclim-table, echo=FALSE}
-tibble(biovar = paste0("bio", 1:16),
+tibble(biovar = paste0("bio", 1:19),
        definition = c("Mean annual temperature",
                       "Mean diurnal range",
                       "Isothermality",
@@ -156,7 +187,10 @@ tibble(biovar = paste0("bio", 1:16),
                       "Precipitation of wettest month",
                       "Precipitation of driest month",
                       "Precipitation seasonality",
-                      "Precipitation of wettest quarter"),
+                      "Precipitation of wettest quarter",
+                      "Precipitation of driest quarter",
+                      "Precipitation of warmest quarter",
+                      "Precipitation of coldest quarter"),
        formula = c("",
                    "",
                    "(bio2 / bio7) * 100",
@@ -172,46 +206,84 @@ tibble(biovar = paste0("bio", 1:16),
                    "",
                    "",
                    "",
+                   "",
+                   "",
+                   "",
                    "")
 ) %>%
   gt()
 ```
 
-Here the climate data is from WorldClim 1.4 (<http://www.worldclim.org>), a global dataset compiled from weather station records from the period 1960–1990.
-WorldClim has been widely used in ecological niche modelling.
-Other global climate datasets (e.g. CHELSA, MERRAClim) and a newer version of WorldClim are now available, so it may be a good idea to investigate using these instead.
-The WorldClim data is large so again it is cached in the package's `derived_data` directory.
+Here the current bioclimatic data is from CHELSA (<http://chelsa-climate.org/bioclim/>).
 
-```{r bioclim-data, echo=FALSE}
-# bioclim <- get_bioclim(s_levant, resolution = 0.5, cache_path = "data/derived_data")
-# Workaround for memory problems in Safawi
-load("data/derived_data/bioclim.RData")
-plot(bioclim)
+```{r bioclim-data, include=FALSE}
+fetch_paleoclim("cur", "2_5m", s_levant,
+                "./data/derived_data/paleoclim/paleoclim_cur.grd") %>% 
+  st_as_stars() ->
+  bioclim
 ```
 
-### Soil variables
+#### Palaeoclimate
+
+```{r paleoclim-data, include=FALSE}
+tibble(
+  period_code = c("eh", "yds", "ba", "hs1", "lgm"),
+  period = c("Early Holocene", "Younger Dryas", "Bølling-Allerød", "Heinrich 1", "Last Glacial Maximum"),
+  raster = c(
+    fetch_paleoclim("eh", "2_5m", s_levant, 
+                    "./data/derived_data/paleoclim/paleoclim_eh.grd"),
+    fetch_paleoclim("yds", "2_5m", s_levant, 
+                    "./data/derived_data/paleoclim/paleoclim_yds.grd"),
+    fetch_paleoclim("ba", "2_5m", s_levant, 
+                    "./data/derived_data/paleoclim/paleoclim_ba.grd"),
+    fetch_paleoclim("hs1", "2_5m", s_levant, 
+                    "./data/derived_data/paleoclim/paleoclim_hs1.grd"),
+    fetch_paleoclim("lgm", "2_5m", s_levant, 
+                    "./data/derived_data/paleoclim/paleoclim_lgm.grd")
+  )
+) %>% 
+  mutate(raster = st_as_stars(raster)) ->
+  paleoclim
+```
+
+### Soil
 
 Velazco et al. (2017) have shown that edaphic data, recently available on a global scale, is usefully combined with bioclimatic data in modelling plant niches.
 
 We use data from SoilGrids, a global map of soil characteristics derived from remote sensing classification at 1km resolution.
 
-```{r soil-data}
-soilgrids <- raster::stack(list.files("data/raw_data/soilgrids", ".*tif", full.names = TRUE))
-plot(soilgrids)
+```{r soil-data, include=FALSE}
+soilgrids <- raster::stack(list.files("data/raw_data/soilgrids", ".*tif",
+                                      full.names = TRUE))
 ```
 
 ### Terrain
 
 There are also relevent aspects of the terrain that can be easily derived from a digital elevation model.
-We'll use NASA-JPL's SRTM v3 1 arc-second resolution DEM.
+We'll use NASA-JPL's SRTM v3 3 arc-second resolution DEM, smoothed with Sun's denoising algorithm [TODO: CITE].
+Slope was calculated from this surface using GDAL 3.0.0 and the topographic wetness index (TWI) using the r.topidx module of GRASS 7.8.
+The DEM was reprojected to a conformal projection (Jordan Transverse Mercator, EPSG:19995) for these calculations, using a bilinear interpolation, then back to geographic coordinates.
 
-### Selection of predictor variables
+```{r terrain-data, include=FALSE}
+raster::stack(paste0("./data/raw_data/srtm/",
+                     c("srtm3v3s_slevant.tif",
+                       "srtm3v3s_slevant_slope.tif",
+                       "srtm3v3s_slevant_twi.tif"))) %>% 
+  set_names(c("elev", "slope", "twi")) ->
+  terrain
+```
+
+## Model
+
+### Selection of predictors
 
 We reviewed existing floras to identify specific variables from these datasets that are relevant to the niche of our target taxa. The results are summarised below.
 
-```{r review-table, echo=FALSE, warning=FALSE, message=FALSE}
+```{r review-table, echo=FALSE}
 read_csv("data/raw_data/flora_review.csv") %>% 
   group_by(Taxon) %>% 
+  # TODO: add refs
+  dplyr::select(-Reference) %>% 
   gt()
 ```
 
@@ -219,16 +291,19 @@ Based on these results, we made the following initial selection of predictor var
 
 ```{r predictor-table, echo=FALSE}
 pred <- bind_rows(
-  tibble(group = rep("Climate", 5),
+  tibble(group = rep("Climate", 4),
+         time = rep("now", 4),
          variable = c("Minimum temperature of coldest month",
                       "Total annual precipitation", "Precipitation of wettest month",
-                      "Precipitation of driest month", "Precipitation seasonality"),
-         units = c("°C ×10", "mm", "mm", "mm", "σ/μ"),
-         source = rep("WorldClim 1.4", 5),
-         code = c("bio6", "bio12", "bio13", "bio14", "bio15"),
+                      "Precipitation seasonality"),
+         units = c("°C ×10", "mm", "mm", "σ/μ"),
+         source = rep("PaleoClim 1.0", 4),
+         code = c("bio_6", "bio_12", "bio_13", "bio_15"),
          raster = as.list(raster::subset(bioclim,
-                                         c("bio6", "bio12", "bio13", "bio14", "bio15")))),
+                                         c("bio_6", "bio_12", "bio_13",
+                                           "bio_15")))),
   tibble(group = rep("Soil", 5),
+         time = rep(NA, 5),
          variable = c("Organic carbon content", "Coarse fragment content",
                       "Sand content", "Acidity", "Depth to bedrock"),
          units = c("g per kg fine earth", "% volume", "% mass", "pH ×10 in H2O",
@@ -238,49 +313,60 @@ pred <- bind_rows(
                   "PHIHOX_M_sl2_250m", "BDRICM_M_250m"),
          raster = as.list(raster::subset(soilgrids,
                                          c("ORCDRC_M_sl2_250m", "CRFVOL_M_sl2_250m", "SNDPPT_M_sl2_250m",
-                  "PHIHOX_M_sl2_250m", "BDRICM_M_250m"))))
-  # tibble(group = rep("Terrain", 3),
-  #        variable = c("Elevation", "Slope", "Topographic Wetness Index"),
-  #        units = c("m", "°", "ln(upslope area / tan(slope))"),
-  #        source = rep("SRTM DEM v3", 3),
-  #        code = c("srtm1v3_slevant", "srtm1v3_slevant_slope",
-  #                         "srtm1v3_slevant_twi"))
+                  "PHIHOX_M_sl2_250m", "BDRICM_M_250m")))),
+  tibble(group = rep("Terrain", 3),
+         time = rep(NA, 3),
+         variable = c("Elevation", "Slope", "Topographic Wetness Index"),
+         units = c("m", "°", "ln(upslope area / tan(slope))"),
+         source = rep("SRTM DEM v3", 3),
+         code = c("srtm1v3s_slevant", "srtm1v3s_slevant_slope",
+                  "srtm1v3s_slevant_twi"),
+         raster = as.list(terrain))
 )
 
+# PaleoClim
+paleoclim %>% 
+  transmute(group = "Climate", time = period_code, raster = raster) %>% 
+  mutate(raster = map(raster, ~raster::unstack(.))) %>% 
+  unnest() %>% 
+  mutate(code = unlist(map(raster, names))) %>% 
+  filter(code %in% c("bio_6", "bio_12", "bio_13", "bio_15")) %>% 
+  {bind_rows(pred, .)} ->
+  pred
+
 pred %>%
-  dplyr::select(-raster) %>% 
+  filter(time == "now" | is.na(time)) %>% 
+  dplyr::select(-raster, -time) %>% 
   group_by(group) %>% 
-  gt()
+  gt() %>% 
+  cols_label(variable = "Variable", units = "Units", source = "Dataset",
+             code = "Source code")
 ```
 
 One aspect that we cannot easily incorporate into the models is the interaction between these taxa and other plant and animal species: cereal grasses grow best when they have no competition from perennial plants, *Fraxinus* often grows in scrub or forest, and so on.
 
 We also lack data for soil salinity so far.
 
-### Combining predictor variables
-
 These datasets come with different resolutions.
-To use them all in the same analysis, we resample them all to the finest dataset (WorldClim, 30 arc-seconds).
+To use them all in the same analysis, we resample them all to the finest dataset (the SRTM terrain variables, at 3 arc-second resolution).
 
-```{r predictor-resample}
-pred$raster <- lapply(pred$raster, raster::resample, y = bioclim, method = "ngb")
+```{r predictor-resample, include=FALSE}
+# Parallelisation is Linux and Mac only.
+# 
+pred$raster <- mclapply(pred$raster, raster::resample, y = terrain, method = "ngb",
+                        mc.cores = detectCores())
+# pred$raster <- lapply(pred$raster, raster::resample, y = terrain, method = "ngb")
 ```
-
-## Model construction
 
 We will model the ecological niche of each species using a generalised linear regression.
 
 First we extract the values of the predictor variables at each occurrence and pseudo-absence location:
 
-```{r predictor-extraction}
-# TODO: refactor to use pred
-bioclim %>% 
-  raster::extract(as_Spatial(occ)) %>% 
-  {cbind(occ, .)} %>% 
-  st_as_sf(crs = st_crs(occ)) ->
-  occ
-
-soilgrids %>% 
+```{r predictor-extraction, include=FALSE}
+pred %>% 
+  filter(time == "now" | is.na(time)) %>% 
+  magrittr::extract2("raster") %>% 
+  stack() %>% 
   raster::extract(as_Spatial(occ)) %>% 
   {cbind(occ, .)} %>% 
   st_as_sf(crs = st_crs(occ)) ->
@@ -296,36 +382,35 @@ Species response curves are constructed with a simple logistic regression, fitti
 The use of a linear regression assumes a unimodal response.
 We fit first, second, and third order polynomial models to each species/predictor combination and calculate the Akaike Information Criterion (AIC).
 
-```{r response-curves-fit, warning=FALSE, message=FALSE}
-# Summarise occurrences on a grid
-palestine %>% 
-  as_Spatial() %>% 
-  raster::rasterize(bioclim) ->
-  palestine_raster
-
+```{r response-curves-fit, include=FALSE}
 occ %>% 
-  filter(occurrence == TRUE) %>% 
-  group_by(taxon) %>% 
-  do(occ_grid = raster_burn(., palestine_raster)) ->
-  occ_grids
+  gather("pred_var", "pred_val", bio_6:twi) %>% 
+  # NAs from gaps in the predictor data.
+  drop_na(pred_val) %>%
+  group_by(taxon, pred_var) %>% 
+  nest() %>% 
+  expand(taxon, pred_var, data, polyn = 1:3) %>%
+  mutate(
+    response_model = paste0("occurrence ~ poly(pred_val, ", polyn, ")"),
+    response_fit = map2(data, response_model,
+                        ~ glm(as.formula(.y),
+                              family = "binomial",
+                              data = .x,
+                              weights = weight)),
+    response_glance = map(response_fit, glance)
+  ) ->
+  response_models
 
-# Fit poly(1:3) to each taxon/predictor combination
-expand.grid(taxon = unique(occ$taxon),
-            predictor = pred$code,
-            polyn = 1:3) %>% 
-  group_by(taxon, predictor, polyn) %>% 
-  do(
-    # TODO: It works but I hate it.
-    fit = model_response(unlist(occ_grids[occ_grids$taxon == .$taxon, "occ_grid"])[[1]],
-                         unlist(pred[pred$code == .$predictor, "raster"])[[1]],
-                         .$polyn)
-  ) %>% 
-  glance(fit) -> 
-  response_glm
+# Select model with lowest AIC for each taxon–predictor combination
+response_models %>%
+  unnest(response_glance) %>% 
+  group_by(taxon, pred_var) %>% 
+  filter(AIC == min(AIC)) ->
+  response_models
 ```
 
 ```{r response-curves-table, echo=FALSE}
-# response_glm %>% 
+# response_models %>% 
 #   spread(polyn, aic) %>% 
 #   rename(aic_poly1 = `1`, aic_poly2 = `2`, aic_poly3 = `3`) %>% 
 #   gt(rowname_col = "predictor", groupname_col = "taxon") %>% 
@@ -334,58 +419,36 @@ expand.grid(taxon = unique(occ$taxon),
 
 The optimal model is the one with the lowest AIC.
 
-```{r response-curves-optimal}
-response_glm %>%
-  group_by(taxon, predictor) %>%
-  mutate(optimum = polyn == which.min(AIC)) ->
-  response_glm
-
-# TODO
-# Re-fit and plot optimal 
-# model_response(occ_grids$occ_grid[[1]], pred$raster[[1]], 2) %>% predict(data.frame(pred = -72:109, type = "response")) %>% plot()
-# Need to dplyrise this – see broom::augment()
-# response_glm %>% 
-#   filter(optimum == TRUE) %>% 
-#   slice(1:3) %>% 
-#   do(
-#     fit = model_response(unlist(occ_grids[occ_grids$taxon == .$taxon, "occ_grid"])[[1]],
-#                          unlist(pred[pred$code == .$predictor,"raster"])[[1]],
-#                          .$polyn)
-#   ) 
-```
-
-### Model fitting
+### Logistic regression
 
 Now we can fit regression models combining all the predictor variables.
 
-```{r model_fit, warning=FALSE, message=FALSE}
-# TODO: use optimal polynomial order
+```{r model_fit, include=FALSE}
 occ %>% 
+  drop_na(bio_6:twi) %>% 
   group_by(taxon) %>% 
-  remove_missing(vars = c("bio1", "bio2", "bio3", "bio4", "bio5", "bio6", 
-                          "bio7", "bio8", "bio9", "bio10", "bio11", "bio12", 
-                          "bio13", "bio14", "bio15", "bio16", "bio17", "bio18", 
-                          "bio19", "BDRICM_M_250m", "CRFVOL_M_sl2_250m", 
-                          "ORCDRC_M_sl2_250m", "PHIHOX_M_sl2_250m", 
-                          "SNDPPT_M_sl2_250m")) %>% 
-  do(model = glm(occurrence ~ 
-                   poly(bio6, 2) +
-                   poly(bio12, 2) +
-                   poly(bio13, 2) +
-                   # poly(bio14, 2) +
-                   poly(bio15, 2) +
-                   poly(BDRICM_M_250m, 2) +
-                   poly(CRFVOL_M_sl2_250m, 2) +
-                   poly(ORCDRC_M_sl2_250m, 2) + 
-                   poly(PHIHOX_M_sl2_250m, 2) + 
-                   poly(SNDPPT_M_sl2_250m, 2),
-                 data = .)) ->
-  models
-
+  nest() %>% 
+  mutate(
+    model = map_chr(taxon, ~ paste0(
+      "occurrence ~ ",
+      str_c(paste0("poly(",
+                   filter(response_models, taxon == .x)$pred_var,
+                   ", ",
+                   filter(response_models, taxon == .x)$polyn,
+                   ")"),
+            collapse = " + "))),
+    fit = map2(model, data,
+               ~ glm(as.formula(.x),
+                     family = "binomial",
+                     data = .y,
+                     weights = weight)),
+    glance = map(fit, glance)
+  ) ->
+  enm
 ```
 
 
-## Predicting occurrences
+## Results
 ### Current conditions
 
 We can now use the fitted models to predict the occurrence of the different taxa according to the predictor variables.
@@ -393,30 +456,56 @@ Initially, we do this based on current conditions.
 This allows us to extrapolate from regions with good occurrence data (i.e. Israel/Palestine) to those without.
 It also hints at what the distribution of the plant might be under "ideal conditions", without agriculture, grazing, etc.
 
-```{r pred_current}
-models %>% 
-  do(taxon = .$taxon,
-     model = .$model,
-     pred_current = raster::predict(object = raster::stack(pred$raster),
-                                    model = .$model)) ->
-  models
+```{r predictions, include=FALSE}
+# Slow
+profvis::profvis({
+enm %>% 
+  mutate(pred_now = map(fit, 
+                        ~raster::predict(
+                          raster::stack(
+                            filter(pred, time == "now" | is.na(time))$raster),
+                          .))) %>% 
+  mutate(pred_eh = map(fit, 
+                        ~raster::predict(
+                          raster::stack(
+                            filter(pred, time == "eh" | is.na(time))$raster),
+                          .))) %>% 
+  mutate(pred_yds = map(fit, 
+                         ~raster::predict(
+                           raster::stack(
+                             filter(pred, time == "yds" | is.na(time))$raster),
+                           .))) %>% 
+  mutate(pred_ba = map(fit, 
+                        ~raster::predict(
+                          raster::stack(
+                            filter(pred, time == "ba" | is.na(time))$raster),
+                          .))) %>% 
+  mutate(pred_hs1 = map(fit, 
+                         ~raster::predict(
+                           raster::stack(
+                             filter(pred, time == "hs1" | is.na(time))$raster),
+                           .))) %>% 
+  mutate(pred_lgm = map(fit, 
+                         ~raster::predict(
+                           raster::stack(
+                             filter(pred, time == "lgm" | is.na(time))$raster),
+                           .))) %>% 
+  mutate(pred_now = map(pred_now, logit_to_p),
+         pred_eh = map(pred_eh, logit_to_p),
+         pred_yds = map(pred_yds, logit_to_p),
+         pred_ba = map(pred_ba, logit_to_p),
+         pred_hs1 = map(pred_hs1, logit_to_p),
+         pred_lgm = map(pred_yds, logit_to_p)) ->
+  enm
+})
 ```
 
 ```{r pred_current_plot, echo=FALSE}
-raster::stack(models$pred_current) %>%
-  set_names(models$taxon) %>% 
+raster::stack(enm$pred_now) %>%
+  set_names(enm$taxon) %>% 
   plot()
 ```
 
-### Binning
+```{r pred_yds_}
 
-To more easily interpret these predictions, we could convert the raw probability scores into confidence intervals, based on the proportion of known occurrences it successfully predicts.
-
-```{r binning}
-raster::stack(models$pred_current) %>%
-  set_names(paste0("pred_current_", models$taxon)) %>% 
-  raster::extract(as_Spatial(occ)) %>% 
-  {cbind(occ, .)} %>% 
-  st_as_sf(crs = st_crs(occ)) ->
-  occ2
-```
+## Discussion
