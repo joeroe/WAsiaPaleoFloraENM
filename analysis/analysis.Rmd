@@ -506,6 +506,4 @@ raster::stack(enm$pred_now) %>%
   plot()
 ```
 
-```{r pred_yds_}
-
 ## Discussion
