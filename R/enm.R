@@ -4,21 +4,62 @@
 
 #' Generate pseudo-absence points
 #'
-#' @param region  object of class `sf` or `sfc`. The region in which to generate
-#'                pseudo-absence points.
+#' @param region  The region in which to generate pseudo-absence points. Must be
+#'                an object with an [sf::st_sample()] method, or an object
+#'                coercible with [sf::st_bbox] (for much faster sampling from
+#'                a rectangular bounding box).
 #' @param ...     Name-value pairs of expressions to be added as fixed attributes
 #'                of the pseudo-absences. See [dplyr::mutate()].
 #' @param N       integer. Number of pseudo-absence points to generate.
 #'
 #' @return
+#' An `sf` object containing `N` random points within `region`, with attributes
+#' specified in `...`.
+#'
 #' @export
 #'
 #' @examples
-generate_psabsences <- function(region, ..., N = 10000) {
-  sf::st_sample(region, N) %>%
-    as_tibble() %>%
-    mutate(...) %>%
-    return()
+background_sample <- function(region, N, coord_x = "x", coord_y = "y", ...) {
+  if (inherits(region, c("sf", "sfc", "sfg"))) {
+    bg_sample <- sample_sf(region, N, ...)
+  }
+  else {
+    bg_sample <- sample_bbox(region, N, ...)
+  }
+
+  if (!is.na(coord_x)) {
+    colnames(bg_sample)[colnames(bg_sample) == "X"] <- coord_x
+  }
+  if (!is.na(coord_y)) {
+    colnames(bg_sample)[colnames(bg_sample) == "Y"] <- coord_y
+  }
+
+  bg_sample
+}
+
+#' @noRd
+#' @keywords {internal}
+sample_bbox <- function(region, N, ...) {
+  region <- sf::st_bbox(region)
+  data.frame(
+    X = runif(N, region[["xmin"]], region[["xmax"]]),
+    Y =  runif(N, region[["ymin"]], region[["ymax"]])
+  ) |>
+    sf::st_as_sf(coords = c("X", "Y"),
+                 crs = sf::st_crs(region),
+                 remove = FALSE) |>
+    dplyr::mutate(...)
+}
+
+#' @noRd
+#' @keywords {internal}
+sample_sf <- function(region, N, ...) {
+  points <- sf::st_sample(region, N)
+  sf::st_sf(
+    as.data.frame(sf::st_coordinates(points)),
+    geometry = points
+    ) |>
+    dplyr::mutate(...)
 }
 
 #' @export

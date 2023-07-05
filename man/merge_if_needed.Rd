@@ -7,7 +7,7 @@
 merge_if_needed(rasters)
 }
 \arguments{
-\item{rasters}{List of \code{Raster*} objects.}
+\item{rasters}{List of \verb{Raster*} objects.}
 }
 \description{
 Utility function for merging a list of Raster* objects. If passed a list of

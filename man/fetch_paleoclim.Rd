@@ -4,8 +4,7 @@
 \alias{fetch_paleoclim}
 \title{Fetch PaleoClim data}
 \usage{
-fetch_paleoclim(period, resolution, ext = NULL, cache_file,
-  redownload = FALSE)
+fetch_paleoclim(period, resolution, ext = NULL, cache_file, redownload = FALSE)
 }
 \arguments{
 \item{period}{Character. Time period to fetch.}

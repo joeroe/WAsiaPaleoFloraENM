@@ -1,5 +1,28 @@
 # data.R
 
+#' Path helpers
+#'
+#' Helper functions to construct paths relative to the root of the research
+#' compendium.
+#'
+#' @param ... Additional path components passed to [here::here()]
+#'
+#' @rdname path_helpers
+#'
+#' @export
+#'
+#' @examples
+#' raw_data("ne")
+#' derived_data("gbif")
+raw_data <- function(...) {
+  here::here("analysis", "data", "raw_data", ...)
+}
+
+#' @rdname path_helpers
+#' @export
+derived_data <- function(...) {
+  here::here("analysis", "data", "derived_data", ...)
+}
 
 # Occurrence data (GBIF) --------------------------------------------------
 
