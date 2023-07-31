@@ -16,6 +16,7 @@ Imports:
     ggplot2,
     ggspatial,
     here,
+    lwgeom,
     parsnip,
     purrr,
     ranger,
