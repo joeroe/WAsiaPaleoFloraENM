@@ -8,6 +8,7 @@ format: html
 library("dplyr")
 library("ggplot2")
 library("ggspatial")
+library("here")
 library("parsnip")
 library("purrr")
 library("ranger")
@@ -67,56 +68,54 @@ sf_use_s2(use_s2)
 Occurrence data was obtained from GBIF.
 
 ```{r data-occ}
-# Download or read data from GBIF
-# TODO: T. boeoticum ? (equate with T. urartu?)
-gbif_path <- here::here("analysis", "data", "derived_data", "gbif")
-occ <- bind_rows(
-  fetch_gbif("Hordeum", "spontaneum*", ext = w_asia, gbif_path),
-  #fetch_gbif("Bolboschoenus", "glaucus*", ext = w_asia, gbif_path),    
-  #fetch_gbif("Bolboschoenus", "maritimus*", ext = w_asia, gbif_path),    
-  #fetch_gbif("Scirpus", "maritimus*", ext = w_asia, gbif_path),
-  #fetch_gbif("Triticum", "urartu*", ext = w_asia, gbif_path),
-  #fetch_gbif("Triticum", "dicoccoides*", ext = w_asia, gbif_path),
-  #fetch_gbif("Stipa", "*", ext = w_asia, gbif_path),
-  #fetch_gbif("Zilla", "spinosa*", ext = w_asia, gbif_path),
-  #fetch_gbif("Vitex", "*", ext = w_asia, gbif_path),
-  #fetch_gbif("Fraxinus", "*", ext = w_asia, gbif_path)
-)
+gbif_data <- function(scientificName, ...) {
+  gbif_data <- rgbif::occ_data(scientificName = scientificName, ...)
+  gbif_data$data
+}
 
-# Code taxonomic groups for analysis
-occ |>
-  mutate(taxon = case_when(genus == "Hordeum" ~ "Hordeum spontaneum",
-                           genus == "Bolboschoenus" ~ "Bolboschoenus sp.",
-                           species == "Triticum urartu" ~ "Triticum urartu",
-                           species == "Triticum dicoccoides" ~ "Triticum dicoccoides",
-                           genus == "Stipa" ~ "Stipa sp.",
-                           genus == "Zilla" ~ "Zilla spinosa",
-                           genus == "Vitex" ~ "Vitex sp.",
-                           genus == "Fraxinus" ~ "Fraxinus sp.")) ->
+gbif_path <- here::here("analysis", "data", "derived_data", "gbif")
+
+taxa <- c("Hordeum spontaneum" = "Hordeum spontaneum")
+          # "Bolboshoenus spp." = "Bolboschoenus")
+
+# Get occurrence data from GBIF
+# Including only records with coordinates and no recorded issues with geospatial
+#   data.
+taxa |>
+  map(gbif_data, hasCoordinate = TRUE, hasGeospatialIssue = FALSE, 
+      geometry = w_asia, limit = 100000) |>
+  list_rbind(names_to = "taxon") ->
   occ
 
-# TODO: convert to a test
-if(any(is.na(occ$taxon))) stop("Taxon contains missing values!")
+# Exclude:
+# * Coordinate uncertainty of 5 km or more (≈2.5 mins)
+# * Fossil occurrences
+occ |>
+  filter(coordinateUncertaintyInMeters < 5000 | is.na(coordinateUncertaintyInMeters)) |>
+  filter(basisOfRecord != c("FOSSIL_SPECIMEN")) ->
+  occ
 
-# Remove duplicate records within analytic groups
+# Remove duplicated coordinates (as recommended by CITE)
 occ |>
   group_by(taxon) |>
-  distinct(lon, lat, .keep_all = TRUE) |>
+  distinct(decimalLongitude, decimalLatitude, .keep_all = TRUE) |>
   ungroup() ->
   occ
 
 # Convert to sf
 occ |>
-  st_as_sf(coords = c("lon", "lat"), crs = 4326, remove = FALSE) ->
+  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), 
+           crs = 4326, remove = FALSE) ->
   occ
 ```
 
 ```{r plot-occ-distribution}
-ggplot() + 
+ggplot(occ) + 
+  facet_wrap(vars(taxon)) +
   layer_spatial(ne_land, fill = "#ffffff") +
   annotation_spatial(s_levant, fill = alpha("red", 0.15), colour = "red") +
   layer_spatial(occ, alpha = 0.1, symbol = 16) +
-  # layer_spatial(ne_countries, fill = NA) +
+  layer_spatial(ne_countries, fill = NA) +
   coord_sf(xlim = w_asia[c("xmin", "xmax")], 
            ylim = w_asia[c("ymin", "ymax")],
            crs = utm37n,
@@ -139,8 +138,8 @@ occ |>
   mutate(present = TRUE) |>
   bind_rows(background_sample(s_levant_land, 
                               n_background,
-                              coord_x = "lon",
-                              coord_y = "lat", 
+                              coord_x = "decimalLongitude",
+                              coord_y = "decimalLatitude", 
                               taxon = "Hordeum spontaneum", 
                               present = FALSE)) ->
   occ
@@ -158,13 +157,13 @@ occ |>
 tibble(period = c("lgm", "hs1", "ba", "yds", "eh", "cur")) |>
   mutate(raster = map(period, paleoclim, "2_5m", 
                       region = buffer_bbox(w_asia, 10),
-                      cache_path = here::here(".paleoclim_cache"))) -> # TODO: revert to default cache
+                      cache_path = here(".paleoclim_cache"))) -> # TODO: revert to default cache
   climate
 
 training_climate <- filter(climate, period == "cur")$raster[[1]]
 
 occ |>
-  mutate(bio = terra::extract(training_climate, data.frame(lon, lat), 
+  mutate(bio = terra::extract(training_climate, data.frame(decimalLongitude, decimalLatitude), 
                               method = "bilinear", ID = FALSE)) |>
   unpack(bio) |>
   ungroup() ->
