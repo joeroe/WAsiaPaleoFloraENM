@@ -5,29 +5,24 @@ Authors@R:
     person(given = "Joe",
            family = "Roe",
            role = c("aut", "cre"),
-           email = "jwg983@hum.ku.dk")
+           email = "joeroe@hey.com")
 Description: 
 License: MIT + file LICENSE
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    bookdown,
-    rnaturalearth,
-    dismo,
-    raster,
     dplyr,
-    magrittr,
-    purrr,
-    readr,
-    tibble,
-    sf,
-    rgeos,
-    jsonlite,
-    rgdal,
-    lwgeom,
+    ggplot2,
+    ggspatial,
     here,
-    stringr,
-    broom
+    parsnip,
+    purrr,
+    ranger,
+    rgbif,
+    rpaleoclim,
+    sf,
+    tibble,
+    tidyr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.2
