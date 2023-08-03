@@ -173,10 +173,7 @@ names(climate) |>
 ```
 
 ```{r training-climate}
-occ |>
-  mutate(bio = extract_points(climate$cur, occ$geometry)) |>
-  unpack(bio) ->
-  occ
+occ <- cbind(occ, st_extract(climate$cur, occ$geometry))
 ```
 
 
