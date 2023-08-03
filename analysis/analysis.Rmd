@@ -173,7 +173,7 @@ names(climate) |>
 ```
 
 ```{r training-climate}
-occ <- cbind(occ, st_extract(climate$cur, occ$geometry))
+occ <- cbind(occ, st_extract(climate$cur, occ))
 ```
 
 
@@ -184,9 +184,15 @@ Soil, terrain (incl. TWI, slope?)
 ### Random Forest
 
 ```{r model}
-# TODO: Deal with missing values
+# TODO: Where do the missing value(s) actually come from?
+occ |>
+  as_tibble() |>
+  select(present, starts_with("bio")) |>
+  drop_na() ->
+  rf_data
+
 rand_forest(mode = "regression") |>
-  fit(as.numeric(present) ~ ., data = select(occ, present, starts_with("bio_"))) ->
+  fit(as.numeric(present) ~ ., data = rf_data) ->
   rf_fit
 ```
 
@@ -200,7 +206,7 @@ rand_forest(mode = "regression") |>
 ### Hindcasting
 
 ```{r predict}
-predict(rf_fit, climate$cur)
+rf_pred <- predict(climate$cur, rf_fit)
 ```
 
 ### Verification
