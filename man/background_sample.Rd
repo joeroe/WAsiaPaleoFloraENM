@@ -4,7 +4,7 @@
 \alias{background_sample}
 \title{Generate pseudo-absence points}
 \usage{
-background_sample(region, N, ...)
+background_sample(region, N, coord_x = "x", coord_y = "y", ...)
 }
 \arguments{
 \item{region}{The region in which to generate pseudo-absence points. Must be

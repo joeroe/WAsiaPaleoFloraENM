@@ -32,3 +32,21 @@ buffer_bbox <- function(bbox, add) {
     ymax = bbox[["ymax"]] + add
   ))
 }
+
+#' Extract point values from a stars raster
+#'
+#' Analogous to raster::extract() / terra::extract(), but for stars format rasters.
+#'
+#' @param raster `stars` object
+#' @param points `sf` object with point geometry
+#'
+#' @return
+#' A data frame with the same number of rows as `points`.
+#'
+#' @export
+extract_points <- function(raster, points) {
+  raster |>
+    aggregate(points, \(x) x[1], as_points = FALSE) |>
+    as.data.frame() |>
+    dplyr::select(-geometry)
+}

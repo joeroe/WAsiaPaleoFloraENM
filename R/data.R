@@ -159,7 +159,7 @@ get_bioclim <- function(extent, resolution = 0.5, cache_path = getwd(), quiet = 
 #' @details
 #'
 #' The raster is always read or re-read from the cached file to ensure consistency.
-#' See [rpaleoview::paleoview()] for more details.
+#' See [rpaleoclim::paleoclim()] for more details.
 #'
 #' @export
 #'

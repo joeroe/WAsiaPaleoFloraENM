@@ -6,6 +6,7 @@ format: html
 
 ```{r dependencies}
 library("dplyr")
+library("fs")
 library("ggplot2")
 library("ggspatial")
 library("here")
@@ -14,6 +15,8 @@ library("purrr")
 library("ranger")
 library("rpaleoclim")
 library("sf")
+library("stars")
+library("stringr")
 library("tibble")
 library("tidyr")
 
@@ -153,22 +156,29 @@ occ |>
 
 ### Climate data
 
-```{r data-paleoclim}
-tibble(period = c("lgm", "hs1", "ba", "yds", "eh", "cur")) |>
-  mutate(raster = map(period, paleoclim, "2_5m", 
-                      region = buffer_bbox(w_asia, 10),
-                      cache_path = here(".paleoclim_cache"))) -> # TODO: revert to default cache
+```{r data-climate}
+raw_data("paleoclim") |>
+  dir_ls() |>
+  map(dir_ls, glob = "*.tif") |>
+  map(read_stars) |>
+  map(\(x) set_names(x, path_ext_remove(path_file(names(x))))) ->
   climate
 
-training_climate <- filter(climate, period == "cur")$raster[[1]]
+# Tidy up names
+names(climate) |>
+  basename() |>
+  str_remove(regex("chelsa_", ignore_case = TRUE)) |>
+  str_split_i("_", 1) ->
+  names(climate)
+```
 
+```{r training-climate}
 occ |>
-  mutate(bio = terra::extract(training_climate, data.frame(decimalLongitude, decimalLatitude), 
-                              method = "bilinear", ID = FALSE)) |>
-  unpack(bio) |>
-  ungroup() ->
+  mutate(bio = extract_points(climate$cur, occ$geometry)) |>
+  unpack(bio) ->
   occ
 ```
+
 
 ### Other predictor data
 
@@ -177,6 +187,7 @@ Soil, terrain (incl. TWI, slope?)
 ### Random Forest
 
 ```{r model}
+# TODO: Investigate where these NAs are coming from
 rand_forest(mode = "regression") |>
   fit(as.numeric(present) ~ ., data = select(occ, present, starts_with("bio_"))) ->
   rf_fit
@@ -192,7 +203,9 @@ rand_forest(mode = "regression") |>
 ### Hindcasting
 
 ```{r predict}
-predict(rf_fit, as.data.frame(filter(climate, period == "cur")$raster), type = "raw")
+# TODO: deal with missing data in pred vars
+# TODO: turn back to something spatial? stars?
+predict(rf_fit, climate$cur)
 ```
 
 ### Verification

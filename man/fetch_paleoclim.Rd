@@ -25,5 +25,5 @@ An interface to \code{\link[rpaleoclim:paleoclim]{rpaleoclim::paleoclim()}} with
 }
 \details{
 The raster is always read or re-read from the cached file to ensure consistency.
-See \code{\link[rpaleoview:paleoview]{rpaleoview::paleoview()}} for more details.
+See \code{\link[rpaleoclim:paleoclim]{rpaleoclim::paleoclim()}} for more details.
 }
