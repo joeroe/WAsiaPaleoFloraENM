@@ -187,7 +187,7 @@ Soil, terrain (incl. TWI, slope?)
 ### Random Forest
 
 ```{r model}
-# TODO: Investigate where these NAs are coming from
+# TODO: Deal with missing values
 rand_forest(mode = "regression") |>
   fit(as.numeric(present) ~ ., data = select(occ, present, starts_with("bio_"))) ->
   rf_fit
@@ -203,8 +203,6 @@ rand_forest(mode = "regression") |>
 ### Hindcasting
 
 ```{r predict}
-# TODO: deal with missing data in pred vars
-# TODO: turn back to something spatial? stars?
 predict(rf_fit, climate$cur)
 ```
 
