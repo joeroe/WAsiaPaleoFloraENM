@@ -141,6 +141,9 @@ We follow the advice of Barbet-Massin et al. (2012) for regression-based species
 @ValaviEtAl2022 recommends using a very large background sample for random forest models.
 
 ```{r data-background}
+# TODO: Make your mind up – what region are we modelling?
+# Currently presence data is taken from across W Asia, but background is
+#   generated only for the S. Levant.
 n_background <- 10000
 
 occ |>
