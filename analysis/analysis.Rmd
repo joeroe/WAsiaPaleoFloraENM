@@ -78,8 +78,8 @@ gbif_data <- function(scientificName, ...) {
 
 gbif_path <- here::here("analysis", "data", "derived_data", "gbif")
 
-taxa <- c("Hordeum spontaneum" = "Hordeum spontaneum")
-          # "Bolboshoenus spp." = "Bolboschoenus")
+# taxa <- c("Hordeum spontaneum" = "Hordeum spontaneum")
+taxa <- c("Bolboshoenus spp." = "Bolboschoenus")
 
 # Get occurrence data from GBIF
 # Including only records with coordinates and no recorded issues with geospatial
@@ -197,8 +197,8 @@ occ |>
 rand_forest(mode = "classification", trees = 1000) |>
   set_engine(
     "ranger",
-    probability = TRUE,
-    sample.fraction = c(2250 / n_background, 1), # TODO: parameterise
+    # probability = TRUE,
+    sample.fraction = c(220 / n_background, 1), # TODO: parameterise
   ) -> 
   rf_model 
 
@@ -217,8 +217,20 @@ rf_fit <- fit(rf_model, factor(present) ~ ., data = rf_data)
 
 ```{r predict}
 # TODO: predict on all periods (maybe combine stars and collapse into dimension first?)
-rf_pred_cur <- predict(climate$cur, rf_fit)
-rf_pred_eh <- predict(climate$EH, rf_fit)
+rf_pred_cur <- predict(climate$cur, rf_fit, type = "prob")
+rf_pred_eh <- predict(climate$EH, rf_fit, type = "prob")
+rf_pred_yds <- predict(climate$YDS, rf_fit, type = "prob")
+rf_pred_ba <- predict(climate$BA, rf_fit, type = "prob")
+rf_pred_hs1 <- predict(climate$HS1, rf_fit, type = "prob")
+rf_pred_lgm <- predict(climate$LGM, rf_fit, type = "prob")
+
+rf_pred <- c(rf_pred_cur, rf_pred_eh, rf_pred_yds, rf_pred_ba, rf_pred_hs1,
+             rf_pred_lgm)
+names(rf_pred) <- c("cur", "EH", "YDS", "BA", "HS1", "LGM")
+
+ggplot() + 
+  geom_stars(data = st_redimension(st_crop(rf_pred, w_asia))) + 
+  facet_wrap(~new_dim)
 ```
 
 ### Verification
