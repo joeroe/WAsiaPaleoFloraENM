@@ -135,7 +135,7 @@ We follow the advice of Barbet-Massin et al. (2012) for regression-based species
 @ValaviEtAl2022 recommends using a very large background sample for random forest models.
 
 ```{r psabsences, include=FALSE}
-n_background <- 1000
+n_background <- 10000
 
 occ |>
   mutate(present = TRUE) |>
@@ -146,12 +146,6 @@ occ |>
                               taxon = "Hordeum spontaneum", 
                               present = FALSE)) ->
   occ
-
-# Weights
-#occ %>% 
-#  group_by(taxon, occurrence) %>% 
-#  mutate(weight = 1 + (n_psab / n() - 1)) ->
-#  occ
 ```
 
 ### Climate data
@@ -183,17 +177,33 @@ Soil, terrain (incl. TWI, slope?)
 
 ### Random Forest
 
+There are many methods for ENM.
+Random Forest is one of the best performing, providing it is appropriately parameterised to account for the class imbalance between presence and background samples (balanced random forest) [@ValaviEtAl2021a; @ValaviEtAl2021b].
+
+We used the R package ranger [@WrightZiegler2017].
+
 ```{r model}
 # TODO: Where do the missing value(s) actually come from?
+# Parameters adapted from the example of a down-sampled RF model given in
+#   https://rvalavi.github.io/SDMwithRFs/#model-fitting-with-ranger-package
 occ |>
   as_tibble() |>
   select(present, starts_with("bio")) |>
   drop_na() ->
   rf_data
 
-rand_forest(mode = "regression") |>
-  fit(as.numeric(present) ~ ., data = rf_data) ->
-  rf_fit
+# Model
+# TODO: tune?
+rand_forest(mode = "classification", trees = 1000) |>
+  set_engine(
+    "ranger",
+    probability = TRUE,
+    sample.fraction = c(2250 / n_background, 1), # TODO: parameterise
+  ) -> 
+  rf_model 
+
+# Fit
+rf_fit <- fit(rf_model, factor(present) ~ ., data = rf_data)
 ```
 
 ## Results
@@ -206,7 +216,9 @@ rand_forest(mode = "regression") |>
 ### Hindcasting
 
 ```{r predict}
-rf_pred <- predict(climate$cur, rf_fit)
+# TODO: predict on all periods (maybe combine stars and collapse into dimension first?)
+rf_pred_cur <- predict(climate$cur, rf_fit)
+rf_pred_eh <- predict(climate$EH, rf_fit)
 ```
 
 ### Verification
