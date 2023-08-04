@@ -78,8 +78,10 @@ gbif_data <- function(scientificName, ...) {
 
 gbif_path <- here::here("analysis", "data", "derived_data", "gbif")
 
-# taxa <- c("Hordeum spontaneum" = "Hordeum spontaneum")
-taxa <- c("Bolboshoenus spp." = "Bolboschoenus")
+taxa <- c("Triticum dicoccoides" = "Triticum dicoccoides",
+          "Triticum urartu" = "Triticum urartu",
+          "Hordeum spontaneum" = "Hordeum spontaneum",
+          "Bolboshoenus spp." = "Bolboschoenus")
 
 # Get occurrence data from GBIF
 # Including only records with coordinates and no recorded issues with geospatial
@@ -98,16 +100,20 @@ occ |>
   filter(basisOfRecord != c("FOSSIL_SPECIMEN")) ->
   occ
 
-# Remove duplicated coordinates (as recommended by CITE)
+# Remove redundant observations of the same taxon in the same place
 occ |>
   group_by(taxon) |>
   distinct(decimalLongitude, decimalLatitude, .keep_all = TRUE) |>
   ungroup() ->
   occ
 
-# Convert to sf
+# Drop unneeded columns, normalise column names and convert to sf
 occ |>
-  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), 
+  select(
+    taxon, gbif_key = key, genus, species,
+    longitude = decimalLongitude, latitude = decimalLatitude
+  ) |>
+  st_as_sf(coords = c("longitude", "latitude"), 
            crs = 4326, remove = FALSE) ->
   occ
 ```
@@ -117,7 +123,7 @@ ggplot(occ) +
   facet_wrap(vars(taxon)) +
   layer_spatial(ne_land, fill = "#ffffff") +
   annotation_spatial(s_levant, fill = alpha("red", 0.15), colour = "red") +
-  layer_spatial(occ, alpha = 0.1, symbol = 16) +
+  layer_spatial(occ, alpha = 0.2) +
   layer_spatial(ne_countries, fill = NA) +
   coord_sf(xlim = w_asia[c("xmin", "xmax")], 
            ylim = w_asia[c("ymin", "ymax")],
@@ -134,17 +140,25 @@ There are several ways to do this.
 We follow the advice of Barbet-Massin et al. (2012) for regression-based species distribution models and use a large (~10000) random sample of points, weighted equally against the presences in the regression.
 @ValaviEtAl2022 recommends using a very large background sample for random forest models.
 
-```{r psabsences, include=FALSE}
+```{r data-background}
 n_background <- 10000
 
 occ |>
   mutate(present = TRUE) |>
-  bind_rows(background_sample(s_levant_land, 
-                              n_background,
-                              coord_x = "decimalLongitude",
-                              coord_y = "decimalLatitude", 
-                              taxon = "Hordeum spontaneum", 
-                              present = FALSE)) ->
+  group_by(taxon) |>
+  nest(.key = "occ_data") |>
+  mutate(bg_data = map(1:n(), \(i) { 
+    background_sample(
+      region = s_levant_land, 
+      N = n_background,
+      coord_x = "longitude", coord_y = "latitude",
+      present = FALSE
+    )
+  })) |>
+  mutate(data = map2(occ_data, bg_data, bind_rows)) |>
+  select(taxon, data) |>
+  unnest(data) |>
+  st_sf() ->
   occ
 ```
 
@@ -167,7 +181,7 @@ names(climate) |>
 ```
 
 ```{r training-climate}
-occ <- cbind(occ, st_extract(climate$cur, occ))
+occ <- cbind(occ, st_extract(climate$cur, occ)) |> select(-geometry.1)
 ```
 
 
@@ -183,27 +197,36 @@ Random Forest is one of the best performing, providing it is appropriately param
 We used the R package ranger [@WrightZiegler2017].
 
 ```{r model}
-# TODO: Where do the missing value(s) actually come from?
-# Parameters adapted from the example of a down-sampled RF model given in
-#   https://rvalavi.github.io/SDMwithRFs/#model-fitting-with-ranger-package
-occ |>
-  as_tibble() |>
-  select(present, starts_with("bio")) |>
-  drop_na() ->
-  rf_data
+rf_pred_vars <- function() {
+  c(any_of("present"), starts_with("bio"))
+}
+
+# Drop any rows with NA values in any of the predictor variables
+# TODO: Where do these actually come from? There's usually only a handful.
+occ <- drop_na(occ, rf_pred_vars())
 
 # Model
+# Parameters adapted from the example of a down-sampled RF model given in
+#   https://rvalavi.github.io/SDMwithRFs/#model-fitting-with-ranger-package
 # TODO: tune?
+
 rand_forest(mode = "classification", trees = 1000) |>
   set_engine(
     "ranger",
-    # probability = TRUE,
-    sample.fraction = c(220 / n_background, 1), # TODO: parameterise
+    probability = TRUE,
+    sample.fraction = c(sum(as.logical(.y())) / n_background, 1)
   ) -> 
   rf_model 
 
-# Fit
-rf_fit <- fit(rf_model, factor(present) ~ ., data = rf_data)
+# Fit to each taxon
+occ |>
+  nest(.by = taxon) |>
+  mutate(
+    data = map(data, as_tibble),
+    fit = map(data, \(data) {
+      fit(rf_model, factor(present) ~ ., data = select(data, rf_pred_vars()))
+    })) ->
+  rf_fits
 ```
 
 ## Results
@@ -216,6 +239,8 @@ rf_fit <- fit(rf_model, factor(present) ~ ., data = rf_data)
 ### Hindcasting
 
 ```{r predict}
+rf_fit <- rf_fits$fit[[1]]
+
 # TODO: predict on all periods (maybe combine stars and collapse into dimension first?)
 rf_pred_cur <- predict(climate$cur, rf_fit, type = "prob")
 rf_pred_eh <- predict(climate$EH, rf_fit, type = "prob")
