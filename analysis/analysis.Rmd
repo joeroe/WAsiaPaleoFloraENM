@@ -416,6 +416,7 @@ rand_forest(mode = "classification", trees = 1000) |>
   rf_model 
 
 # Fit to each taxon
+# TODO: parallelise
 occ |>
   nest(.by = taxon) |>
   mutate(
@@ -437,21 +438,15 @@ occ |>
 
 ```{r predict}
 # TODO: tidy
-# TODO: parallelise
-rf_fit <- filter(rf_fits, taxon == "Secale cereale") |>
-  pull(fit)[[1]]
+rf_fit <- filter(rf_fits, taxon == "Triticum urartu") |>
+  pull(fit)
+rf_fit <- rf_fit[[1]]
 
-# TODO: predict on all periods (maybe combine stars and collapse into dimension first?)
-rf_pred_cur <- predict(climate$cur, rf_fit, type = "prob")
-rf_pred_eh <- predict(climate$EH, rf_fit, type = "prob")
-rf_pred_yds <- predict(climate$YDS, rf_fit, type = "prob")
-rf_pred_ba <- predict(climate$BA, rf_fit, type = "prob")
-rf_pred_hs1 <- predict(climate$HS1, rf_fit, type = "prob")
-rf_pred_lgm <- predict(climate$LGM, rf_fit, type = "prob")
-
-rf_pred <- c(rf_pred_cur, rf_pred_eh, rf_pred_yds, rf_pred_ba, rf_pred_hs1,
-             rf_pred_lgm)
-names(rf_pred) <- c("cur", "EH", "YDS", "BA", "HS1", "LGM")
+# TODO: Maybe combine stars and collapse period into dimension first?
+rf_pred <- map(climate, predict, model = rf_fit, type = "prob")
+rf_pred <- map(rf_pred, \(x) x[".pred_TRUE"])
+rf_pred <- do.call(c, rf_pred)
+rf_pred <- st_redimension(rf_pred, name = "period")
 
 ggplot() + 
   geom_stars(data = st_redimension(st_crop(rf_pred, w_asia))) + 
