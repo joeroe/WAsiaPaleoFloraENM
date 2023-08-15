@@ -2,17 +2,22 @@
 title: "Palaeodistribution of crop progenitors and wild foods in the Southern Levant"
 author: "Joe Roe"
 format: html
+bibliography: references.bib
 ---
 
 ```{r dependencies}
 library("dplyr")
 library("fs")
+library("furrr")
 library("ggplot2")
 library("ggspatial")
+library("gt")
 library("here")
 library("parsnip")
 library("purrr")
 library("ranger")
+library("readr")
+library("rgbif")
 library("rpaleoclim")
 library("sf")
 library("stars")
@@ -21,6 +26,13 @@ library("tibble")
 library("tidyr")
 
 library("BadiaPaleoFloraENM") # this package, install with devtools::install()
+```
+
+```{r parallelise}
+# Several parts of this analysis are processing- and memory-intensive.
+# You may need to adjust the futures strategy specified here to fit your 
+# computational resources. See ?future::plan for options.
+plan("multisession")
 ```
 
 ```{r definitions}
@@ -66,11 +78,183 @@ s_levant_land <- st_intersection(st_as_sfc(s_levant), ne_land)
 sf_use_s2(use_s2)
 ```
 
-### Occurrence data
+### Taxa and occurrence data
 
-Occurrence data was obtained from GBIF.
+To generate the list of taxa modelled in this study, we ...
+
+* Taxa present at more than three Neolithic sites, according to the database of our previous study [@ArranzOtaeguiRoe2023]
+* Identified at least to species (and matchable to the GBIF Backbone Taxonomy)
+* Have at least 100 occurrences in West Asia (meeting the criteria below) in the GBIF database
+* Excluded domestic species, replacing them with their wild progenitor, where known and present in the GBIF database
+
+We also considered the number modern occurrences available for each taxon.
+ENMs are known to have reasonable predictive power even with small training samples (i.e. less than a hundred observations, [@StockwellPeterson2002; @HernandezEtAl2006; @WiszEtAl2008]).
+
+```{r data-neolithic-flora}
+neolithic_flora <- read_tsv(raw_data("swasia_neolithic_flora.tsv"))
+
+# Rename some columns for clarity
+neolithic_flora <- rename(neolithic_flora,
+                          taxon_group = "taxon", taxon = "taxon_detail")
+
+# Assign to archaeological periods
+periods <- tribble(
+  ~period,             ~agriculture,                          ~start_bp, ~end_bp,
+  "Late Epipal.",      "Foraging",                            15000,     11700,
+  "PPNA",              "Pre-domestication cultivation",       11700,     10700,
+  "EPPNB",             "Cultivation of domesticated species", 10700,     10200,
+  "MPPNB",             "Cultivation of domesticated species", 10200,     9500,
+  "LPPNB/C",           "Agriculture",                         9500,      8500,
+  "Pottery Neolithic", "Agriculture",                         8500,      6500,
+  "Chalcolithic",      "Agriculture",                         6500,      5000,
+)
+
+neolithic <- c("PPNA", "EPPNB", "MPPNB", "LPPNB/C", "Pottery Neolithic")
+
+neolithic_flora <- mutate(neolithic_flora,
+                          age_mid = age_end + ((age_start - age_end) / 2),
+                          period = cut(-age_mid, 
+                                       breaks = -c(periods$start_bp, 0), 
+                                       labels = periods$period,
+                                       ordered_result = TRUE)
+)
+
+# Assemblage statistics
+neolithic_flora |> 
+  distinct(site_name, phase_code, period) |> 
+  filter(period %in% neolithic) |> 
+  nrow() ->
+  n_assemb_neolithic
+
+neolithic_flora |> 
+  filter(period %in% neolithic) |> 
+  distinct(site_name) |> 
+  nrow() ->
+  n_site_neolithic
+```
+
+```{r data-taxa}
+neolithic_flora |>
+  # group_by(taxon_group) |>
+  # mutate(taxon = list(unique(taxon))) |>
+  filter(period %in% neolithic) |>
+  group_by(taxon) |>
+  summarise(
+    n_present = length(unique(phase_code)),
+    p_present = n_present / n_assemb_neolithic,
+    .groups = "drop"
+  ) |>
+  filter(n_present > 2) ->
+  taxa
+```
+
+```{r taxa-names}
+# Normalise species names and match to the GBIF Backbone Taxonomy
+# Excluding taxa not identified to species
+taxa |>
+  filter(!str_ends(taxon, "sp.")) |>
+  mutate(
+    taxon = case_match(taxon,
+                       "Vicia narbonense" ~ "Vicia narbonensis", # N=3
+                       "Triticum aestivocompactum" ~ "Triticum aestivum compactum", # N=3
+                       "Heliotropium persicum" ~ "Moltkia angustifolia", # N=2
+                       "Lens orientalis" ~ "Vicia orientalis", # N=2
+                       "Scirpus tabernaemontani" ~ "Schoenoplectus tabernaemontani", # N=2
+                       "Stipa capensis" ~ "Stipa dregeana", # N=2
+                       .default = taxon),
+    taxon_original = taxon,
+    taxon = map_chr(taxon, gbif_accepted_name)
+  ) ->
+  taxa
+
+# TODO: trim to wild types?
+# taxa |>
+#   drop_na(taxon) |>
+#   mutate(
+#     taxon = str_remove(taxon, " sp."),
+#     taxon_original = taxon,
+#     taxon = map_chr(taxon, gbif_accepted_name)
+#   ) |>
+#   drop_na(taxon) |> # Drop names that couldn't be matched to GBIF
+#   filter(!taxon %in% domesticates) |>
+#   group_by(taxon_group) |>
+#   mutate(
+#     genus = str_extract(taxon, "[^\\s]+"),
+#     is_genus = genus == taxon,
+#     genus_in_group = genus %in% taxon
+#   ) |>
+#   filter(is_genus | !genus_in_group) |> # Drop redundant taxons
+#   distinct(taxon_group, taxon, n_present, p_present) ->
+#   taxa
+```
+
+```{r taxa-domesticates}
+# Recode domesticates as their wild progenitors.
+# Add other wild progenitors of wheats
+taxa |> 
+  mutate(taxon = case_match(
+    taxon,
+    "Cicer arietinum" ~ "Cicer reticulatum",
+    "Hordeum vulgare" ~ "Hordeum spontaneum",
+    "Vicia lens" ~ "Vicia orientalis",
+    "Linum usitatissimum" ~ "Linum bienne",
+    "Triticum aestivum" ~ "Triticum turgidum dicoccum",
+    "Triticum dicoccoides" ~ "Triticum turgidum dicoccum",
+    "Triticum turgidum durum" ~ "Triticum turgidum dicoccum",
+    "Triticum monococcum" ~ "Triticum monococcum aegilopoides",
+    .default = taxon
+  )) |>
+  bind_rows(tibble(taxon = c("Triticum urartu", "Aegilops speltoides", 
+                             "Aegilops tauschii"))) ->
+  taxa
+```
+
+```{r taxa-occ-count}
+taxa |>
+  group_by(taxon) |>
+  summarise(
+    taxon_original = list(c(taxon_original)),
+    n_present = max(n_present), # TODO: be more precise?
+    p_present = max(p_present)
+    ) |>
+  mutate(n_occ = map_dbl(taxon, \(x) occ_count(scientificName = x, 
+                                               hasCoordinate = TRUE, 
+                                               hasGeospatialIssue = FALSE,
+                                               geometry = bbox_wkt(w_asia)))) ->
+  taxa
+```
+
+```{r tbl-taxa-occ-count}
+#| tbl-cap: "Taxonomic groups modelled in this study."
+# TODO: add to caption:
+# - with presence in Neolithic sites in West Asia, out of the X sites included in Y
+# - with number of reliably-georeferenced occurrences in West Asia recorded in GBIF
+# TODO: add count of species included?
+taxa |>
+  mutate(
+    taxon_detail = map_chr(taxon_original, paste, collapse = ", "),
+    taxon_detail = if_else(taxon == taxon_detail, NA_character_, taxon_detail),
+    include = n_occ > 50
+  ) |>
+  select(-taxon_original) |>
+  group_by(include) |>
+  arrange(-n_present) |>
+  gt() |>
+  cols_merge(
+    c(taxon, taxon_detail),
+    rows = !is.na(taxon_detail),
+    pattern = "{1}<br><small>(incl. {2})</small>"
+  ) |>
+  fmt_percent(p_present, decimals = 0) |>
+  cols_merge_n_pct(n_present, p_present) |>
+  tab_style(cell_text(style = "italic"), cells_body(taxon))
+```
+
+Occurrence data was obtained from GBIF using the GBIF occurrence API.
+This deals with synonyms etc. (using the GBIF Backbone Taxonomy as a standard), so e.g. retrieving data for "Bolboschoenus" includes all species and subspecies, including specimens described as *Bolboschoenus sp.*, *Bolboschoenus maritimus* and *Scirpus maritimus*.
 
 ```{r data-occ}
+taxa <- filter(taxa, n_occ > 50)
 gbif_data <- function(scientificName, ...) {
   gbif_data <- rgbif::occ_data(scientificName = scientificName, ...)
   gbif_data$data
@@ -78,16 +262,21 @@ gbif_data <- function(scientificName, ...) {
 
 gbif_path <- here::here("analysis", "data", "derived_data", "gbif")
 
-taxa <- c("Triticum dicoccoides" = "Triticum dicoccoides",
-          "Triticum urartu" = "Triticum urartu",
-          "Hordeum spontaneum" = "Hordeum spontaneum",
-          "Bolboshoenus spp." = "Bolboschoenus")
+#taxa <- c("Triticum dicoccoides" = "Triticum dicoccoides",
+#          "Triticum urartu" = "Triticum urartu",
+#          "Hordeum spontaneum" = "Hordeum spontaneum",
+#          "Vicia orientalis" = "Vicia orientalis", # AKA Lens (culinaris) orientalis
+#          "Bolboshoenus spp." = "Bolboschoenus")
+
+# TODO: maybe first with occ_count first?
 
 # Get occurrence data from GBIF
 # Including only records with coordinates and no recorded issues with geospatial
 #   data.
 taxa |>
-  map(gbif_data, hasCoordinate = TRUE, hasGeospatialIssue = FALSE, 
+  select(taxon, taxon) |>
+  deframe() |> # Extract as named vector
+  future_map(gbif_data, hasCoordinate = TRUE, hasGeospatialIssue = FALSE, 
       geometry = w_asia, limit = 100000) |>
   list_rbind(names_to = "taxon") ->
   occ
@@ -107,6 +296,9 @@ occ |>
   ungroup() ->
   occ
 
+# TODO: temp dump -- remove
+save(occ, file = "big_occ.Rdata")
+
 # Drop unneeded columns, normalise column names and convert to sf
 occ |>
   select(
@@ -122,9 +314,9 @@ occ |>
 ggplot(occ) + 
   facet_wrap(vars(taxon)) +
   layer_spatial(ne_land, fill = "#ffffff") +
-  annotation_spatial(s_levant, fill = alpha("red", 0.15), colour = "red") +
+  # annotation_spatial(s_levant, fill = alpha("red", 0.15), colour = "red") +
   layer_spatial(occ, alpha = 0.2) +
-  layer_spatial(ne_countries, fill = NA) +
+  # layer_spatial(ne_countries, fill = NA) +
   coord_sf(xlim = w_asia[c("xmin", "xmax")], 
            ylim = w_asia[c("ymin", "ymax")],
            crs = utm37n,
@@ -144,6 +336,8 @@ We follow the advice of Barbet-Massin et al. (2012) for regression-based species
 # TODO: Make your mind up – what region are we modelling?
 # Currently presence data is taken from across W Asia, but background is
 #   generated only for the S. Levant.
+# TODO: maybe defer this to just before the model is actually fit 
+#   (and discard the background sample)
 n_background <- 10000
 
 occ |>
@@ -242,7 +436,10 @@ occ |>
 ### Hindcasting
 
 ```{r predict}
-rf_fit <- rf_fits$fit[[1]]
+# TODO: tidy
+# TODO: parallelise
+rf_fit <- filter(rf_fits, taxon == "Secale cereale") |>
+  pull(fit)[[1]]
 
 # TODO: predict on all periods (maybe combine stars and collapse into dimension first?)
 rf_pred_cur <- predict(climate$cur, rf_fit, type = "prob")

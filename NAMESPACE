@@ -2,10 +2,12 @@
 
 export("%>%")
 export(background_sample)
+export(bbox_wkt)
 export(buffer_bbox)
 export(derived_data)
 export(fetch_gbif)
 export(fetch_paleoclim)
+export(gbif_accepted_name)
 export(get_bioclim)
 export(logit_to_p)
 export(model_response)

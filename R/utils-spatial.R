@@ -32,3 +32,13 @@ buffer_bbox <- function(bbox, add) {
     ymax = bbox[["ymax"]] + add
   ))
 }
+
+#' Well-Known Text (WKT) representation of a bounding box
+#'
+#' @param bbox [sf::st_bbox] object
+#'
+#' @return
+#' @export
+bbox_wkt <- function(bbox) {
+  sf::st_as_text(sf::st_as_sfc(bbox))
+}
