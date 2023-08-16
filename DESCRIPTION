@@ -6,7 +6,7 @@ Authors@R:
            family = "Roe",
            role = c("aut", "cre"),
            email = "joeroe@hey.com")
-Description: 
+Description: Compendium of data and code for our paper ....
 License: MIT + file LICENSE
 ByteCompile: true
 Encoding: UTF-8
@@ -25,8 +25,10 @@ Imports:
     ranger,
     readr,
     rgbif,
+    rlang,
     rpaleoclim,
     sf,
+    snakecase,
     stars,
     stringr,
     tibble,

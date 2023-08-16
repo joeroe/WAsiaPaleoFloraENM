@@ -28,19 +28,34 @@ library("tidyr")
 library("BadiaPaleoFloraENM") # this package, install with devtools::install()
 ```
 
-```{r parallelise}
+```{r setup-parallel}
 # Several parts of this analysis are processing- and memory-intensive.
 # You may need to adjust the futures strategy specified here to fit your 
 # computational resources. See ?future::plan for options.
 plan("multisession")
 ```
 
-```{r definitions}
+```{r define-regions}
 latlong <- 4326
 utm37n <- 32637
 
 w_asia <- st_bbox(c(xmin = 30, xmax = 50, ymin = 25, ymax = 40), crs = 4326)
 s_levant <- st_bbox(c(xmin = 34, xmax = 39, ymin = 29, ymax = 34), crs = 4326)
+```
+
+```{r define-periods}
+archaeo_periods <- tribble(
+  ~period,             ~agriculture,                          ~start_bp, ~end_bp,
+  "Late Epipal.",      "Foraging",                            15000,     11700,
+  "PPNA",              "Pre-domestication cultivation",       11700,     10700,
+  "EPPNB",             "Cultivation of domesticated species", 10700,     10200,
+  "MPPNB",             "Cultivation of domesticated species", 10200,     9500,
+  "LPPNB/C",           "Agriculture",                         9500,      8500,
+  "Pottery Neolithic", "Agriculture",                         8500,      6500,
+  "Chalcolithic",      "Agriculture",                         6500,      5000,
+)
+
+neolithic <- c("PPNA", "EPPNB", "MPPNB", "LPPNB/C", "Pottery Neolithic")
 ```
 
 ## Introduction
@@ -49,7 +64,7 @@ s_levant <- st_bbox(c(xmin = 34, xmax = 39, ymin = 29, ymax = 34), crs = 4326)
 
 ## Methods and materials
 
-```{r data-basemap}
+```{r read-basemap}
 # Turn off s2 while we deal with Natural Earth's dodgy geometries
 use_s2 <- sf_use_s2(FALSE)
 
@@ -73,12 +88,45 @@ ne_land <- read_sf(raw_data("ne"), "ne_10m_land") |>
   st_union()
 
 s_levant_land <- st_intersection(st_as_sfc(s_levant), ne_land)
+w_asia_land <- st_intersection(st_as_sfc(w_asia), ne_land)
 
 # Restore previous setting of s2
 sf_use_s2(use_s2)
 ```
 
-### Taxa and occurrence data
+### Occurrence data
+
+```{r read-archaeo_flora}
+archae_flora <- read_tsv(raw_data("swasia_neolithic_flora.tsv"))
+```
+
+```{r tidy-archaeo_flora}
+archaeo_flora |>
+  rename(taxon_group = "taxon", taxon = "taxon_detail") |>
+  # Assign to archaeological periods
+  # TODO: refactor as function
+  # TODO: assign climate periods too
+  mutate(
+    age_mid = age_end + ((age_start - age_end) / 2),
+    period = cut(-age_mid, 
+                 breaks = -c(archaeo_periods$start_bp, 0), 
+                 labels = archaeo_periods$period,
+                 ordered_result = TRUE)
+  ) ->
+  archaeo_flora
+```
+
+```{r summarise-archaeo_flora}
+n_assemb_neolithic <- archaeo_flora |> 
+  distinct(site_name, phase_code, period) |> 
+  filter(period %in% neolithic) |> 
+  nrow()
+
+n_site_neolithic <- archaeo_flora |> 
+  filter(period %in% neolithic) |> 
+  distinct(site_name) |> 
+  nrow()
+```
 
 To generate the list of taxa modelled in this study, we ...
 
@@ -90,53 +138,8 @@ To generate the list of taxa modelled in this study, we ...
 We also considered the number modern occurrences available for each taxon.
 ENMs are known to have reasonable predictive power even with small training samples (i.e. less than a hundred observations, [@StockwellPeterson2002; @HernandezEtAl2006; @WiszEtAl2008]).
 
-```{r data-neolithic-flora}
-neolithic_flora <- read_tsv(raw_data("swasia_neolithic_flora.tsv"))
-
-# Rename some columns for clarity
-neolithic_flora <- rename(neolithic_flora,
-                          taxon_group = "taxon", taxon = "taxon_detail")
-
-# Assign to archaeological periods
-periods <- tribble(
-  ~period,             ~agriculture,                          ~start_bp, ~end_bp,
-  "Late Epipal.",      "Foraging",                            15000,     11700,
-  "PPNA",              "Pre-domestication cultivation",       11700,     10700,
-  "EPPNB",             "Cultivation of domesticated species", 10700,     10200,
-  "MPPNB",             "Cultivation of domesticated species", 10200,     9500,
-  "LPPNB/C",           "Agriculture",                         9500,      8500,
-  "Pottery Neolithic", "Agriculture",                         8500,      6500,
-  "Chalcolithic",      "Agriculture",                         6500,      5000,
-)
-
-neolithic <- c("PPNA", "EPPNB", "MPPNB", "LPPNB/C", "Pottery Neolithic")
-
-neolithic_flora <- mutate(neolithic_flora,
-                          age_mid = age_end + ((age_start - age_end) / 2),
-                          period = cut(-age_mid, 
-                                       breaks = -c(periods$start_bp, 0), 
-                                       labels = periods$period,
-                                       ordered_result = TRUE)
-)
-
-# Assemblage statistics
-neolithic_flora |> 
-  distinct(site_name, phase_code, period) |> 
-  filter(period %in% neolithic) |> 
-  nrow() ->
-  n_assemb_neolithic
-
-neolithic_flora |> 
-  filter(period %in% neolithic) |> 
-  distinct(site_name) |> 
-  nrow() ->
-  n_site_neolithic
-```
-
-```{r data-taxa}
-neolithic_flora |>
-  # group_by(taxon_group) |>
-  # mutate(taxon = list(unique(taxon))) |>
+```{r generate-flora}
+archaeo_flora |>
   filter(period %in% neolithic) |>
   group_by(taxon) |>
   summarise(
@@ -145,13 +148,13 @@ neolithic_flora |>
     .groups = "drop"
   ) |>
   filter(n_present > 2) ->
-  taxa
+  flora
 ```
 
-```{r taxa-names}
+```{r tidy-flora-taxonomy}
 # Normalise species names and match to the GBIF Backbone Taxonomy
 # Excluding taxa not identified to species
-taxa |>
+flora |>
   filter(!str_ends(taxon, "sp.")) |>
   mutate(
     taxon = case_match(taxon,
@@ -165,33 +168,13 @@ taxa |>
     taxon_original = taxon,
     taxon = map_chr(taxon, gbif_accepted_name)
   ) ->
-  taxa
-
-# TODO: trim to wild types?
-# taxa |>
-#   drop_na(taxon) |>
-#   mutate(
-#     taxon = str_remove(taxon, " sp."),
-#     taxon_original = taxon,
-#     taxon = map_chr(taxon, gbif_accepted_name)
-#   ) |>
-#   drop_na(taxon) |> # Drop names that couldn't be matched to GBIF
-#   filter(!taxon %in% domesticates) |>
-#   group_by(taxon_group) |>
-#   mutate(
-#     genus = str_extract(taxon, "[^\\s]+"),
-#     is_genus = genus == taxon,
-#     genus_in_group = genus %in% taxon
-#   ) |>
-#   filter(is_genus | !genus_in_group) |> # Drop redundant taxons
-#   distinct(taxon_group, taxon, n_present, p_present) ->
-#   taxa
+  flora
 ```
 
-```{r taxa-domesticates}
+```{r tidy-flora-domesticates}
 # Recode domesticates as their wild progenitors.
 # Add other wild progenitors of wheats
-taxa |> 
+flora |> 
   mutate(taxon = case_match(
     taxon,
     "Cicer arietinum" ~ "Cicer reticulatum",
@@ -206,11 +189,11 @@ taxa |>
   )) |>
   bind_rows(tibble(taxon = c("Triticum urartu", "Aegilops speltoides", 
                              "Aegilops tauschii"))) ->
-  taxa
+  flora
 ```
 
-```{r taxa-occ-count}
-taxa |>
+```{r fetch-occ-count}
+flora |>
   group_by(taxon) |>
   summarise(
     taxon_original = list(c(taxon_original)),
@@ -221,16 +204,16 @@ taxa |>
                                                hasCoordinate = TRUE, 
                                                hasGeospatialIssue = FALSE,
                                                geometry = bbox_wkt(w_asia)))) ->
-  taxa
+  flora
 ```
 
-```{r tbl-taxa-occ-count}
-#| tbl-cap: "Taxonomic groups modelled in this study."
+```{r tbl-occ-count}
+#| tbl-cap: "Species modelled in this study."
 # TODO: add to caption:
 # - with presence in Neolithic sites in West Asia, out of the X sites included in Y
 # - with number of reliably-georeferenced occurrences in West Asia recorded in GBIF
 # TODO: add count of species included?
-taxa |>
+flora |>
   mutate(
     taxon_detail = map_chr(taxon_original, paste, collapse = ", "),
     taxon_detail = if_else(taxon == taxon_detail, NA_character_, taxon_detail),
@@ -250,73 +233,56 @@ taxa |>
   tab_style(cell_text(style = "italic"), cells_body(taxon))
 ```
 
+```{r filter-flora}
+flora <- filter(flora, n_occ > 50)
+```
+
 Occurrence data was obtained from GBIF using the GBIF occurrence API.
 This deals with synonyms etc. (using the GBIF Backbone Taxonomy as a standard), so e.g. retrieving data for "Bolboschoenus" includes all species and subspecies, including specimens described as *Bolboschoenus sp.*, *Bolboschoenus maritimus* and *Scirpus maritimus*.
 
-```{r data-occ}
-taxa <- filter(taxa, n_occ > 50)
+```{r fetch-occ}
+# TODO: Refactor
 gbif_data <- function(scientificName, ...) {
   gbif_data <- rgbif::occ_data(scientificName = scientificName, ...)
   gbif_data$data
 }
 
-gbif_path <- here::here("analysis", "data", "derived_data", "gbif")
-
-#taxa <- c("Triticum dicoccoides" = "Triticum dicoccoides",
-#          "Triticum urartu" = "Triticum urartu",
-#          "Hordeum spontaneum" = "Hordeum spontaneum",
-#          "Vicia orientalis" = "Vicia orientalis", # AKA Lens (culinaris) orientalis
-#          "Bolboshoenus spp." = "Bolboschoenus")
-
-# TODO: maybe first with occ_count first?
-
-# Get occurrence data from GBIF
-# Including only records with coordinates and no recorded issues with geospatial
-#   data.
-taxa |>
-  select(taxon, taxon) |>
-  deframe() |> # Extract as named vector
-  future_map(gbif_data, hasCoordinate = TRUE, hasGeospatialIssue = FALSE, 
-      geometry = w_asia, limit = 100000) |>
-  list_rbind(names_to = "taxon") ->
-  occ
-
-# Exclude:
-# * Coordinate uncertainty of 5 km or more (≈2.5 mins)
-# * Fossil occurrences
-occ |>
-  filter(coordinateUncertaintyInMeters < 5000 | is.na(coordinateUncertaintyInMeters)) |>
-  filter(basisOfRecord != c("FOSSIL_SPECIMEN")) ->
-  occ
-
-# Remove redundant observations of the same taxon in the same place
-occ |>
-  group_by(taxon) |>
-  distinct(decimalLongitude, decimalLatitude, .keep_all = TRUE) |>
-  ungroup() ->
-  occ
-
-# TODO: temp dump -- remove
-save(occ, file = "big_occ.Rdata")
-
-# Drop unneeded columns, normalise column names and convert to sf
-occ |>
-  select(
-    taxon, gbif_key = key, genus, species,
-    longitude = decimalLongitude, latitude = decimalLatitude
-  ) |>
-  st_as_sf(coords = c("longitude", "latitude"), 
-           crs = 4326, remove = FALSE) ->
-  occ
+flora |>
+  mutate(
+    occ = future_map(taxon, gbif_data, 
+                     hasCoordinate = TRUE, hasGeospatialIssue = FALSE, 
+                     geometry = w_asia, limit = 100000)
+  ) ->
+  flora
 ```
 
-```{r plot-occ-distribution}
-ggplot(occ) + 
+```{r tidy-occ}
+# TODO: further tidying. Ideas:
+# - https://data-blog.gbif.org/post/gbif-filtering-guide/
+# - https://cran.r-project.org/web/packages/CoordinateCleaner/vignettes/Cleaning_GBIF_data_with_CoordinateCleaner.html
+# - https://www.r-bloggers.com/2021/03/downloading-and-cleaning-gbif-data-with-r/
+flora |>
+  mutate(
+    occ = future_map(occ, gbif_drop_imprecise_coords, threshold = 5000),
+    occ = future_map(occ, gbif_drop_fossils),
+    occ = future_map(occ, gbif_drop_duplicate_coords),
+    occ = future_map(occ, gbif_standardise_names),
+    occ = future_map(occ, \(x) {
+      select(x, gbif_key = key, scientific_name, genus, species, longitude, 
+             latitude)
+    })
+  ) ->
+  flora
+```
+
+```{r fig-occ-map}
+flora |>
+  unnest(occ) |>
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) |>
+  ggplot() + 
   facet_wrap(vars(taxon)) +
   layer_spatial(ne_land, fill = "#ffffff") +
-  # annotation_spatial(s_levant, fill = alpha("red", 0.15), colour = "red") +
-  layer_spatial(occ, alpha = 0.2) +
-  # layer_spatial(ne_countries, fill = NA) +
+  geom_sf(shape = ".") +
   coord_sf(xlim = w_asia[c("xmin", "xmax")], 
            ylim = w_asia[c("ymin", "ymax")],
            crs = utm37n,
@@ -332,10 +298,8 @@ There are several ways to do this.
 We follow the advice of Barbet-Massin et al. (2012) for regression-based species distribution models and use a large (~10000) random sample of points, weighted equally against the presences in the regression.
 @ValaviEtAl2022 recommends using a very large background sample for random forest models.
 
-```{r data-background}
-# TODO: Make your mind up – what region are we modelling?
-# Currently presence data is taken from across W Asia, but background is
-#   generated only for the S. Levant.
+```{r generate-background}
+# TODO: Refactor to work with nested occ
 # TODO: maybe defer this to just before the model is actually fit 
 #   (and discard the background sample)
 n_background <- 10000
@@ -346,7 +310,7 @@ occ |>
   nest(.key = "occ_data") |>
   mutate(bg_data = map(1:n(), \(i) { 
     background_sample(
-      region = s_levant_land, 
+      region = w_asia_land, 
       N = n_background,
       coord_x = "longitude", coord_y = "latitude",
       present = FALSE
@@ -359,7 +323,7 @@ occ |>
   occ
 ```
 
-### Climate data
+### Predictor data
 
 ```{r data-climate}
 raw_data("paleoclim") |>
@@ -381,10 +345,7 @@ names(climate) |>
 occ <- cbind(occ, st_extract(climate$cur, occ)) |> select(-geometry.1)
 ```
 
-
-### Other predictor data
-
-Soil, terrain (incl. TWI, slope?)
+TODO: Soil, terrain (incl. TWI, slope?)
 
 ### Random Forest
 
@@ -394,26 +355,25 @@ Random Forest is one of the best performing, providing it is appropriately param
 We used the R package ranger [@WrightZiegler2017].
 
 ```{r model}
-rf_pred_vars <- function() {
+rf_predictors <- function() {
   c(any_of("present"), starts_with("bio"))
 }
 
 # Drop any rows with NA values in any of the predictor variables
 # TODO: Where do these actually come from? There's usually only a handful.
-occ <- drop_na(occ, rf_pred_vars())
+occ <- drop_na(occ, rf_predictors())
 
 # Model
 # Parameters adapted from the example of a down-sampled RF model given in
 #   https://rvalavi.github.io/SDMwithRFs/#model-fitting-with-ranger-package
 # TODO: tune?
 
-rand_forest(mode = "classification", trees = 1000) |>
+rf_model <- rand_forest(mode = "classification", trees = 1000) |>
   set_engine(
     "ranger",
     probability = TRUE,
     sample.fraction = c(sum(as.logical(.y())) / n_background, 1)
-  ) -> 
-  rf_model 
+  )
 
 # Fit to each taxon
 # TODO: parallelise
@@ -425,6 +385,27 @@ occ |>
       fit(rf_model, factor(present) ~ ., data = select(data, rf_pred_vars()))
     })) ->
   rf_fits
+
+# TODO: not this
+rf_fits$taxon <- taxa$taxon
+```
+
+The output of the model is probalistic.
+However, this should not be understood as an actual probability of occurrence [@CITE], but more akin to habitat suitability.
+To simplify interpretation, we can convert these predictions into binary presence/absence maps, a process called "thresholding".
+We select the threshold value for each model individually, using MaxSSS (as recommended by [@LuiEtAl2013])
+This also makes it possible to analyses the predictions together as an assemblage.
+
+```{r thresholding}
+# TODO: thresholding
+# - Pick a threshold
+# - Reclassify pred raster
+# - Extract predicted classification (for cur) for occ
+# - ...or predict back onto the occurrence data? do we actually need the rasters for this?
+# - Calculate sensitivity and with yardstick
+# - Sum (SSS)
+# - (Plot?)
+# - Pick max SSS
 ```
 
 ## Results
@@ -449,10 +430,20 @@ rf_pred <- do.call(c, rf_pred)
 rf_pred <- st_redimension(rf_pred, name = "period")
 
 ggplot() + 
-  geom_stars(data = st_redimension(st_crop(rf_pred, w_asia))) + 
-  facet_wrap(~new_dim)
+  geom_stars(data = st_crop(rf_pred, w_asia)) + 
+  facet_wrap(~period) +
+  scale_fill_batlow(reverse = TRUE)
 ```
 
-### Verification
+### Model assessment & verification
+
+```{r todo}
+# TODO: model performance assessment:
+# - R2
+# - Boyce index
+# - AUC, ROC, AUC-ROC, AUC-PRG ?
+# - TSS
+
+```
 
 ## Discussion

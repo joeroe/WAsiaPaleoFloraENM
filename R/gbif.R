@@ -10,7 +10,7 @@
 #'
 #' @return
 #' If the GBIF Backbone Taxonomy considers `name` a synonym, the canonical name
-#' of the accepted usage. Otherwise, `name`
+#' of the accepted usage. Otherwise, `name`.
 #'
 #' @export
 gbif_accepted_name <- function(name) {
@@ -19,3 +19,80 @@ gbif_accepted_name <- function(name) {
   else if (gbif$synonym) name_usage(gbif$acceptedUsageKey)$data$canonicalName
   else gbif$canonicalName
 }
+
+#' Clean GBIF data
+#'
+#' A collection of functions for cleaning occurrence data from GBIF.
+#'
+#' @param data Table of occurrence data retrieved with [rgbif::occ_data()]
+#' @param threshold For `gbif_drop_imprecise_coords()`, the minimum acceptable
+#'   coordinate uncertainty (in meters).
+#' @param shorten If `TRUE`, `gbif_standardise_names()` shorten long column
+#'   names in addition to converting them to snake case, e.g. `decimalLongitude`
+#'   to `longitude`.
+#'
+#' @return
+#' Modified version of `data`.
+#'
+#' @rdname gbif_clean
+#' @export
+gbif_drop_imprecise_coords <- function(data, threshold = 5000) {
+  if (!"coordinateUncertaintyInMeters" %in% names(data)) return(data)
+  dplyr::filter(data, .data$coordinateUncertaintyInMeters < threshold |
+                  is.na(.data$coordinateUncertaintyInMeters))
+}
+
+#' @rdname gbif_clean
+#' @export
+gbif_drop_duplicate_coords <- function(data) {
+  dplyr::distinct(data, .data$decimalLongitude, .data$decimalLatitude,
+                  .keep_all = TRUE)
+}
+
+#' @rdname gbif_clean
+#' @export
+gbif_drop_fossils <- function(data) {
+  dplyr::filter(data, .data$basisOfRecord != "FOSSIL_SPECIMEN")
+}
+
+#' @rdname gbif_clean
+#' @export
+gbif_standardise_names <- function(data, shorten = TRUE) {
+  colnames(data) <- snakecase::to_snake_case(colnames(data))
+  if (isTRUE(shorten)) data <- gbif_shorten_names(data)
+  return(data)
+}
+
+#' @noRd
+#' @keywords internal
+gbif_shorten_names <- function(data) {
+    dplyr::rename(
+      data,
+      longitude = "decimal_longitude",
+      latitude = "decimal_latitude"
+    )
+}
+
+#' Convert GBIF occurrence data to sf
+#'
+#' Converts occurrence data retrieved with [rgbif::occ_data()] to a
+#' [sf::sf]-format simple features object with point geometry.
+#'
+#' Assumes that `data` has been pre-processed with [gbif_standardise_names()]
+#' and does not include rows with missing coordinates.
+#'
+#' @param data Table of occurrence data retrieved with [rgbif::occ_data()]
+#'
+#' @return
+#' An [sf::sf] object.
+#'
+#' @export
+gbif_to_sf <- function(data) {
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326, remove = FALSE)
+}
+
+# Drop unneeded columns, normalise column names and convert to sf
+#  select(
+#    taxon, gbif_key = key, genus, species,
+#    longitude = decimalLongitude, latitude = decimalLatitude
+#  )

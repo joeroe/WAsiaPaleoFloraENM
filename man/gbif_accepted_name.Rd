@@ -11,7 +11,7 @@ gbif_accepted_name(name)
 }
 \value{
 If the GBIF Backbone Taxonomy considers \code{name} a synonym, the canonical name
-of the accepted usage. Otherwise, \code{name}
+of the accepted usage. Otherwise, \code{name}.
 }
 \description{
 Resolves the accepted name of a given taxon according to the GBIF Backbone
