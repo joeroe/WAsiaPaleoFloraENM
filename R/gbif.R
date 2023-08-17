@@ -88,11 +88,6 @@ gbif_shorten_names <- function(data) {
 #'
 #' @export
 gbif_to_sf <- function(data) {
-  st_as_sf(coords = c("longitude", "latitude"), crs = 4326, remove = FALSE)
+  sf::st_as_sf(data, coords = c("longitude", "latitude"),
+               crs = 4326, remove = FALSE)
 }
-
-# Drop unneeded columns, normalise column names and convert to sf
-#  select(
-#    taxon, gbif_key = key, genus, species,
-#    longitude = decimalLongitude, latitude = decimalLatitude
-#  )

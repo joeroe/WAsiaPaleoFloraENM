@@ -21,6 +21,7 @@ Imports:
     here,
     lwgeom,
     parsnip,
+    progressr,
     purrr,
     ranger,
     readr,

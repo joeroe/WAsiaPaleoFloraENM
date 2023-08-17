@@ -14,6 +14,7 @@ library("ggspatial")
 library("gt")
 library("here")
 library("parsnip")
+library("progressr")
 library("purrr")
 library("ranger")
 library("readr")
@@ -97,7 +98,7 @@ sf_use_s2(use_s2)
 ### Occurrence data
 
 ```{r read-archaeo_flora}
-archae_flora <- read_tsv(raw_data("swasia_neolithic_flora.tsv"))
+archaeo_flora <- read_tsv(raw_data("swasia_neolithic_flora.tsv"))
 ```
 
 ```{r tidy-archaeo_flora}
@@ -235,6 +236,9 @@ flora |>
 
 ```{r filter-flora}
 flora <- filter(flora, n_occ > 50)
+# TODO: Temporary measure.
+# Why are there 47k occurrences of Avena sterilis??
+flora <- filter(flora, taxon != "Avena sterilis")
 ```
 
 Occurrence data was obtained from GBIF using the GBIF occurrence API.
@@ -249,9 +253,10 @@ gbif_data <- function(scientificName, ...) {
 
 flora |>
   mutate(
-    occ = future_map(taxon, gbif_data, 
-                     hasCoordinate = TRUE, hasGeospatialIssue = FALSE, 
-                     geometry = w_asia, limit = 100000)
+    occ = map(taxon, gbif_data, 
+              hasCoordinate = TRUE, hasGeospatialIssue = FALSE, 
+              geometry = w_asia, limit = 100000,
+              .progress = TRUE)
   ) ->
   flora
 ```
@@ -263,11 +268,11 @@ flora |>
 # - https://www.r-bloggers.com/2021/03/downloading-and-cleaning-gbif-data-with-r/
 flora |>
   mutate(
-    occ = future_map(occ, gbif_drop_imprecise_coords, threshold = 5000),
-    occ = future_map(occ, gbif_drop_fossils),
-    occ = future_map(occ, gbif_drop_duplicate_coords),
-    occ = future_map(occ, gbif_standardise_names),
-    occ = future_map(occ, \(x) {
+    occ = map(occ, gbif_drop_imprecise_coords, threshold = 5000),
+    occ = map(occ, gbif_drop_fossils),
+    occ = map(occ, gbif_drop_duplicate_coords),
+    occ = map(occ, gbif_standardise_names),
+    occ = map(occ, \(x) {
       select(x, gbif_key = key, scientific_name, genus, species, longitude, 
              latitude)
     })
@@ -299,28 +304,25 @@ We follow the advice of Barbet-Massin et al. (2012) for regression-based species
 @ValaviEtAl2022 recommends using a very large background sample for random forest models.
 
 ```{r generate-background}
-# TODO: Refactor to work with nested occ
-# TODO: maybe defer this to just before the model is actually fit 
+# TODO: maybe defer this to just before the model is actually fit ?
 #   (and discard the background sample)
 n_background <- 10000
 
-occ |>
-  mutate(present = TRUE) |>
-  group_by(taxon) |>
-  nest(.key = "occ_data") |>
-  mutate(bg_data = map(1:n(), \(i) { 
-    background_sample(
-      region = w_asia_land, 
-      N = n_background,
-      coord_x = "longitude", coord_y = "latitude",
-      present = FALSE
-    )
-  })) |>
-  mutate(data = map2(occ_data, bg_data, bind_rows)) |>
-  select(taxon, data) |>
-  unnest(data) |>
-  st_sf() ->
-  occ
+flora |>
+  mutate(
+    occ = map(occ, mutate, present = TRUE),
+    bg_data = map(1:n(), \(i) { 
+      background_sample(
+        region = w_asia_land, 
+        N = n_background,
+        coord_x = "longitude", coord_y = "latitude",
+        present = FALSE
+      )
+    }),
+    occ = map2(occ, bg_data, bind_rows)
+  ) |>
+  select(-bg_data) ->
+  flora
 ```
 
 ### Predictor data
@@ -342,7 +344,11 @@ names(climate) |>
 ```
 
 ```{r training-climate}
-occ <- cbind(occ, st_extract(climate$cur, occ)) |> select(-geometry.1)
+flora |> 
+  mutate(
+    occ = map(occ, \(x) cbind(x, st_extract(climate$cur, gbif_to_sf(x))))
+  ) ->
+  flora
 ```
 
 TODO: Soil, terrain (incl. TWI, slope?)
@@ -361,7 +367,7 @@ rf_predictors <- function() {
 
 # Drop any rows with NA values in any of the predictor variables
 # TODO: Where do these actually come from? There's usually only a handful.
-occ <- drop_na(occ, rf_predictors())
+# occ <- drop_na(occ, rf_predictors())
 
 # Model
 # Parameters adapted from the example of a down-sampled RF model given in
@@ -377,17 +383,13 @@ rf_model <- rand_forest(mode = "classification", trees = 1000) |>
 
 # Fit to each taxon
 # TODO: parallelise
-occ |>
-  nest(.by = taxon) |>
+flora |>
   mutate(
-    data = map(data, as_tibble),
-    fit = map(data, \(data) {
-      fit(rf_model, factor(present) ~ ., data = select(data, rf_pred_vars()))
-    })) ->
-  rf_fits
-
-# TODO: not this
-rf_fits$taxon <- taxa$taxon
+    fit = map(occ, \(occ) {
+      fit(rf_model, factor(present) ~ ., data = select(occ, rf_predictors()))
+    }, .progress = TRUE)
+  ) ->
+  flora
 ```
 
 The output of the model is probalistic.
