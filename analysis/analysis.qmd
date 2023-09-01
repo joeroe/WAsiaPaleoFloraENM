@@ -1,6 +1,35 @@
 ---
-title: "Palaeodistribution of crop progenitors and wild foods in the Southern Levant"
-author: "Joe Roe"
+title: Palaeodistribution of crop progenitors and other plant resources over the Pleistocene–Holocene transition in Southwest Asia
+date: today
+author: 
+- name: Joe Roe
+  id: jr
+  orcid: 0000-0002-1011-1244
+  email: joeroe@hey.com
+  affiliation: University of Bern
+- name: Amaia Arranz-Otaegui
+  id: aao
+  orcid: 0000-0002-5091-6426
+  affiliation: University of the Basque Country
+abstract: |
+  This paper presents the first comprehensive reconstructions of the prehistoric 
+  ranges of [X] plant species known to have been gathered or cultivated by early
+  agricultural societies in Southwest Asia, including the progenitors of the 
+  first crops. We used machine learning to train an ecological niche model (ENM)
+  of each species based on its present-day distribution in relation to climate 
+  and environmental variables. Predictions of the potential ranges of these 
+  species at key stages of the Pleistocene–Holocene transition could then be
+  derived from these models using palaeoclimate 
+  Species ranges were on average [X%] [larger|smaller] in the Early Holocene 
+  compared to today, indicating [...]. The modelled ranges predict the
+  observed occurrence of these species on archaeological sites with [low|medium|high]
+  accuracy. The regional ubiquity of species in the archaeological record is [not] 
+  correlated with the predicted size of its range and the diversity of
+  archaeobotanical assemblages is [not] correlated with the predicted diversity
+  of its environs. This indicates that trends in taxonomic composition of
+  the archaeobotanical record is [not] likely to be influenced by environmental 
+  change and species turnover, not just, as is often assumed, human economic 
+  choices.
 format: html
 bibliography: references.bib
 ---
@@ -61,7 +90,31 @@ neolithic <- c("PPNA", "EPPNB", "MPPNB", "LPPNB/C", "Pottery Neolithic")
 
 ## Introduction
 
+* The first farming societies had an ecological context
+* Subsistence is understood (largely) through archaeobotany; ecological context from archaeobotany, palynology, palaeoclimate, etc.
+  * But these have a variety of biases (human selection, taphonomy, etc.)
+  * And at the end of the day only represent specific places – interpolation to the entire region is not straightforward
+  * Overlap makes it difficult to see where human choices depart from the environmental background [cf. Martin et al. 2016, for zooarch]
+* Here we present an alternative approach using ENM
+  * Whole region, at multiple climate snapshots
+  * Independent of archaeobot. and pal. clim. data, so can verify and compare
+
 ## Background
+
+* Epipal./Neo. plant-based economies
+  * More than the "founder crops"; 
+  * More than food;
+  * Regionally and temporally diverse
+  * ...so we model lots of species!
+* Regional ecological reconstructions
+  * See CSEAS (AEA-prep) presentation
+  * Figure: comparisons
+* Archaeological applications of ENM
+  * Review: Franklin et al. 2015
+  * In SW Asia: Conolly et al. 2012, Collins et al. 2018
+  * Train with archaeo, or train with present-day?
+    * In ENM literature, many sceptical about fore- and hind-casting
+    * Archaeo data a golden opportunity here
 
 ## Methods and materials
 
@@ -449,3 +502,5 @@ ggplot() +
 ```
 
 ## Discussion
+
+## Acknowledgments {.appendix}
