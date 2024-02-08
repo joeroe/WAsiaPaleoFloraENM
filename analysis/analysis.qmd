@@ -1,5 +1,5 @@
 ---
-title: Palaeodistribution of crop progenitors and other plant resources over the Pleistocene–Holocene transition in Southwest Asia
+title: Biogeography of crop progenitors and wild plant resources during the transition to agriculture in West Asia
 date: today
 author: 
 - name: Joe Roe
@@ -36,6 +36,7 @@ bibliography: references.bib
 
 ```{r dependencies}
 library("dplyr")
+library("forcats")
 library("fs")
 library("furrr")
 library("ggplot2")
@@ -271,10 +272,11 @@ flora |>
   mutate(
     taxon_detail = map_chr(taxon_original, paste, collapse = ", "),
     taxon_detail = if_else(taxon == taxon_detail, NA_character_, taxon_detail),
-    include = n_occ > 50
+    #include = n_occ > 50
   ) |>
   select(-taxon_original) |>
-  group_by(include) |>
+  # group_by(include) |>
+  filter(n_occ > 50) |>
   arrange(-n_present) |>
   gt() |>
   cols_merge(
@@ -474,7 +476,7 @@ This also makes it possible to analyses the predictions together as an assemblag
 
 ```{r predict}
 # TODO: tidy
-rf_fit <- filter(rf_fits, taxon == "Triticum urartu") |>
+rf_fit <- filter(flora, taxon == "Triticum turgidum dicoccum") |>
   pull(fit)
 rf_fit <- rf_fit[[1]]
 
@@ -484,10 +486,35 @@ rf_pred <- map(rf_pred, \(x) x[".pred_TRUE"])
 rf_pred <- do.call(c, rf_pred)
 rf_pred <- st_redimension(rf_pred, name = "period")
 
+# Order and relabel periods
+climate_periods <- rf_pred |>
+  st_get_dimension_values("period") |>
+  ordered(levels = c("LGM", "HS1", "BA", "YDS", "EH", "cur")) |>
+  recode(
+    "LGM" = "LGM (21 ka)",
+    "HS1" = "HS1 (17.0-14.7 ka)",
+    "BA"  = "BA (14.7-12.9 ka)",
+    "YDS" = "YDS (12.9-11.7 ka)",
+    "EH"  = "EH (11.7-8.326 ka)",
+    "cur" = "current"
+  )
+
+rf_pred <- st_set_dimensions(rf_pred, "period", values = climate_periods)
+
 ggplot() + 
-  geom_stars(data = st_crop(rf_pred, w_asia)) + 
-  facet_wrap(~period) +
-  scale_fill_batlow(reverse = TRUE)
+  geom_stars(data = rf_pred) +
+  facet_wrap(~period, ncol = 2) +
+  scale_fill_batlow(reverse = TRUE) +
+  coord_sf(crs = latlong) +
+  labs(
+    title = "Triticum turgidum dicoccum",
+    fill = "Predicted occurrence",
+    x = NULL,
+    y = NULL
+  ) +
+  theme(
+    plot.title = element_text(face = "italic")
+  )
 ```
 
 ### Model assessment & verification
