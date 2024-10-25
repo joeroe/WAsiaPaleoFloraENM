@@ -43,6 +43,7 @@ library("ggplot2")
 library("ggspatial")
 library("gt")
 library("here")
+library("khroma")
 library("parsnip")
 library("progressr")
 library("purrr")
@@ -503,12 +504,12 @@ rf_pred <- st_set_dimensions(rf_pred, "period", values = climate_periods)
 
 ggplot() + 
   geom_stars(data = rf_pred) +
-  facet_wrap(~period, ncol = 2) +
+  facet_wrap(~period, ncol = 3) +
   scale_fill_batlow(reverse = TRUE) +
   coord_sf(crs = latlong) +
   labs(
     title = "Triticum turgidum dicoccum",
-    fill = "Predicted occurrence",
+    fill = NULL,
     x = NULL,
     y = NULL
   ) +
