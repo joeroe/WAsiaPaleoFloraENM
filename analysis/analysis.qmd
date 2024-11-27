@@ -35,26 +35,30 @@ bibliography: references.bib
 ---
 
 ```{r dependencies}
+library("cowplot")
 library("dplyr")
 library("forcats")
 library("fs")
 library("furrr")
 library("ggplot2")
+library("ggrepel")
 library("ggspatial")
 library("gt")
 library("here")
 library("khroma")
-library("parsnip")
 library("progressr")
 library("purrr")
 library("ranger")
 library("readr")
+library("recipes")
 library("rgbif")
 library("rpaleoclim")
+library("scales")
 library("sf")
 library("stars")
 library("stringr")
 library("tibble")
+library("tidymodels")
 library("tidyr")
 
 library("BadiaPaleoFloraENM") # this package, install with devtools::install()
@@ -280,6 +284,7 @@ flora |>
   filter(n_occ > 50) |>
   arrange(-n_present) |>
   gt() |>
+  # TODO: move synonyms to footnotes?
   cols_merge(
     c(taxon, taxon_detail),
     rows = !is.na(taxon_detail),
@@ -362,23 +367,24 @@ We follow the advice of Barbet-Massin et al. (2012) for regression-based species
 ```{r generate-background}
 # TODO: maybe defer this to just before the model is actually fit ?
 #   (and discard the background sample)
+# using a custom recipe step even?
 n_background <- 10000
 
-flora |>
+flora <- flora |>
   mutate(
-    occ = map(occ, mutate, present = TRUE),
-    bg_data = map(1:n(), \(i) { 
+    occ = map(occ, mutate, present = TRUE, weight = 1),
+    bg_data = map(occ, function(x, region, n) { 
       background_sample(
-        region = w_asia_land, 
-        N = n_background,
+        region = region, 
+        N = n,
         coord_x = "longitude", coord_y = "latitude",
-        present = FALSE
+        present = FALSE,
+        weight = (1 / n) * nrow(x) # weight presences and background equally
       )
-    }),
+    }, region = w_asia_land, n = n_background),
     occ = map2(occ, bg_data, bind_rows)
   ) |>
-  select(-bg_data) ->
-  flora
+  select(-bg_data)
 ```
 
 ### Predictor data
@@ -402,7 +408,11 @@ names(climate) |>
 ```{r training-climate}
 flora |> 
   mutate(
-    occ = map(occ, \(x) cbind(x, st_extract(climate$cur, gbif_to_sf(x))))
+    occ = map(occ, \(x) cbind(x, st_extract(climate$cur, gbif_to_sf(x)))),
+    # TODO: where is the extra geometry column coming from?
+    occ = map(occ, \(x) as_tibble(select(x, -geometry))),
+    # TODO: can this happen earlier?
+    occ = map(occ, \(x) mutate(x, present = factor(present, c(FALSE, TRUE))))
   ) ->
   flora
 ```
@@ -416,46 +426,97 @@ Random Forest is one of the best performing, providing it is appropriately param
 
 We used the R package ranger [@WrightZiegler2017].
 
-```{r model}
-rf_predictors <- function() {
-  c(any_of("present"), starts_with("bio"))
-}
-
-# Drop any rows with NA values in any of the predictor variables
-# TODO: Where do these actually come from? There's usually only a handful.
-# occ <- drop_na(occ, rf_predictors())
-
-# Model
-# Parameters adapted from the example of a down-sampled RF model given in
-#   https://rvalavi.github.io/SDMwithRFs/#model-fitting-with-ranger-package
-# TODO: tune?
-
-rf_model <- rand_forest(mode = "classification", trees = 1000) |>
-  set_engine(
-    "ranger",
-    probability = TRUE,
-    sample.fraction = c(sum(as.logical(.y())) / n_background, 1)
+```{r prepare-niche-model-data}
+# Split training, test (for model assessment) and cross-validation sets (for
+# tuning)
+flora <- flora |>
+  mutate(
+    occ = map(occ, \(x) mutate(x, weight = importance_weights(weight))),
+    occ = map(occ, \(x) drop_na(x, starts_with("bio"))), # TODO: where do these come from?
+    occ_split = map(occ, \(x) initial_split(x, strata = present)),
+    # occ_folds = map(occ_split, \(x) vfold_cv(training(x), v = 10, strata = present))
   )
 
-# Fit to each taxon
-# TODO: parallelise
-flora |>
-  mutate(
-    fit = map(occ, \(occ) {
-      fit(rf_model, factor(present) ~ ., data = select(occ, rf_predictors()))
-    }, .progress = TRUE)
-  ) ->
-  flora
+# Data preprocessing recipe
+# Following recommended preprocessing steps for RF classification from:
+#   https://www.tmwr.org/pre-proc-table.html
+niche_recipe <- recipe(training(flora$occ_split[[1]])) |>
+  update_role(gbif_key:latitude, new_role = "ID") |>
+  update_role(present, new_role = "outcome") |>
+  update_role(starts_with("bio"), new_role = "predictor") |>
+  step_nzv(all_predictors())
 ```
 
-The output of the model is probalistic.
-However, this should not be understood as an actual probability of occurrence [@CITE], but more akin to habitat suitability.
+```{r niche-models}
+# Random Forest Niche Model
+# With hyperparameters adapted from the example of a down-sampled RF model given 
+# by https://rvalavi.github.io/SDMwithRFs/#model-fitting-with-ranger-package
+niche_model <- rand_forest(mode = "classification", trees = 1000) |>
+  set_engine(
+    "ranger", 
+    sample.fraction = c(sum(as.logical(.y())) / n_background, 1),
+    probability = TRUE
+  )
+
+# TODO: Or... tune parameters? But this is very compute-intensive.
+# niche_model <- rand_forest(
+#   mode = "classification", 
+#   mtry = tune(),
+#   trees = tune(),
+#   min_n = tune()
+# ) |>
+#   set_engine("ranger", probability = TRUE)
+
+niche_workflow <- workflow(niche_recipe, niche_model)
+```
+
+We follow @ValaviEtAl2021a in using down-sampling and their recommended hyperparameters to avoid overfitting.
+
+<!-- TODO: OR:
+Hyperparameter tuning is important to avoid over-fitting [@CITE].
+We tuned each model separately to maximise ROC AUC.
+-->
+
+```{r tune-niche-models}
+# Tune model (separately for each taxon)
+# TODO: would be nice but is extremely slow
+# flora |>
+#   slice_sample(n = 10) |>
+#   mutate(
+#     niche_tuning_grid = map(occ_split, function(data, recipe) {
+#       grid_regular(
+#         finalize(mtry(), bake(prep(recipe), training(data), all_predictors())),
+#         trees(),
+#         min_n(),
+#         levels = 5
+#       )
+#     }, recipe = niche_recipe, .progress = TRUE),
+#     niche_tuning = map2(niche_tuning_grid, occ_folds, function(grid, folds, wflow) {
+#       tune_grid(wflow, folds, grid = grid)
+#     }, wflow = niche_workflow, .progress = TRUE),
+#     niche_hparams = map(niche_tuning, select_best, metric = "roc_auc"),
+#     niche_model = map(niche_hparams, function(params, wflow) {
+#       finalize_workflow(wflow, params)
+#     }, wflow = niche_workflow)
+#   )
+```
+
+```{r fit-niche-models}
+# Fit best model to training data
+flora <- flora |>
+  mutate(
+    niche = map(occ_split, \(x) last_fit(niche_workflow, x), .progress = TRUE)
+  )
+```
+
+The output of the model is probabilistic.
+However, this should not be understood as an actual probability of occurrence [@CITE], but more akin to an estimate of habitat suitability.
 To simplify interpretation, we can convert these predictions into binary presence/absence maps, a process called "thresholding".
 We select the threshold value for each model individually, using MaxSSS (as recommended by [@LuiEtAl2013])
 This also makes it possible to analyses the predictions together as an assemblage.
 
 ```{r thresholding}
-# TODO: thresholding
+# TODO: thresholding?
 # - Pick a threshold
 # - Reclassify pred raster
 # - Extract predicted classification (for cur) for occ
@@ -464,9 +525,50 @@ This also makes it possible to analyses the predictions together as an assemblag
 # - Sum (SSS)
 # - (Plot?)
 # - Pick max SSS
+#
+# Or just stick with probabilities?
 ```
 
 ## Results
+
+### Model assessment
+
+```{r niche_model_test}
+# Predict model on test data and assess performance
+# TODO: model performance assessments:
+# - [ ] R2
+# - [ ] Boyce index
+# - [x] AUC, ROC, AUC-ROC, AUC-PRG ?
+# - [ ] TSS
+# flora <- flora |>
+#   mutate(
+#     niche_test = map2(niche, occ_split, \(x, y) augment(x, testing(y))),
+#     niche_test_roc_auc = map_dbl(niche_test, function(x) {
+#       roc_auc(x, present, .pred_TRUE)$.estimate
+#     }),
+#     niche_test_accuracy = map_dbl(niche_test, function(x) {
+#       accuracy(x, present, .pred_class)$.estimate
+#     })
+#   )
+
+# TODO: filter to minimum accuracy? 0.85? 0.9? 0.95?
+```
+
+```{r fig-model-accuracy-vs-n_occ}
+#| fig-cap: Number of taxon occurrences and model accuracy on test dataset
+flora |>
+  mutate(niche_test_fit = map(niche, collect_metrics)) |>
+  unnest(niche_test_fit) |>
+  filter(.metric == "accuracy") |> # TODO: or roc_auc?
+  mutate(label = if_else(.estimate < 0.8, taxon, NA_character_)) |>
+  ggplot(aes(n_occ, .estimate)) + 
+  geom_smooth(method = "glm", formula = y ~ log(x)) +
+  geom_point() + 
+  geom_text_repel(aes(label = label), fontface = "italic") +
+  scale_x_log10(name = "Occurrences") +
+  scale_y_continuous(name = "Model accuracy", labels = label_percent()) +
+  theme_half_open() 
+```
 
 ### Modelled ecological niches
 
@@ -476,19 +578,25 @@ This also makes it possible to analyses the predictions together as an assemblag
 ### Hindcasting
 
 ```{r predict}
-# TODO: tidy
-rf_fit <- filter(flora, taxon == "Triticum turgidum dicoccum") |>
-  pull(fit)
-rf_fit <- rf_fit[[1]]
+# TODO: structure this way from the beginning?
+# Thanks to https://stackoverflow.com/questions/65183306/stars-package-how-to-define-additional-dimensions-based-on-an-attribute-filena
+climate_pred <- do.call(c, map(climate, st_redimension, name = "variable")) |>
+  st_redimension(name = "period") |>
+  split("variable")
 
-# TODO: Maybe combine stars and collapse period into dimension first?
-rf_pred <- map(climate, predict, model = rf_fit, type = "prob")
-rf_pred <- map(rf_pred, \(x) x[".pred_TRUE"])
-rf_pred <- do.call(c, rf_pred)
-rf_pred <- st_redimension(rf_pred, name = "period")
+# TODO: very high memory usage
+flora <- flora |>
+  mutate(
+    prediction = map(niche, \(mod, obj) predict(obj, extract_fit_engine(mod)), 
+                     obj = climate_pred)
+  )
+```
+
+```{r fig-niche-prediction}
+niche_prediction <- filter(flora, taxon == "Linum bienne")$prediction[[1]]
 
 # Order and relabel periods
-climate_periods <- rf_pred |>
+climate_periods <- niche_prediction |>
   st_get_dimension_values("period") |>
   ordered(levels = c("LGM", "HS1", "BA", "YDS", "EH", "cur")) |>
   recode(
@@ -496,39 +604,64 @@ climate_periods <- rf_pred |>
     "HS1" = "HS1 (17.0-14.7 ka)",
     "BA"  = "BA (14.7-12.9 ka)",
     "YDS" = "YDS (12.9-11.7 ka)",
-    "EH"  = "EH (11.7-8.326 ka)",
+    "EH"  = "EH (11.7-8.3 ka)",
     "cur" = "current"
   )
 
-rf_pred <- st_set_dimensions(rf_pred, "period", values = climate_periods)
+niche_prediction <- st_set_dimensions(niche_prediction, "period", values = climate_periods)
 
 ggplot() + 
-  geom_stars(data = rf_pred) +
+  geom_stars(data = select(niche_prediction, prediction.TRUE.) > 0.5) +
   facet_wrap(~period, ncol = 3) +
-  scale_fill_batlow(reverse = TRUE) +
+  # scale_fill_batlow(reverse = TRUE) +
   coord_sf(crs = latlong) +
   labs(
-    title = "Triticum turgidum dicoccum",
+    title = "Linum bienne",
     fill = NULL,
     x = NULL,
     y = NULL
   ) +
+  theme_map() +
   theme(
     plot.title = element_text(face = "italic")
   )
 ```
 
-### Model assessment & verification
-
-```{r todo}
-# TODO: model performance assessment:
-# - R2
-# - Boyce index
-# - AUC, ROC, AUC-ROC, AUC-PRG ?
-# - TSS
-
-```
+### Comparison to archaeological occurrences
 
 ## Discussion
+
+```{r sum-pred-eh}
+flora |>
+  mutate(pred_eh = map(fit, \(x) predict(climate$EH, model = x, type = "prob"))) ->
+  x
+
+pred_eh <- x$pred_eh
+names(pred_eh) <- x$taxon
+pred_eh <- do.call(c, map(pred_eh, select, .pred_TRUE))
+pred_eh <- merge(pred_eh, name = "taxon")
+sum_pred_eh <- st_apply(pred_eh, c("x", "y"), sum, na.rm = TRUE)
+```
+
+```{r fig-sum-pred-eh}
+#| fig-cap: predicted species richness for the early Holocene
+ggplot() + 
+  geom_stars(data = sum_pred_eh) +
+  scale_fill_batlow(reverse = FALSE) +
+  coord_sf(crs = latlong) +
+  labs(
+    title = "Predicted species richness",
+    subtitle = "Early Holocene (11.7–8.326 ka)",
+    fill = NULL,
+    x = NULL,
+    y = NULL
+  )
+
+saveRDS(pred_eh, "pred_eh.Rdata")
+```
+
+```{r fig-pred-observed-eh}
+
+```
 
 ## Acknowledgments {.appendix}
