@@ -533,27 +533,6 @@ This also makes it possible to analyses the predictions together as an assemblag
 
 ### Model assessment
 
-```{r niche_model_test}
-# Predict model on test data and assess performance
-# TODO: model performance assessments:
-# - [ ] R2
-# - [ ] Boyce index
-# - [x] AUC, ROC, AUC-ROC, AUC-PRG ?
-# - [ ] TSS
-# flora <- flora |>
-#   mutate(
-#     niche_test = map2(niche, occ_split, \(x, y) augment(x, testing(y))),
-#     niche_test_roc_auc = map_dbl(niche_test, function(x) {
-#       roc_auc(x, present, .pred_TRUE)$.estimate
-#     }),
-#     niche_test_accuracy = map_dbl(niche_test, function(x) {
-#       accuracy(x, present, .pred_class)$.estimate
-#     })
-#   )
-
-# TODO: filter to minimum accuracy? 0.85? 0.9? 0.95?
-```
-
 ```{r fig-model-accuracy-vs-n_occ}
 #| fig-cap: Number of taxon occurrences and model accuracy on test dataset
 flora |>
@@ -584,7 +563,7 @@ climate_pred <- do.call(c, map(climate, st_redimension, name = "variable")) |>
   st_redimension(name = "period") |>
   split("variable")
 
-# TODO: very high memory usage
+# NOTE: very high memory usage
 flora <- flora |>
   mutate(
     prediction = map(niche, \(mod, obj) predict(obj, extract_fit_engine(mod)), 
