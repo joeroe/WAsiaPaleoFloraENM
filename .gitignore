@@ -1,6 +1,5 @@
 .Rhistory
 .RData
 .Rproj.user
-analysis/data/derived_data/
-analysis/data/raw_data/srtm/
-.paleoclim_cache
+.env
+analysis/data/derived_data/paleoclim/raw

@@ -12,6 +12,7 @@ ByteCompile: true
 Encoding: UTF-8
 LazyData: true
 Imports: 
+    dotenv,
     dplyr,
     fs,
     furrr,

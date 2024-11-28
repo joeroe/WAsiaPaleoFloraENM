@@ -37,6 +37,7 @@ bibliography: references.bib
 ```{r dependencies}
 library("cowplot")
 library("dplyr")
+library("dotenv")
 library("forcats")
 library("fs")
 library("furrr")
@@ -52,7 +53,6 @@ library("ranger")
 library("readr")
 library("recipes")
 library("rgbif")
-library("rpaleoclim")
 library("scales")
 library("sf")
 library("stars")
@@ -75,7 +75,7 @@ plan("multisession")
 latlong <- 4326
 utm37n <- 32637
 
-w_asia <- st_bbox(c(xmin = 30, xmax = 50, ymin = 25, ymax = 40), crs = 4326)
+w_asia <- st_bbox(c(xmin = 25, xmax = 55, ymin = 22.5, ymax = 42.5), crs = 4326)
 s_levant <- st_bbox(c(xmin = 34, xmax = 39, ymin = 29, ymax = 34), crs = 4326)
 ```
 
@@ -92,6 +92,15 @@ archaeo_periods <- tribble(
 )
 
 neolithic <- c("PPNA", "EPPNB", "MPPNB", "LPPNB/C", "Pottery Neolithic")
+
+climate_periods <- fct_inorder(c(
+  lgm = "LGM (21 ka)",
+  hs1 = "HS1 (17.0-14.7 ka)",
+  ba  = "BA (14.7-12.9 ka)",
+  yds = "YDS (12.9-11.7 ka)",
+  eh  = "EH (11.7-8.3 ka)",
+  cur = "current"
+))
 ```
 
 ## Introduction
@@ -389,23 +398,71 @@ flora <- flora |>
 
 ### Predictor data
 
-```{r data-climate}
-raw_data("paleoclim") |>
-  dir_ls() |>
-  map(dir_ls, glob = "*.tif") |>
-  map(read_stars) |>
-  map(\(x) set_names(x, path_ext_remove(path_file(names(x))))) ->
-  climate
+Bioclimatic data – the standard, and what allows us to do hindcasting.
 
-# Tidy up names
-names(climate) |>
-  basename() |>
-  str_remove(regex("chelsa_", ignore_case = TRUE)) |>
-  str_split_i("_", 1) ->
-  names(climate)
+Topographic data derived from a DEM:
+
+* Aspect and slope – proxies for solar radiation, but only if high resolution [@AustinVanNiel2011; @LeempoelEtAl2015]
+* TWI – proxy for soil moisture, important for arid environments [@KopeckyCizkova2010; @CamposEtAl2016; DiVirgilioEtAl2018]
+
+Soil data – important for plants [@DubuisEtAl2013; @ModEtAl2016; @VelazcoEtAl2017] but not all variables from SoilGrids are reliable: so we just use soil texture (clay, silt, sand) and pH at the surface (0-5 cm depth) [@MillerEtAl2024].
+
+```{r data-terrain}
+# Reacquire derived_data/srtm_15plus_w_asia.tif if needed:
+if (!file_exists(derived_data("dem", "srtm_15plus_w_asia.tif"))) {
+  message("Redownloading DEM data...")
+  source(here("data", "data-dem.R"))
+}
+
+dem <- read_stars(derived_data("dem", "srtm_15plus_w_asia.tif"))
+names(dem) <- "elevation"
+
+# TODO: slope
+# TODO: aspect
+# TODO: twi
 ```
 
-```{r training-climate}
+```{r data-soil}
+# Reacquire derived_data/soilgrids if needed:
+if (length(dir_ls(derived_data("soilgrids"), glob = "*.tif")) < 1) {
+  message("Redownloading SoilGrids data...")
+  source(here("data", "data-soilgrids.R"))
+}
+
+soil <- map(dir_ls(derived_data("soilgrids")), read_stars)
+names(soil) <- str_split_i(basename(names(soil)), "_", 2)
+soil <- do.call(c, soil)
+```
+
+```{r data-climate}
+# Reacquire derived_data/paleoclim if needed:
+if (length(dir_ls(derived_data("paleoclim"), glob = "*.tif")) < 1) {
+  message("Redownloading Paleoclim data...")
+  source(here("data", "data-paleoclim.R"))
+}
+
+climate <- read_stars(
+  derived_data(
+    "paleoclim", 
+    paste0("paleoclim_", names(climate_periods), "_2_5m_w_asia.tif")
+  ),
+  along = NA
+)
+
+names(climate) <- names(climate_periods)
+
+climate <- st_redimension(climate, name = "period") |>
+  split("band")
+```
+
+```{r data-environment}
+# TODO: resample to common res
+# TODO: reproject
+# TODO: combine
+# TODO: fill NAs?
+```
+
+```{r extract-predictor-data}
 flora |> 
   mutate(
     occ = map(occ, \(x) cbind(x, st_extract(climate$cur, gbif_to_sf(x)))),
