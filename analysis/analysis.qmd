@@ -71,6 +71,9 @@ library("BadiaPaleoFloraENM") # this package, install with devtools::install()
 plan("multisession")
 ```
 
+```{r setup-whitebox}
+```
+
 ```{r define-regions}
 latlong <- 4326
 utm37n <- 32637
@@ -161,6 +164,89 @@ w_asia_land <- st_intersection(st_as_sfc(w_asia), ne_land)
 
 # Restore previous setting of s2
 sf_use_s2(use_s2)
+```
+
+### Predictor data
+
+Bioclimatic data – the standard, and what allows us to do hindcasting.
+
+Topographic data derived from a DEM:
+
+* Aspect and slope – proxies for solar radiation, but only if high resolution [@AustinVanNiel2011; @LeempoelEtAl2015]
+* TWI – proxy for soil moisture, important for arid environments [@KopeckyCizkova2010; @CamposEtAl2016; DiVirgilioEtAl2018]
+
+Soil data – important for plants [@DubuisEtAl2013; @ModEtAl2016; @VelazcoEtAl2017] but not all variables from SoilGrids are reliable: so we just use soil texture (clay, silt, sand) and pH at the surface (0-5 cm depth) [@MillerEtAl2024].
+
+```{r data-terrain}
+# Reacquire derived_data/srtm_15plus_w_asia.tif if needed:
+if (!file_exists(derived_data("dem", "srtm_15plus_w_asia.tif"))) {
+  message("Redownloading DEM data...")
+  source(here("data", "data-dem.R"))
+}
+
+# TODO: derived terrain products are two big to commit
+# TODO: does TWI actually make sense at this resolution? Could start with (much)
+# higher res, then upscale?
+terrain <- read_stars(derived_data("dem", c("srtm_15plus_w_asia.tif", 
+                                            "srtm_15plus_w_asia_slope.tif",
+                                            "srtm_15plus_w_asia_aspect.tif",
+                                            "srtm_15plus_w_asia_wetness.tif")))
+names(terrain) <- c("elevation", "slope", "aspect", "wetness")
+```
+
+```{r data-soil}
+# Reacquire derived_data/soilgrids if needed:
+if (length(dir_ls(derived_data("soilgrids"), glob = "*.tif")) < 1) {
+  message("Redownloading SoilGrids data...")
+  source(here("data", "data-soilgrids.R"))
+}
+
+soil <- map(dir_ls(derived_data("soilgrids")), read_stars)
+names(soil) <- str_split_i(basename(names(soil)), "_", 2)
+soil <- do.call(c, soil)
+```
+
+```{r data-climate}
+# Reacquire derived_data/paleoclim if needed:
+if (length(dir_ls(derived_data("paleoclim"), glob = "*.tif")) < 1) {
+  message("Redownloading Paleoclim data...")
+  source(here("data", "data-paleoclim.R"))
+}
+
+climate <- read_stars(
+  derived_data(
+    "paleoclim", 
+    paste0("paleoclim_", names(climate_periods), "_2_5m_w_asia.tif")
+  ),
+  along = NA
+)
+
+names(climate) <- names(climate_periods)
+
+climate <- st_redimension(climate, name = "period") |>
+  split("band")
+```
+
+```{r data-environment}
+# For time-invariant predictors, collapse attributes into dimension and 
+# duplicate to create a dummy period dimension
+# TODO: maybe need to downsample first?
+terrain <- st_redimension(terrain, name = "variable")
+terrain <- do.call(c, rep(list(terrain), length(climate_periods)))
+names(terrain) <- names(climate_periods)
+terrain <- st_redimension(terrain, name = "period") # TODO: why *so* slow?
+
+soil <- st_redimension(soil, name = "variable")
+soil <- do.call(c, rep(list(soil), length(climate_periods)))
+names(soil) <- names(climate_periods)
+soil <- st_redimension(soil, name = "period")
+
+# Resample to common grid
+terrain <- st_warp(terrain, climate, use_gdal = TRUE, method = "cubicspline")
+soil <- st_warp(soil, climate, use_gdal = TRUE, method = "cubicspline")
+
+# TODO: combine and split variable
+# TODO: fill NAs?
 ```
 
 ### Occurrence data
@@ -396,71 +482,6 @@ flora <- flora |>
   select(-bg_data)
 ```
 
-### Predictor data
-
-Bioclimatic data – the standard, and what allows us to do hindcasting.
-
-Topographic data derived from a DEM:
-
-* Aspect and slope – proxies for solar radiation, but only if high resolution [@AustinVanNiel2011; @LeempoelEtAl2015]
-* TWI – proxy for soil moisture, important for arid environments [@KopeckyCizkova2010; @CamposEtAl2016; DiVirgilioEtAl2018]
-
-Soil data – important for plants [@DubuisEtAl2013; @ModEtAl2016; @VelazcoEtAl2017] but not all variables from SoilGrids are reliable: so we just use soil texture (clay, silt, sand) and pH at the surface (0-5 cm depth) [@MillerEtAl2024].
-
-```{r data-terrain}
-# Reacquire derived_data/srtm_15plus_w_asia.tif if needed:
-if (!file_exists(derived_data("dem", "srtm_15plus_w_asia.tif"))) {
-  message("Redownloading DEM data...")
-  source(here("data", "data-dem.R"))
-}
-
-dem <- read_stars(derived_data("dem", "srtm_15plus_w_asia.tif"))
-names(dem) <- "elevation"
-
-# TODO: slope
-# TODO: aspect
-# TODO: twi
-```
-
-```{r data-soil}
-# Reacquire derived_data/soilgrids if needed:
-if (length(dir_ls(derived_data("soilgrids"), glob = "*.tif")) < 1) {
-  message("Redownloading SoilGrids data...")
-  source(here("data", "data-soilgrids.R"))
-}
-
-soil <- map(dir_ls(derived_data("soilgrids")), read_stars)
-names(soil) <- str_split_i(basename(names(soil)), "_", 2)
-soil <- do.call(c, soil)
-```
-
-```{r data-climate}
-# Reacquire derived_data/paleoclim if needed:
-if (length(dir_ls(derived_data("paleoclim"), glob = "*.tif")) < 1) {
-  message("Redownloading Paleoclim data...")
-  source(here("data", "data-paleoclim.R"))
-}
-
-climate <- read_stars(
-  derived_data(
-    "paleoclim", 
-    paste0("paleoclim_", names(climate_periods), "_2_5m_w_asia.tif")
-  ),
-  along = NA
-)
-
-names(climate) <- names(climate_periods)
-
-climate <- st_redimension(climate, name = "period") |>
-  split("band")
-```
-
-```{r data-environment}
-# TODO: resample to common res
-# TODO: reproject
-# TODO: combine
-# TODO: fill NAs?
-```
 
 ```{r extract-predictor-data}
 flora |> 
