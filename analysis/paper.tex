@@ -1,0 +1,824 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  number,
+  review]{elsarticle}
+
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else  
+    % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{5}
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\journal{Open Quaternary}
+
+\usepackage{bookmark}
+
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Biogeography of crop progenitors and wild plant resources during the transition to agriculture in West Asia, 21--8.3 ka},
+  pdfauthor={Joe Roe; Amaia Arranz-Otaegui},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\setlength{\parindent}{6pt}
+\begin{document}
+
+\begin{frontmatter}
+\title{Biogeography of crop progenitors and wild plant resources during
+the transition to agriculture in West Asia, 21--8.3 ka}
+\author[1,2]{Joe Roe%
+\corref{cor1}%
+}
+ \ead{joeroe@hey.com} 
+\author[3]{Amaia Arranz-Otaegui%
+%
+}
+
+
+\affiliation[1]{organization={University of
+Bern},country={Switzerland},countrysep={,},postcodesep={}}
+\affiliation[2]{organization={University of
+Copenhagen},country={Denmark},countrysep={,},postcodesep={}}
+\affiliation[3]{organization={University of the Basque
+Country},country={Spain},countrysep={,},postcodesep={}}
+
+\cortext[cor1]{Corresponding author}
+
+
+        
+\begin{abstract}
+This paper presents the first comprehensive reconstructions of the
+palaeodistributions of {[}X{]} plant species known to have been gathered
+or cultivated by early agricultural societies in Southwest Asia,
+including the progenitors of the first crops. We used machine learning
+to train an ecological niche model (ENM) of each species based on its
+present-day distribution in relation to climate and environmental
+variables. Predictions of the potential ranges of these species at key
+stages of the Pleistocene--Holocene transition could then be derived
+from these models using hindcast data from palaeoclimate simulations.
+Species ranges were on average {[}X\%{]} {[}larger\textbar smaller{]} in
+the Early Holocene compared to today, indicating {[}\ldots{]}. The
+modelled ranges predict the observed occurrence of these species on
+archaeological sites with {[}low\textbar medium\textbar high{]}
+accuracy. The regional ubiquity of species in the archaeological record
+is {[}not{]} correlated with the predicted size of its range and the
+diversity of archaeobotanical assemblages is {[}not{]} correlated with
+the predicted diversity of its environs. This indicates that trends in
+taxonomic composition of the archaeobotanical record is {[}not{]} likely
+to be influenced by environmental change and species turnover, not just,
+as is often assumed, human economic choices.
+\end{abstract}
+
+
+
+
+
+\end{frontmatter}
+    
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  Finish analysis:
+
+  \begin{itemize}
+  \tightlist
+  \item[$\square$]
+    Add terrain, soil
+  \item[$\square$]
+    Find a resolution that's workable
+  \item[$\square$]
+    Do thresholding?
+  \end{itemize}
+\item[$\square$]
+  First draft:
+
+  \begin{itemize}
+  \tightlist
+  \item[$\square$]
+    Introduction
+  \item[$\square$]
+    Background
+
+    \begin{itemize}
+    \tightlist
+    \item[$\square$]
+      Biogeography
+    \item[$\square$]
+      ENM
+    \end{itemize}
+  \item[$\boxtimes$]
+    Methods \& Materials
+
+    \begin{itemize}
+    \tightlist
+    \item[$\boxtimes$]
+      Occurrence data
+    \item[$\boxtimes$]
+      Predictor data
+    \item[$\boxtimes$]
+      Random Forest model
+    \end{itemize}
+  \item[$\square$]
+    Results
+
+    \begin{itemize}
+    \tightlist
+    \item[$\square$]
+      Model assessment
+    \item[$\square$]
+      Hindcasting
+    \end{itemize}
+  \item[$\square$]
+    Discussion
+
+    \begin{itemize}
+    \tightlist
+    \item[$\square$]
+      General trends
+    \item[$\square$]
+      Case studies
+    \end{itemize}
+  \item[$\square$]
+    Conclusion
+  \end{itemize}
+\item[$\square$]
+  Figures
+
+  \begin{itemize}
+  \tightlist
+  \item[$\square$]
+    tbl-predictors
+  \item[$\square$]
+    tbl-climate-periods
+  \end{itemize}
+\item[$\square$]
+  Appendix with all hindcast predictions
+\item[$\square$]
+  References \& copyediting
+\item[$\square$]
+  Final proofread
+\end{itemize}
+
+\section{Introduction}\label{introduction}
+
+\begin{itemize}
+\tightlist
+\item
+  The first farming societies had an ecological context
+\item
+  Subsistence is understood (largely) through archaeobotany and
+  zooarchaeology; ecological context from environmental archaeology,
+  palynology, palaeoclimate records, etc.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    But these have a variety of biases (human selection, taphonomy,
+    etc.)
+  \item
+    And at the end of the day only represent specific places --
+    interpolation to the entire region is not straightforward
+  \item
+    Overlap makes it difficult to see where human choices depart from
+    the environmental background (cf. Martin et al., 2016)
+  \item
+    Or to fully contextualise subsistence strategies and shifts in
+    strategies in response to environmental shifts (e.g. Yaworsky et
+    al., 2023).
+  \end{itemize}
+\item
+  Here we present an alternative approach using ENM
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Whole region, at multiple climate snapshots
+  \item
+    Independent of archaeobot. and pal. clim. data, so can verify and
+    compare
+  \end{itemize}
+\end{itemize}
+
+\section{Background}\label{background}
+
+\begin{itemize}
+\tightlist
+\item
+  The transition to agriculture in West Asia was\ldots{}
+\end{itemize}
+
+\subsection{Biogeography and agricultural
+origins}\label{biogeography-and-agricultural-origins}
+
+\begin{itemize}
+\tightlist
+\item
+  Has always been important in study of agricultural origins
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Historically: Vavilov, Pumpelly \& Childe
+  \item
+    Genetic studies tell us origin points, but not ranges
+  \end{itemize}
+\item
+  Epipal./Neo. plant-based economies were diverse
+
+  \begin{itemize}
+  \tightlist
+  \item
+    More than the ``founder crops'';
+  \item
+    More than food
+  \item
+    (In archaebot., not all intentionally collected)
+  \item
+    Regionally and temporally diverse
+  \item
+    \ldots so we model lots of species!
+  \end{itemize}
+\item
+  Regional ecological reconstructions generally rely on the `expert
+  interpolation' (or what do they call it with isoscapes?) method
+
+  \begin{itemize}
+  \tightlist
+  \item
+    See CSEAS (AEA-prep) presentation
+  \item
+    Figure: comparisons
+  \end{itemize}
+\end{itemize}
+
+\subsection{Ecological niche modelling in
+archaeology}\label{ecological-niche-modelling-in-archaeology}
+
+\begin{itemize}
+\tightlist
+\item
+  Review: (Franklin et al., 2015)
+\item
+  In SW Asia: (Conolly et al., 2012) (first use ever??), (Collins et
+  al., 2018)
+\item
+  Varying uses: to reconstruct human niches (esp.~in Palaeolithic), to
+  reconstruct spread of (esp.~domestic) species from archaeological
+  record, or to reconstruct wild ranges from modern occurrences and
+  palaeoclimate (our approach)
+\item
+  Caveats
+
+  \begin{itemize}
+  \tightlist
+  \item
+    In ENM literature, many sceptical about fore- and hind-casting
+  \item
+    Archaeo data a golden opportunity here
+  \end{itemize}
+\end{itemize}
+
+\section{Methods and materials}\label{methods-and-materials}
+
+\subsection{Occurrence data}\label{occurrence-data}
+
+We consider X distinct taxa (Table~\ref{tbl-occ-count}) - all the
+identifiable species known to be present at more than three Neolithic
+sites in West Asia, according to our previous study (Arranz-Otaegui and
+Roe, 2023).
+
+Taxonomic names were resolves to the canonical form specified in the
+GBIF Backbone Taxonomy (\textbf{GBIFSecretariat2023?}). So for example
+occurrences for ``Bolboschoenus'' included all species and subspecies,
+including specimens described as \emph{Bolboschoenus sp.},
+\emph{Bolboschoenus maritimus} and \emph{Scirpus maritimus}. Domestic
+species meeting our inclusion criteria were substituted with their wild
+progenitor(s), where known.
+
+\subsection{Occurrence data}\label{occurrence-data-1}
+
+Occurrence data was obtained from the Global Biodiversity Information
+Facility (GBIF) using via its application programming interface and the
+R package rgbif (Chamberlain et al., 2024; Chamberlain and Boettiger,
+2017). Although ENMs have reasonable predictive power even with small
+training samples (Hernandez et al., 2006; Stockwell and Peterson, 2002;
+Wisz et al., 2008), we excluded X taxa with less than fifty recorded
+occurrences in our study region. We also excluded one taxon (\emph{Avena
+sterilis}) with over 47,000 occurrences, as this would have been
+computationally prohibitive and we were uncertain what account for such
+a disproportionately high number of records.
+
+Occurrence data only tells us where a species is present; there is
+rarely definitive information on where the species is \emph{not} found.
+We therefore need to generate random background points or
+``pseudo-absences'' to feed to the model. There are several ways to do
+this. We follow the advice of (Barbet-Massin et al., 2012) for
+regression-based species distribution models and use a large (:10000)
+random sample of points, weighted equally against the presences in the
+regression. (Valavi et al., 2022) also recommend using a very large
+background sample for random forest models.
+
+\subsection{Predictor data}\label{predictor-data}
+
+We modelled the occurrence of species as a function of X spatial
+predictor variables (\textbf{?@tbl-predictors}). These included:
+
+\begin{itemize}
+\tightlist
+\item
+  Sixteen `bioclimatic' variables derived from monthly temperature and
+  precipitation values, following standard practice for species
+  distribution models (Hijmans et al., 2005). Contemporary bioclimatic
+  predictor data for West Asia was extracted from the global CHELSA
+  dataset (Karger et al., 2017), which predicts temperature and
+  precipitation from downscaled general circulation model output at 1 km
+  resolution.
+\end{itemize}
+
+\begin{itemize}
+\tightlist
+\item
+  Terrain aspect and slope, which at high resolution perform well as
+  proxies for solar radiation when modelling plant occurrence (Austin
+  and Van Niel, 2011; Leempoel et al., 2015); and the topographic
+  wetness index (TWI), which serves as a proxy for soil moisture and is
+  particularly important in modelling arid environments (Campos et al.,
+  2016; Di Virgilio et al., 2018; Kopecký and Čížková, 2010). All three
+  were derived from the SRTM15+ digital elevation model using algorithms
+  from WhiteboxTools (Lindsay, 2016).
+\end{itemize}
+
+\begin{itemize}
+\tightlist
+\item
+  Edaphic data from SoilGrids (Hengl et al., 2017, 2014), which improves
+  model performance for plants (Dubuis et al., 2013; Mod et al., 2016;
+  Velazco et al., 2017). Based on a recent assessment of the reliability
+  of SoilGrids data for species distribution modelling (Miller et al.,
+  2024), we used a subset of four variables relating to soil texture
+  (clay, silt, sand) and pH at the surface (0-5 cm depth).
+\end{itemize}
+
+Predictor data was transformed to the same projection system (WGS84 /
+UTM 37 N) and a common resolution of X km.
+
+For hindcasting, we used reconstructed bioclimatic data for key periods
+(\textbf{?@tbl-climate-periods}) generated from downscaled paleoclimate
+simulations from the HadCM3 general circulation model (Brown et al.,
+2018). Terrain and soil predictors were held constant, since
+reconstructions of these variables in the past are not available at
+sufficient scale. It is not likely that either macroscale topography or
+soil characteristics have altered significantly over the period of time
+considered here, so we assume that this does not degrade model
+performance, and may in fact benefit it by providing `anchoring'
+predictors that are independent of climate change.
+
+\subsection{Random Forest}\label{random-forest}
+
+Ecological niche modelling is a classification problem that can be
+approached with a wide range of statistical methods. A substantial
+literature exists on the relatively performance of these approaches and
+their respective parameterisations (reviewed in Valavi et al., 2022).
+Random Forest, a widely-used machine learning algorithm, is amongst the
+best performing approaches for presence-only species distribution
+models, providing it is appropriately parameterised to account for the
+class imbalance between presence and background samples (Valavi et al.,
+2022, 2021). For our application, it also has the advantage of requiring
+little to no manual parameter tuning to achieve good predictive results,
+which makes it easier to model a larger numbers of taxa.
+
+For each taxon we trained a classification model to predict occurrence
+(presence or absence/background) based on our X predictor variables
+(\textbf{?@tbl-predictors}). We used the Random Forest algorithm
+implemented in the R package `ranger' (Wright and Ziegler, 2017) and the
+`tidymodels' (\textbf{tidymodels?}) framework for data preprocessing and
+model selection. To avoid overfitting, we follow (Valavi et al., 2021)
+in their recommended hyperparameters and use of down-sampling to balance
+presence and background samples. Models for each taxon were fit
+independently, with redundant zero-variance predictors excluded, and
+assessed based on balanced training (3/4) and test (1/4) partitions.
+
+The output of the model is probabilistic. However, this should not be
+understood as an actual probability of occurrence (\textbf{CITE?}), but
+more akin to an estimate of habitat suitability. To simplify
+interpretation, we can convert these predictions into binary
+presence/absence maps, a process called ``thresholding''. We select the
+threshold value for each model individually, using MaxSSS (as
+recommended by Liu et al., 2013). This also makes it possible to
+analyses the predictions together as an assemblage.
+
+\section{Results}\label{results}
+
+\subsection{Model assessment}\label{model-assessment}
+
+\begin{itemize}
+\tightlist
+\item
+  Modelled ecological niches on current data
+\end{itemize}
+
+\subsection{Hindcasting}\label{hindcasting}
+
+Sensitivity to climate fluctuations?
+
+\begin{itemize}
+\tightlist
+\item
+  Comparison to archaeological occurrences
+\end{itemize}
+
+\section{Discussion}\label{discussion}
+
+\begin{itemize}
+\tightlist
+\item
+  General trends:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Quantified sensitivity of plant ranges to climate change
+  \item
+    Crop progenitors saw range contractions just before the onset of
+    agriculture? (Moreso than other wild resources??)
+  \item
+    How could are reconstructed ranges at predicting archaeological
+    assemblages? (+Implications)
+  \end{itemize}
+\item
+  Interesting individual case studies:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Wheat progenitors
+  \item
+    ???
+  \end{itemize}
+\end{itemize}
+
+\section{Conclusion}\label{conclusion}
+
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-ArranzOtaeguiRoe2023}
+Arranz-Otaegui, A., Roe, J., 2023. Revisiting the concept of the
+{``{Neolithic Founder Crops}''} in southwest {Asia}. Vegetation History
+and Archaeobotany. \url{https://doi.org/10.1007/s00334-023-00917-1}
+
+\bibitem[\citeproctext]{ref-AustinVanNiel2011}
+Austin, M.P., Van Niel, K.P., 2011. Improving species distribution
+models for climate change studies: Variable selection and scale. Journal
+of Biogeography 38, 1--8.
+\url{https://doi.org/10.1111/j.1365-2699.2010.02416.x}
+
+\bibitem[\citeproctext]{ref-BarbetMassinEtAl2012}
+Barbet-Massin, M., Jiguet, F., Albert, C.H., Thuiller, W., 2012.
+Selecting pseudo-absences for species distribution models: How, where
+and how many?: {How} to use pseudo-absences in niche modelling? Methods
+Ecol. Evol. 3, 327--338.
+\url{https://doi.org/10.1111/j.2041-210X.2011.00172.x}
+
+\bibitem[\citeproctext]{ref-BrownEtAl2018}
+Brown, J.L., Hill, D.J., Dolan, A.M., Carnaval, A.C., Haywood, A.M.,
+2018. {PaleoClim}, high spatial resolution paleoclimate surfaces for
+global land areas. Sci Data 5, 180254.
+\url{https://doi.org/10.1038/sdata.2018.254}
+
+\bibitem[\citeproctext]{ref-CamposEtAl2016}
+Campos, V.E., Cappa, F.M., Viviana, F.M., Giannoni, S.M., 2016. Using
+remotely sensed data to model suitable habitats for tree species in a
+desert environment. Journal of Vegetation Science 27, 200--210.
+\url{https://doi.org/10.1111/jvs.12328}
+
+\bibitem[\citeproctext]{ref-rgbif}
+Chamberlain, S., Barve, V., Mcglinn, D., Oldoni, D., Desmet, P.,
+Geffert, L., Ram, K., 2024.
+\href{https://CRAN.R-project.org/package=rgbif}{Rgbif: Interface to the
+global biodiversity information facility API}.
+
+\bibitem[\citeproctext]{ref-ChamberlainBoettiger2017}
+Chamberlain, S., Boettiger, C., 2017.
+\href{https://doi.org/10.7287/peerj.preprints.3304v1}{R python, and ruby
+clients for GBIF species occurrence data}. PeerJ PrePrints.
+
+\bibitem[\citeproctext]{ref-CollinsEtAl2018}
+Collins, C., Asouti, E., Grove, M., Kabukcu, C., Bradley, L.,
+Chiverrell, R., 2018. Understanding resource choice at the transition
+from foraging to farming: {An} application of palaeodistribution
+modelling to the {Neolithic} of the {Konya Plain}, south-central
+{Anatolia}, {Turkey}. J. Archaeol. Sci. 96, 57--72.
+\url{https://doi.org/10.1016/j.jas.2018.02.003}
+
+\bibitem[\citeproctext]{ref-ConollyEtAl2012}
+Conolly, J., Manning, K., Colledge, S., Dobney, K., Shennan, S., 2012.
+Species distribution modelling of ancient cattle from early {Neolithic}
+sites in {SW Asia} and {Europe}. Holocene 22, 997--1010.
+\url{https://doi.org/10.1177/0959683612437871}
+
+\bibitem[\citeproctext]{ref-DiVirgilioEtAl2018}
+Di Virgilio, G., Wardell-Johnson, G.W., Robinson, T.P., Temple-Smith,
+D., Hesford, J., 2018. Characterising fine-scale variation in plant
+species richness and endemism across topographically complex, semi-arid
+landscapes. Journal of Arid Environments 156, 59--68.
+\url{https://doi.org/10.1016/j.jaridenv.2018.04.005}
+
+\bibitem[\citeproctext]{ref-DubuisEtAl2013}
+Dubuis, A., Giovanettina, S., Pellissier, L., Pottier, J., Vittoz, P.,
+Guisan, A., 2013. Improving the prediction of plant species distribution
+and community composition by adding edaphic to topo-climatic variables.
+Journal of Vegetation Science 24, 593--606.
+\url{https://doi.org/10.1111/jvs.12002}
+
+\bibitem[\citeproctext]{ref-FranklinEtAl2015}
+Franklin, J., Potts, A.J., Fisher, E.C., Cowling, R.M., Marean, C.W.,
+2015. Paleodistribution modeling in archaeology and paleoanthropology.
+Quat. Sci. Rev. 110, 1--14.
+\url{https://doi.org/10.1016/j.quascirev.2014.12.015}
+
+\bibitem[\citeproctext]{ref-HenglEtAl2014}
+Hengl, T., de Jesus, J.M., MacMillan, R.A., Batjes, N.H., Heuvelink,
+G.B.M., Ribeiro, E., Samuel-Rosa, A., Kempen, B., Leenaars, J.G.B.,
+Walsh, M.G., Gonzalez, M.R., 2014. {SoilGrids1km--global} soil
+information based on automated mapping. PLoS One 9, e105992.
+\url{https://doi.org/10.1371/journal.pone.0105992}
+
+\bibitem[\citeproctext]{ref-HenglEtAl2017}
+Hengl, T., Mendes de Jesus, J., Heuvelink, G.B.M., Ruiperez Gonzalez,
+M., Kilibarda, M., Blagotić, A., Shangguan, W., Wright, M.N., Geng, X.,
+Bauer-Marschallinger, B., Guevara, M.A., Vargas, R., MacMillan, R.A.,
+Batjes, N.H., Leenaars, J.G.B., Ribeiro, E., Wheeler, I., Mantel, S.,
+Kempen, B., 2017. {SoilGrids250m}: {Global} gridded soil information
+based on machine learning. PLoS One 12, e0169748.
+\url{https://doi.org/10.1371/journal.pone.0169748}
+
+\bibitem[\citeproctext]{ref-HernandezEtAl2006}
+Hernandez, P.A., Graham, C.H., Master, L.L., Albert, D.L., 2006. The
+effect of sample size and species characteristics on performance of
+different species distribution modeling methods. Ecography 29, 773--785.
+\url{https://doi.org/10.1111/j.0906-7590.2006.04700.x}
+
+\bibitem[\citeproctext]{ref-HijmansEtAl2005}
+Hijmans, R.J., Cameron, S.E., Parra, J.L., Jones, P.G., Jarvis, A.,
+2005. Very high resolution interpolated climate surfaces for global land
+areas. Int. J. Climatol. 25, 1965--1978.
+\url{https://doi.org/10.1002/joc.1276}
+
+\bibitem[\citeproctext]{ref-KargerEtAl2017}
+Karger, D.N., Conrad, O., Böhner, J., Kawohl, T., Kreft, H., Soria-Auza,
+R.W., Zimmermann, N.E., Linder, H.P., Kessler, M., 2017. Climatologies
+at high resolution for the earth's land surface areas. Sci Data 4,
+170122. \url{https://doi.org/10.1038/sdata.2017.122}
+
+\bibitem[\citeproctext]{ref-KopeckyCizkova2010}
+Kopecký, M., Čížková, Š., 2010. Using topographic wetness index in
+vegetation ecology: Does the algorithm matter? Appl. Veg. Sci. 13,
+450--459. \url{https://doi.org/10.1111/j.1654-109X.2010.01083.x}
+
+\bibitem[\citeproctext]{ref-LeempoelEtAl2015}
+Leempoel, K., Parisod, C., Geiser, C., Daprà, L., Vittoz, P., Joost, S.,
+2015. Very high-resolution digital elevation models: Are multi-scale
+derived variables ecologically relevant? Methods in Ecology and
+Evolution 6, 1373--1383. \url{https://doi.org/10.1111/2041-210X.12427}
+
+\bibitem[\citeproctext]{ref-Lindsay2016}
+Lindsay, J.B., 2016. Whitebox {GAT}: {A} case study in geomorphometric
+analysis. Comput. Geosci. 95, 75--84.
+\url{https://doi.org/10.1016/j.cageo.2016.07.003}
+
+\bibitem[\citeproctext]{ref-LiuEtAl2013}
+Liu, C., White, M., Newell, G., 2013. Selecting thresholds for the
+prediction of species occurrence with presence-only data. Journal of
+Biogeography 40, 778--789. \url{https://doi.org/10.1111/jbi.12058}
+
+\bibitem[\citeproctext]{ref-MartinEtAl2016}
+Martin, L., Edwards, Y.H., Roe, J., Garrard, A., 2016. Faunal turnover
+in the {Azraq Basin}, eastern {Jordan} 28,000 to 9,000 cal {BP},
+signalling climate change and human impact. Quaternary Research 86,
+200--219. \url{https://doi.org/10.1016/j.yqres.2016.07.001}
+
+\bibitem[\citeproctext]{ref-MillerEtAl2024}
+Miller, T., Blackwood, C.B., Case, A.L., 2024. Assessing the utility of
+{SoilGrids250} for biogeographic inference of plant populations. Ecology
+and Evolution 14, e10986. \url{https://doi.org/10.1002/ece3.10986}
+
+\bibitem[\citeproctext]{ref-ModEtAl2016}
+Mod, H.K., Scherrer, D., Luoto, M., Guisan, A., 2016. What we use is not
+what we know: Environmental predictors in plant distribution models.
+Journal of Vegetation Science 27, 1308--1322.
+\url{https://doi.org/10.1111/jvs.12444}
+
+\bibitem[\citeproctext]{ref-StockwellPeterson2002}
+Stockwell, D.R.B., Peterson, A.T., 2002. Effects of sample size on
+accuracy of species distribution models. Ecological Modelling 148,
+1--13. \url{https://doi.org/10.1016/S0304-3800(01)00388-X}
+
+\bibitem[\citeproctext]{ref-ValaviEtAl2021}
+Valavi, R., Elith, J., Lahoz-Monfort, J.J., Guillera-Arroita, G., 2021.
+Modelling species presence-only data with random forests. Ecography 44,
+1731--1742. \url{https://doi.org/10.1111/ecog.05615}
+
+\bibitem[\citeproctext]{ref-ValaviEtAl2022}
+Valavi, R., Guillera-Arroita, G., Lahoz-Monfort, J.J., Elith, J., 2022.
+Predictive performance of presence-only species distribution models: A
+benchmark study with reproducible code. Ecological Monographs 92,
+e01486. \url{https://doi.org/10.1002/ecm.1486}
+
+\bibitem[\citeproctext]{ref-VelazcoEtAl2017}
+Velazco, S.J.E., Galvão, F., Villalobos, F., De Marco Júnior, P., 2017.
+Using worldwide edaphic data to model plant species niches: {An}
+assessment at a continental extent. PLoS One 12, e0186025.
+\url{https://doi.org/10.1371/journal.pone.0186025}
+
+\bibitem[\citeproctext]{ref-WiszEtAl2008}
+Wisz, M.S., Hijmans, R.J., Li, J., Peterson, A.T., Graham, C.H., Guisan,
+A., Group, N.P.S.D.W., 2008. Effects of sample size on the performance
+of species distribution models. Diversity and Distributions 14,
+763--773. \url{https://doi.org/10.1111/j.1472-4642.2008.00482.x}
+
+\bibitem[\citeproctext]{ref-WrightZiegler2017}
+Wright, M.N., Ziegler, A., 2017. Ranger: {A Fast Implementation} of
+{Random Forests} for {High Dimensional Data} in {C}++ and {R}. Journal
+of Statistical Software 77, 1--17.
+\url{https://doi.org/10.18637/jss.v077.i01}
+
+\bibitem[\citeproctext]{ref-YaworskyEtAl2023}
+Yaworsky, P.M., Hussain, S.T., Riede, F., 2023. Climate-driven habitat
+shifts of high-ranked prey species structure {Late Upper Paleolithic}
+hunting. Scientific Reports 13, 4238.
+\url{https://doi.org/10.1038/s41598-023-31085-x}
+
+\end{CSLReferences}
+
+
+
+
+\end{document}

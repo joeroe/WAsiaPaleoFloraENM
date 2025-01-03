@@ -1,25 +1,33 @@
 ---
-title: Biogeography of crop progenitors and wild plant resources during the transition to agriculture in West Asia
+title: Biogeography of crop progenitors and wild plant resources during the transition to agriculture in West Asia, 21–8.3 ka
 date: today
 author: 
 - name: Joe Roe
   id: jr
   orcid: 0000-0002-1011-1244
   email: joeroe@hey.com
-  affiliation: University of Bern
+  affiliations:
+    - name: University of Bern
+      country: Switzerland
+    - name: University of Copenhagen
+      country: Denmark
+  corresponding: true
 - name: Amaia Arranz-Otaegui
   id: aao
   orcid: 0000-0002-5091-6426
-  affiliation: University of the Basque Country
+  affiliation: 
+    - name: University of the Basque Country
+      country: Spain
 abstract: |
-  This paper presents the first comprehensive reconstructions of the prehistoric 
-  ranges of [X] plant species known to have been gathered or cultivated by early
-  agricultural societies in Southwest Asia, including the progenitors of the 
-  first crops. We used machine learning to train an ecological niche model (ENM)
-  of each species based on its present-day distribution in relation to climate 
-  and environmental variables. Predictions of the potential ranges of these 
-  species at key stages of the Pleistocene–Holocene transition could then be
-  derived from these models using palaeoclimate 
+  This paper presents the first comprehensive reconstructions of the 
+  palaeodistributions of [X] plant species known to have been gathered or 
+  cultivated by early agricultural societies in Southwest Asia, including the 
+  progenitors of the first crops. We used machine learning to train an 
+  ecological niche model (ENM) of each species based on its present-day 
+  distribution in relation to climate and environmental variables. Predictions 
+  of the potential ranges of these species at key stages of the 
+  Pleistocene–Holocene transition could then be derived from these models using 
+  hindcast data from palaeoclimate simulations.
   Species ranges were on average [X%] [larger|smaller] in the Early Holocene 
   compared to today, indicating [...]. The modelled ranges predict the
   observed occurrence of these species on archaeological sites with [low|medium|high]
@@ -30,14 +38,51 @@ abstract: |
   the archaeobotanical record is [not] likely to be influenced by environmental 
   change and species turnover, not just, as is often assumed, human economic 
   choices.
-format: html
+format: 
+  elsevier-pdf:
+    keep-tex: true
+    cite-method: citeproc
+    journal:
+      name: Open Quaternary
+      formatting: review
 bibliography: references.bib
+execute: 
+  echo: false
+  eval: false
 ---
 
-```{r dependencies}
+* [ ] Finish analysis:
+  - [ ] Add terrain, soil
+  - [ ] Find a resolution that's workable
+  - [ ] Do thresholding?
+- [ ] First draft:
+  - [ ] Introduction
+  - [ ] Background
+    - [ ] Biogeography
+    - [ ] ENM
+  - [x] Methods & Materials
+    - [x] Occurrence data
+    - [x] Predictor data
+    - [x] Random Forest model
+  - [ ] Results
+    - [ ] Model assessment
+    - [ ] Hindcasting
+  - [ ] Discussion
+    - [ ] General trends
+    - [ ] Case studies
+  - [ ] Conclusion
+- [ ] Figures
+  - [ ] tbl-predictors
+  - [ ] tbl-climate-periods
+* [ ] Appendix with all hindcast predictions
+- [ ] References & copyediting
+- [ ] Final proofread
+
+```{r dependencies, eval=TRUE, message=FALSE}
 library("cowplot")
 library("dplyr")
 library("dotenv")
+library("english")
 library("forcats")
 library("fs")
 library("furrr")
@@ -82,7 +127,7 @@ w_asia <- st_bbox(c(xmin = 25, xmax = 55, ymin = 22.5, ymax = 42.5), crs = 4326)
 s_levant <- st_bbox(c(xmin = 34, xmax = 39, ymin = 29, ymax = 34), crs = 4326)
 ```
 
-```{r define-periods}
+```{r define-periods, eval=TRUE}
 archaeo_periods <- tribble(
   ~period,             ~agriculture,                          ~start_bp, ~end_bp,
   "Late Epipal.",      "Foraging",                            15000,     11700,
@@ -106,35 +151,47 @@ climate_periods <- fct_inorder(c(
 ))
 ```
 
-## Introduction
+# Introduction
 
 * The first farming societies had an ecological context
-* Subsistence is understood (largely) through archaeobotany; ecological context from archaeobotany, palynology, palaeoclimate, etc.
+* Subsistence is understood (largely) through archaeobotany and zooarchaeology; ecological context from environmental archaeology, palynology, palaeoclimate records, etc.
   * But these have a variety of biases (human selection, taphonomy, etc.)
   * And at the end of the day only represent specific places – interpolation to the entire region is not straightforward
-  * Overlap makes it difficult to see where human choices depart from the environmental background [cf. Martin et al. 2016, for zooarch]
+  * Overlap makes it difficult to see where human choices depart from the environmental background [cf. @MartinEtAl2016]
+  * Or to fully contextualise subsistence strategies and shifts in strategies in response to environmental shifts [e.g. @YaworskyEtAl2023].
 * Here we present an alternative approach using ENM
   * Whole region, at multiple climate snapshots
   * Independent of archaeobot. and pal. clim. data, so can verify and compare
 
-## Background
+# Background
 
-* Epipal./Neo. plant-based economies
+* The transition to agriculture in West Asia was...
+
+## Biogeography and agricultural origins
+
+* Has always been important in study of agricultural origins
+  * Historically: Vavilov, Pumpelly & Childe
+  * Genetic studies tell us origin points, but not ranges
+* Epipal./Neo. plant-based economies were diverse
   * More than the "founder crops"; 
-  * More than food;
+  * More than food
+  * (In archaebot., not all intentionally collected)
   * Regionally and temporally diverse
   * ...so we model lots of species!
-* Regional ecological reconstructions
+* Regional ecological reconstructions generally rely on the 'expert interpolation' (or what do they call it with isoscapes?) method
   * See CSEAS (AEA-prep) presentation
   * Figure: comparisons
-* Archaeological applications of ENM
-  * Review: Franklin et al. 2015
-  * In SW Asia: Conolly et al. 2012, Collins et al. 2018
-  * Train with archaeo, or train with present-day?
-    * In ENM literature, many sceptical about fore- and hind-casting
-    * Archaeo data a golden opportunity here
 
-## Methods and materials
+## Ecological niche modelling in archaeology
+
+* Review: @FranklinEtAl2015
+* In SW Asia: @ConollyEtAl2012 (first use ever??), @CollinsEtAl2018
+* Varying uses: to reconstruct human niches (esp. in Palaeolithic), to reconstruct spread of (esp. domestic) species from archaeological record, or to reconstruct wild ranges from modern occurrences and palaeoclimate (our approach)
+* Caveats
+  * In ENM literature, many sceptical about fore- and hind-casting
+  * Archaeo data a golden opportunity here
+
+# Methods and materials
 
 ```{r read-basemap}
 # Turn off s2 while we deal with Natural Earth's dodgy geometries
@@ -166,97 +223,11 @@ w_asia_land <- st_intersection(st_as_sfc(w_asia), ne_land)
 sf_use_s2(use_s2)
 ```
 
-### Predictor data
+## Occurrence data
 
-Bioclimatic data – the standard, and what allows us to do hindcasting.
-
-Topographic data derived from a DEM:
-
-* Aspect and slope – proxies for solar radiation, but only if high resolution [@AustinVanNiel2011; @LeempoelEtAl2015]
-* TWI – proxy for soil moisture, important for arid environments [@KopeckyCizkova2010; @CamposEtAl2016; DiVirgilioEtAl2018]
-
-Soil data – important for plants [@DubuisEtAl2013; @ModEtAl2016; @VelazcoEtAl2017] but not all variables from SoilGrids are reliable: so we just use soil texture (clay, silt, sand) and pH at the surface (0-5 cm depth) [@MillerEtAl2024].
-
-```{r data-terrain}
-# Reacquire derived_data/srtm_15plus_w_asia.tif if needed:
-if (!file_exists(derived_data("dem", "srtm_15plus_w_asia.tif"))) {
-  message("Redownloading DEM data...")
-  source(here("data", "data-dem.R"))
-}
-
-# TODO: derived terrain products are two big to commit
-# TODO: does TWI actually make sense at this resolution? Could start with (much)
-# higher res, then upscale?
-terrain <- read_stars(derived_data("dem", c("srtm_15plus_w_asia.tif", 
-                                            "srtm_15plus_w_asia_slope.tif",
-                                            "srtm_15plus_w_asia_aspect.tif",
-                                            "srtm_15plus_w_asia_wetness.tif")))
-names(terrain) <- c("elevation", "slope", "aspect", "wetness")
-```
-
-```{r data-soil}
-# Reacquire derived_data/soilgrids if needed:
-if (length(dir_ls(derived_data("soilgrids"), glob = "*.tif")) < 1) {
-  message("Redownloading SoilGrids data...")
-  source(here("data", "data-soilgrids.R"))
-}
-
-soil <- map(dir_ls(derived_data("soilgrids")), read_stars)
-names(soil) <- str_split_i(basename(names(soil)), "_", 2)
-soil <- do.call(c, soil)
-```
-
-```{r data-climate}
-# Reacquire derived_data/paleoclim if needed:
-if (length(dir_ls(derived_data("paleoclim"), glob = "*.tif")) < 1) {
-  message("Redownloading Paleoclim data...")
-  source(here("data", "data-paleoclim.R"))
-}
-
-climate <- read_stars(
-  derived_data(
-    "paleoclim", 
-    paste0("paleoclim_", names(climate_periods), "_2_5m_w_asia.tif")
-  ),
-  along = NA
-)
-
-names(climate) <- names(climate_periods)
-
-climate <- st_redimension(climate, name = "period") |>
-  split("band")
-```
-
-```{r data-environment}
-# For time-invariant predictors, collapse attributes into dimension and 
-# duplicate to create a dummy period dimension
-# TODO: maybe need to downsample first?
-terrain <- st_redimension(terrain, name = "variable")
-terrain <- do.call(c, rep(list(terrain), length(climate_periods)))
-names(terrain) <- names(climate_periods)
-terrain <- st_redimension(terrain, name = "period") # TODO: why *so* slow?
-
-soil <- st_redimension(soil, name = "variable")
-soil <- do.call(c, rep(list(soil), length(climate_periods)))
-names(soil) <- names(climate_periods)
-soil <- st_redimension(soil, name = "period")
-
-# Resample to common grid
-terrain <- st_warp(terrain, climate, use_gdal = TRUE, method = "cubicspline")
-soil <- st_warp(soil, climate, use_gdal = TRUE, method = "cubicspline")
-
-# TODO: combine and split variable
-# TODO: fill NAs?
-```
-
-### Occurrence data
-
-```{r read-archaeo_flora}
-archaeo_flora <- read_tsv(raw_data("swasia_neolithic_flora.tsv"))
-```
-
-```{r tidy-archaeo_flora}
-archaeo_flora |>
+```{r data-flora}
+# Flora present at archaeological sites
+archaeo_flora <- read_tsv(raw_data("swasia_neolithic_flora.tsv")) |>
   rename(taxon_group = "taxon", taxon = "taxon_detail") |>
   # Assign to archaeological periods
   # TODO: refactor as function
@@ -269,9 +240,7 @@ archaeo_flora |>
                  ordered_result = TRUE)
   ) ->
   archaeo_flora
-```
 
-```{r summarise-archaeo_flora}
 n_assemb_neolithic <- archaeo_flora |> 
   distinct(site_name, phase_code, period) |> 
   filter(period %in% neolithic) |> 
@@ -281,19 +250,8 @@ n_site_neolithic <- archaeo_flora |>
   filter(period %in% neolithic) |> 
   distinct(site_name) |> 
   nrow()
-```
 
-To generate the list of taxa modelled in this study, we ...
-
-* Taxa present at more than three Neolithic sites, according to the database of our previous study [@ArranzOtaeguiRoe2023]
-* Identified at least to species (and matchable to the GBIF Backbone Taxonomy)
-* Have at least 100 occurrences in West Asia (meeting the criteria below) in the GBIF database
-* Excluded domestic species, replacing them with their wild progenitor, where known and present in the GBIF database
-
-We also considered the number modern occurrences available for each taxon.
-ENMs are known to have reasonable predictive power even with small training samples (i.e. less than a hundred observations, [@StockwellPeterson2002; @HernandezEtAl2006; @WiszEtAl2008]).
-
-```{r generate-flora}
+# Flora to be modelled
 archaeo_flora |>
   filter(period %in% neolithic) |>
   group_by(taxon) |>
@@ -302,15 +260,20 @@ archaeo_flora |>
     p_present = n_present / n_assemb_neolithic,
     .groups = "drop"
   ) |>
-  filter(n_present > 2) ->
+  filter(n_present > 2) |>
+  # Exclude taxa not identified to species
+  filter(!str_ends(taxon, "sp.")) ->
   flora
 ```
 
-```{r tidy-flora-taxonomy}
-# Normalise species names and match to the GBIF Backbone Taxonomy
-# Excluding taxa not identified to species
-flora |>
-  filter(!str_ends(taxon, "sp.")) |>
+We consider X<!-- TODO --> distinct taxa (@tbl-occ-count) - all the identifiable species known to be present at more than three Neolithic sites in West Asia, according to our previous study [@ArranzOtaeguiRoe2023].
+<!-- TODO: something about not distinguishing between source of plant remains? -->
+
+```{r data-flora-taxonomy}
+# - Normalise species names and match to the GBIF Backbone Taxonomy
+# - Recode domesticates as their wild progenitors.
+# - Add other wild progenitors of wheats
+flora <- flora |>
   mutate(
     taxon = case_match(taxon,
                        "Vicia narbonense" ~ "Vicia narbonensis", # N=3
@@ -321,33 +284,31 @@ flora |>
                        "Stipa capensis" ~ "Stipa dregeana", # N=2
                        .default = taxon),
     taxon_original = taxon,
-    taxon = map_chr(taxon, gbif_accepted_name)
-  ) ->
-  flora
-```
-
-```{r tidy-flora-domesticates}
-# Recode domesticates as their wild progenitors.
-# Add other wild progenitors of wheats
-flora |> 
-  mutate(taxon = case_match(
-    taxon,
-    "Cicer arietinum" ~ "Cicer reticulatum",
-    "Hordeum vulgare" ~ "Hordeum spontaneum",
-    "Vicia lens" ~ "Vicia orientalis",
-    "Linum usitatissimum" ~ "Linum bienne",
-    "Triticum aestivum" ~ "Triticum turgidum dicoccum",
-    "Triticum dicoccoides" ~ "Triticum turgidum dicoccum",
-    "Triticum turgidum durum" ~ "Triticum turgidum dicoccum",
-    "Triticum monococcum" ~ "Triticum monococcum aegilopoides",
-    .default = taxon
-  )) |>
+    taxon = map_chr(taxon, gbif_accepted_name),
+    taxon = case_match(
+      taxon,
+      "Cicer arietinum" ~ "Cicer reticulatum",
+      "Hordeum vulgare" ~ "Hordeum spontaneum",
+      "Vicia lens" ~ "Vicia orientalis",
+      "Linum usitatissimum" ~ "Linum bienne",
+      "Triticum aestivum" ~ "Triticum turgidum dicoccum",
+      "Triticum dicoccoides" ~ "Triticum turgidum dicoccum",
+      "Triticum turgidum durum" ~ "Triticum turgidum dicoccum",
+      "Triticum monococcum" ~ "Triticum monococcum aegilopoides",
+      .default = taxon
+    )
+  ) |>
   bind_rows(tibble(taxon = c("Triticum urartu", "Aegilops speltoides", 
-                             "Aegilops tauschii"))) ->
-  flora
+                             "Aegilops tauschii")))
 ```
 
-```{r fetch-occ-count}
+Taxonomic names were resolves to the canonical form specified in the GBIF Backbone Taxonomy [@GBIFSecretariat2023].
+<!-- TODO: still relevent? aren't we modelling species? -->So for example occurrences for "Bolboschoenus" included all species and subspecies, including specimens described as *Bolboschoenus sp.*, *Bolboschoenus maritimus* and *Scirpus maritimus*.
+Domestic species meeting our inclusion criteria were substituted with their wild progenitor(s), where known.
+
+## Occurrence data
+
+```{r data-occ-count}
 flora |>
   group_by(taxon) |>
   summarise(
@@ -390,15 +351,16 @@ flora |>
   tab_style(cell_text(style = "italic"), cells_body(taxon))
 ```
 
+
 ```{r filter-flora}
 flora <- filter(flora, n_occ > 50)
-# TODO: Temporary measure.
 # Why are there 47k occurrences of Avena sterilis??
 flora <- filter(flora, taxon != "Avena sterilis")
 ```
 
-Occurrence data was obtained from GBIF using the GBIF occurrence API.
-This deals with synonyms etc. (using the GBIF Backbone Taxonomy as a standard), so e.g. retrieving data for "Bolboschoenus" includes all species and subspecies, including specimens described as *Bolboschoenus sp.*, *Bolboschoenus maritimus* and *Scirpus maritimus*.
+Occurrence data was obtained from the Global Biodiversity Information Facility (GBIF) using via its application programming interface and the R package rgbif [@ChamberlainBoettiger2017; @rgbif].
+Although ENMs have reasonable predictive power even with small training samples [@StockwellPeterson2002; @HernandezEtAl2006; @WiszEtAl2008], we excluded X<!-- TODO --> taxa with less than fifty recorded occurrences in our study region.
+We also excluded one taxon (*Avena sterilis*) with over 47,000 occurrences, as this would have been computationally prohibitive and we were uncertain what account for such a disproportionately high number of records.
 
 ```{r fetch-occ}
 # TODO: Refactor
@@ -450,14 +412,7 @@ flora |>
            default_crs = latlong)
 ```
 
-<!-- TODO: following @ValaviEtAl2022, more accurate to call pseudo-absences
-  "background samples" -->
-Occurrence data only tells us where a species is present;
-there is no definitive information on where the species is *not* found.
-We therefore need to generate random background points or "pseudo-absences" to feed to the model.
-There are several ways to do this. 
-We follow the advice of Barbet-Massin et al. (2012) for regression-based species distribution models and use a large (~10000) random sample of points, weighted equally against the presences in the regression.
-@ValaviEtAl2022 recommends using a very large background sample for random forest models.
+<!-- TODO: occurrence tidying -->
 
 ```{r generate-background}
 # TODO: maybe defer this to just before the model is actually fit ?
@@ -482,6 +437,102 @@ flora <- flora |>
   select(-bg_data)
 ```
 
+<!-- TODO: fix informal tone -->
+Occurrence data only tells us where a species is present;
+there is rarely definitive information on where the species is *not* found.
+We therefore need to generate random background points or "pseudo-absences" to feed to the model.
+There are several ways to do this. 
+We follow the advice of @BarbetMassinEtAl2012 for regression-based species distribution models and use a large (:10000) random sample of points, weighted equally against the presences in the regression.
+@ValaviEtAl2022 also recommend using a very large background sample for random forest models.
+
+## Predictor data
+
+We modelled the occurrence of species as a function of <!-- TODO -->X spatial predictor variables (@tbl-predictors).
+These included:
+
+```{r data-climate}
+# Reacquire derived_data/paleoclim if needed:
+if (length(dir_ls(derived_data("paleoclim"), glob = "*.tif")) < 1) {
+  message("Redownloading Paleoclim data...")
+  source(here("data", "data-paleoclim.R"))
+}
+
+climate <- read_stars(
+  derived_data(
+    "paleoclim", 
+    paste0("paleoclim_", names(climate_periods), "_2_5m_w_asia.tif")
+  ),
+  along = NA
+)
+
+names(climate) <- names(climate_periods)
+
+climate <- st_redimension(climate, name = "period") |>
+  split("band")
+```
+
+* Sixteen 'bioclimatic' variables derived from monthly temperature and precipitation values, following standard practice for species distribution models [@HijmansEtAl2005]. Contemporary bioclimatic predictor data for West Asia was extracted from the global CHELSA dataset [@KargerEtAl2017], which predicts temperature and precipitation from downscaled general circulation model output at 1 km resolution.
+
+```{r data-terrain}
+# Reacquire derived_data/srtm_15plus_w_asia.tif if needed:
+if (!file_exists(derived_data("dem", "srtm_15plus_w_asia.tif"))) {
+  message("Redownloading DEM data...")
+  source(here("data", "data-dem.R"))
+}
+
+# TODO: derived terrain products are two big to commit
+# TODO: does TWI actually make sense at this resolution? Could start with (much)
+# higher res, then upscale?
+terrain <- read_stars(derived_data("dem", c("srtm_15plus_w_asia.tif", 
+                                            "srtm_15plus_w_asia_slope.tif",
+                                            "srtm_15plus_w_asia_aspect.tif",
+                                            "srtm_15plus_w_asia_wetness.tif")))
+names(terrain) <- c("elevation", "slope", "aspect", "wetness")
+```
+
+* Terrain aspect and slope, which at high resolution perform well as proxies for solar radiation when modelling plant occurrence [@AustinVanNiel2011; @LeempoelEtAl2015]; and the topographic wetness index (TWI), which serves as a proxy for soil moisture and is particularly important in modelling arid environments [@KopeckyCizkova2010; @CamposEtAl2016; @DiVirgilioEtAl2018]. All three were derived from the SRTM15+ digital elevation model using algorithms from WhiteboxTools [@Lindsay2016].
+
+```{r data-soil}
+# Reacquire derived_data/soilgrids if needed:
+if (length(dir_ls(derived_data("soilgrids"), glob = "*.tif")) < 1) {
+  message("Redownloading SoilGrids data...")
+  source(here("data", "data-soilgrids.R"))
+}
+
+soil <- map(dir_ls(derived_data("soilgrids")), read_stars)
+names(soil) <- str_split_i(basename(names(soil)), "_", 2)
+soil <- do.call(c, soil)
+```
+
+* Edaphic data from SoilGrids [@HenglEtAl2014; @HenglEtAl2017], which improves model performance for plants [@DubuisEtAl2013; @ModEtAl2016; @VelazcoEtAl2017]. Based on a recent assessment of the reliability of SoilGrids data for species distribution modelling [@MillerEtAl2024], we used a subset of four variables relating to soil texture (clay, silt, sand) and pH at the surface (0-5 cm depth).
+
+```{r data-environment}
+# For time-invariant predictors, collapse attributes into dimension and 
+# duplicate to create a dummy period dimension
+# TODO: maybe need to downsample first?
+terrain <- st_redimension(terrain, name = "variable")
+terrain <- do.call(c, rep(list(terrain), length(climate_periods)))
+names(terrain) <- names(climate_periods)
+terrain <- st_redimension(terrain, name = "period") # TODO: why *so* slow?
+
+soil <- st_redimension(soil, name = "variable")
+soil <- do.call(c, rep(list(soil), length(climate_periods)))
+names(soil) <- names(climate_periods)
+soil <- st_redimension(soil, name = "period")
+
+# Resample to common grid
+terrain <- st_warp(terrain, climate, use_gdal = TRUE, method = "cubicspline")
+soil <- st_warp(soil, climate, use_gdal = TRUE, method = "cubicspline")
+
+# TODO: combine and split variable
+# TODO: fill NAs?
+```
+
+Predictor data was transformed to the same projection system (WGS84 / UTM 37 N) and a common resolution of X<!-- TODO --> km.
+
+For hindcasting, we used reconstructed bioclimatic data for `r english(nrow(climate_periods) - 1)` key periods (@tbl-climate-periods) generated from downscaled paleoclimate simulations from the HadCM3 general circulation model [@BrownEtAl2018].
+Terrain and soil predictors were held constant, since reconstructions of these variables in the past are not available at sufficient scale.
+It is not likely that either macroscale topography or soil characteristics have altered significantly over the period of time considered here, so we assume that this does not degrade model performance, and may in fact benefit it by providing 'anchoring' predictors that are independent of climate change.
 
 ```{r extract-predictor-data}
 flora |> 
@@ -495,16 +546,9 @@ flora |>
   flora
 ```
 
-TODO: Soil, terrain (incl. TWI, slope?)
+## Random Forest
 
-### Random Forest
-
-There are many methods for ENM.
-Random Forest is one of the best performing, providing it is appropriately parameterised to account for the class imbalance between presence and background samples (balanced random forest) [@ValaviEtAl2021a; @ValaviEtAl2021b].
-
-We used the R package ranger [@WrightZiegler2017].
-
-```{r prepare-niche-model-data}
+```{r niche-data}
 # Split training, test (for model assessment) and cross-validation sets (for
 # tuning)
 flora <- flora |>
@@ -525,7 +569,12 @@ niche_recipe <- recipe(training(flora$occ_split[[1]])) |>
   step_nzv(all_predictors())
 ```
 
-```{r niche-models}
+Ecological niche modelling is a classification problem that can be approached with a wide range of statistical methods.
+A substantial literature exists on the relatively performance of these approaches and their respective parameterisations [reviewed in @ValaviEtAl2022].
+Random Forest, a widely-used machine learning algorithm, is amongst the best performing approaches for presence-only species distribution models, providing it is appropriately parameterised to account for the class imbalance between presence and background samples [@ValaviEtAl2021; @ValaviEtAl2022].
+For our application, it also has the advantage of requiring little to no manual parameter tuning to achieve good predictive results, which makes it easier to model a larger numbers of taxa.
+
+```{r niche-model}
 # Random Forest Niche Model
 # With hyperparameters adapted from the example of a down-sampled RF model given 
 # by https://rvalavi.github.io/SDMwithRFs/#model-fitting-with-ranger-package
@@ -546,18 +595,9 @@ niche_model <- rand_forest(mode = "classification", trees = 1000) |>
 #   set_engine("ranger", probability = TRUE)
 
 niche_workflow <- workflow(niche_recipe, niche_model)
-```
 
-We follow @ValaviEtAl2021a in using down-sampling and their recommended hyperparameters to avoid overfitting.
-
-<!-- TODO: OR:
-Hyperparameter tuning is important to avoid over-fitting [@CITE].
-We tuned each model separately to maximise ROC AUC.
--->
-
-```{r tune-niche-models}
 # Tune model (separately for each taxon)
-# TODO: would be nice but is extremely slow
+# TODO: questioning - would be nice but is extremely slow
 # flora |>
 #   slice_sample(n = 10) |>
 #   mutate(
@@ -579,6 +619,16 @@ We tuned each model separately to maximise ROC AUC.
 #   )
 ```
 
+For each taxon we trained a classification model to predict occurrence (presence or absence/background) based on our X<!--TODO--> predictor variables (@tbl-predictors).
+We used the Random Forest algorithm implemented in the R package 'ranger' [@WrightZiegler2017] and the 'tidymodels' [@tidymodels] framework for data preprocessing and model selection.
+To avoid overfitting, we follow @ValaviEtAl2021 in their recommended hyperparameters and use of down-sampling to balance presence and background samples.
+Models for each taxon were fit independently, with redundant zero-variance predictors excluded, and assessed based on balanced training (3/4) and test (1/4) partitions.
+
+<!-- TODO: OR:
+Hyperparameter tuning is important to avoid over-fitting [@CITE].
+We tuned each model separately to maximise ROC AUC.
+-->
+
 ```{r fit-niche-models}
 # Fit best model to training data
 flora <- flora |>
@@ -587,10 +637,11 @@ flora <- flora |>
   )
 ```
 
+<!-- TODO: cut? -->
 The output of the model is probabilistic.
 However, this should not be understood as an actual probability of occurrence [@CITE], but more akin to an estimate of habitat suitability.
 To simplify interpretation, we can convert these predictions into binary presence/absence maps, a process called "thresholding".
-We select the threshold value for each model individually, using MaxSSS (as recommended by [@LuiEtAl2013])
+We select the threshold value for each model individually, using MaxSSS [as recommended by @LiuEtAl2013].
 This also makes it possible to analyses the predictions together as an assemblage.
 
 ```{r thresholding}
@@ -607,9 +658,9 @@ This also makes it possible to analyses the predictions together as an assemblag
 # Or just stick with probabilities?
 ```
 
-## Results
+# Results
 
-### Model assessment
+## Model assessment
 
 ```{r fig-model-accuracy-vs-n_occ}
 #| fig-cap: Number of taxon occurrences and model accuracy on test dataset
@@ -627,12 +678,11 @@ flora |>
   theme_half_open() 
 ```
 
-### Modelled ecological niches
+* Modelled ecological niches on current data
 
-* On current data
-* Sensitivity to climate fluctuations
+## Hindcasting
 
-### Hindcasting
+Sensitivity to climate fluctuations?
 
 ```{r predict}
 # TODO: structure this way from the beginning?
@@ -684,9 +734,8 @@ ggplot() +
   )
 ```
 
-### Comparison to archaeological occurrences
+* Comparison to archaeological occurrences
 
-## Discussion
 
 ```{r sum-pred-eh}
 flora |>
@@ -717,8 +766,20 @@ ggplot() +
 saveRDS(pred_eh, "pred_eh.Rdata")
 ```
 
+# Discussion
+
+* General trends:
+  * Quantified sensitivity of plant ranges to climate change
+  * Crop progenitors saw range contractions just before the onset of agriculture? (Moreso than other wild resources??)
+  * How could are reconstructed ranges at predicting archaeological assemblages? (+Implications)
+* Interesting individual case studies:
+  * Wheat progenitors
+  * ???
+
 ```{r fig-pred-observed-eh}
 
 ```
 
-## Acknowledgments {.appendix}
+# Conclusion
+
+# References {.appendix}
