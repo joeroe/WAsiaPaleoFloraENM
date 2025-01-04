@@ -1,5 +1,5 @@
 ---
-title: Biogeography of crop progenitors and wild plant resources in West Asia, 21–8.3 ka
+title: Biogeography of crop progenitors and wild plant resources in Late Pleistocene–Early Holocene West Asia, 21–8.3 ka
 date: today
 author: 
 - name: Joe Roe
@@ -41,10 +41,11 @@ abstract: |
 format: 
   elsevier-pdf:
     keep-tex: true
-    cite-method: citeproc
+    # cite-method: citeproc
     journal:
       name: Open Quaternary
       formatting: review
+      cite-style: authoryear
 bibliography: references.bib
 execute: 
   echo: false
@@ -65,7 +66,7 @@ execute:
     - [ ] Case studies
   - [ ] Conclusion
 - [ ] Figures
-  - [ ] tbl-occ-count
+  - [ ] tbl-occ-count (needs pdf cleanup)
   - [ ] tbl-predictors
   - [ ] tbl-climate-periods
 - [ ] Clean up package code
@@ -205,7 +206,7 @@ Here what is modelled is not strictly a biological niche alone, but also aspects
 These applications can be distinguihed from 'palaeoecological niche modelling', where the object of model remains, as in ecology, a non-human biological niche.
 
 @FranklinEtAl2015 review palaeoecological niche modelling and advocate for its greater adoption in environmental archaeology.
-One relevant early example is @ConollyEtAl2012 used the occurrence of wild and domestic *Bos* remains at prehistoric archaeological sites in Europe and West Asia to map the evolving niche of cattle over the Pleistocene–Holocene transition.
+In an early application to West Asia, @ConollyEtAl2012 used the occurrence of wild and domestic *Bos* remains at prehistoric archaeological sites to map the evolving niche of cattle over the Pleistocene–Holocene transition.
 It has been used to model the availability of fauna exploited by humans at wider scales [e.g. @deAndresHerreroEtAl2018; @YaworksyEtAl2023] and, in a West Asian context, of foraged plant resources in the landscape around the Neolithic site of XX<!-- TODO: Kortik? --> [@CollinsEtAl2018].
 Modelling the spread of crops has been another significant archaeological application [@CremaEtAl].
 
@@ -267,8 +268,6 @@ ggplot() +
 
 <!-- TODO define study region and period -->
 
-## Occurrence data
-
 ```{r data-archaeo-flora}
 # Flora present at archaeological sites
 archaeo_flora <- read_tsv(
@@ -329,9 +328,6 @@ n_site_neolithic <- archaeo_flora |>
   distinct(site_name) |> 
   nrow()
 ```
-
-We consider X<!-- TODO --> distinct taxa (@tbl-occ-count) - all the identifiable species known to be present at more than three Neolithic sites in West Asia, according to our previous study [@ArranzOtaeguiRoe2023].
-<!-- TODO: something about not distinguishing between source of plant remains? -->
 
 ```{r data-flora}
 if (!file_exists(derived_data("flora.tsv"))) {
@@ -410,7 +406,9 @@ flora <- read_tsv(
 )
 ```
 
-Taxonomic names were resolves to the canonical form specified in the GBIF Backbone Taxonomy [@GBIFSecretariat2023].
+We began by considering `r nrow(flora)` distinct taxa (@tbl-occ-count) - all the identifiable species known to be present at more than three Neolithic (c. 11.7–6.5 ka) sites in West Asia, according to our previous study of the regional archaeobotanical data [@ArranzOtaeguiRoe2023].
+<!-- TODO: something about not distinguishing between source of plant remains? -->
+Taxonomic names were resolved to the canonical form specified in the GBIF Backbone Taxonomy [@GBIFSecretariat2023].
 So for example occurrences for *Bolboschoenus maritimus* also include those recorded under the older nomenclature *Scirpus maritimus* (see @tbl-occ-count).
 Domestic species meeting our inclusion criteria were substituted with their wild progenitor(s), where known.
 
@@ -428,7 +426,16 @@ if (!file_exists(derived_data("flora_occ_count.tsv"))) {
     )
   write_tsv(flora, derived_data("flora_occ_count.tsv"))
 }
-flora <- read_tsv(derived_data("flora_occ_count.tsv"))
+flora <- read_tsv(
+  derived_data("flora_occ_count.tsv"),
+  col_types = cols(
+    taxon = col_character(),
+    taxon_detail = col_character(),
+    n_present = col_double(),
+    p_present = col_double(),
+    n_occ = col_double()
+  )
+)
 ```
 
 ```{r tbl-occ-count}
@@ -501,7 +508,23 @@ if (!file_exists(derived_data("flora_occ.tsv"))) {
   )
   write_tsv(unnest(flora, cols = c(occ)), derived_data("flora_occ.tsv"))
 }
-flora <- nest(read_tsv(derived_data("flora_occ.tsv")), occ = gbif_key:latitude)
+flora <- read_tsv(
+  derived_data("flora_occ.tsv"),
+  col_types = cols(
+    taxon = col_character(),
+    taxon_detail = col_character(),
+    n_present = col_double(),
+    p_present = col_double(),
+    n_occ = col_double(),
+    gbif_key = col_double(),
+    scientific_name = col_character(),
+    genus = col_character(),
+    species = col_character(),
+    longitude = col_double(),
+    latitude = col_double()
+  )
+) |>
+  nest(occ = gbif_key:latitude)
 ```
 
 ```{r fig-occ-map}
@@ -633,7 +656,28 @@ environment <- c(climate_cube, terrain_cube, soil_cube)
 rm(climate_cube, terrain_cube, soil_cube)
 ```
 
-Predictor data was transformed to the same projection system (WGS84 / UTM 37 N) and a common resolution of X<!-- TODO --> km.
+Predictor data was transformed to common equal-area projection and resolution of `r pred_res / 1000` km.
+
+```{r tbl-climate-periods}
+#| fig-cap: Palaeoclimatic periods used for hindcasting, after @BrownEtAl2018
+# TODO: add refs (as footnotes?)
+climate_periods |>
+  mutate(
+    code = toupper(code),
+    age_start = start_bp / 1000,
+    age_end = end_bp / 1000
+  ) |>
+  select(period, code, age_start, age_end) |>
+  gt() |>
+  cols_label(period = "Period", age_start = "Age") |>
+  cols_merge(
+    c(period, code),
+    pattern = "{1} ({2})"
+  ) |>
+  cols_merge_range(age_start, age_end) |>
+  cols_units(age_start = "ka") |>
+  sub_missing()
+```
 
 For hindcasting, we used reconstructed bioclimatic data for `r english(nrow(climate_periods) - 1)` key periods (@tbl-climate-periods) generated from downscaled paleoclimate simulations from the HadCM3 general circulation model [@BrownEtAl2018].
 Terrain and soil predictors were held constant, since reconstructions of these variables in the past are not available at sufficient scale.
@@ -710,7 +754,7 @@ niche_workflow <- workflow(niche_recipe, niche_model)
 For each taxon we trained a classification model to predict occurrence (presence or absence/background) based on our X<!--TODO--> predictor variables (@tbl-predictors).
 We used the Random Forest algorithm implemented in the R package 'ranger' [@WrightZiegler2017] and the 'tidymodels' [@tidymodels] framework for data preprocessing and model selection.
 To avoid overfitting, we follow @ValaviEtAl2021 in their recommended hyperparameters and use of down-sampling to balance presence and background samples.
-Models for each taxon were fit independently, with redundant zero-variance predictors excluded, and assessed based on balanced training (3/4) and test (1/4) partitions.
+Models for each taxon were fit independently, with redundant zero-variance predictors excluded, and assessed based on balanced training (¾) and test (¼) partitions.
 
 ```{r fit-niche-models}
 # Fit best model to training data
@@ -741,7 +785,7 @@ flora |>
   mutate(niche_test_fit = map(niche, collect_metrics)) |>
   unnest(niche_test_fit) |>
   filter(.metric == "accuracy") |> # TODO: or roc_auc?
-  mutate(label = if_else(.estimate < 0.8, taxon, NA_character_)) |>
+  mutate(label = if_else(.estimate < 0.75, taxon, NA_character_)) |>
   ggplot(aes(n_occ, .estimate)) + 
   geom_smooth(method = "glm", formula = y ~ log(x)) +
   geom_point() + 
