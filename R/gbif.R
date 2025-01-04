@@ -20,6 +20,14 @@ gbif_accepted_name <- function(name) {
   else gbif$canonicalName
 }
 
+#' Acquire GBIF occurrence data for a given taxon
+#'
+#' @export
+gbif_data <- function(scientificName, ...) {
+  gbif_data <- rgbif::occ_data(scientificName = scientificName, ...)
+  gbif_data$data
+}
+
 #' Clean GBIF data
 #'
 #' A collection of functions for cleaning occurrence data from GBIF.

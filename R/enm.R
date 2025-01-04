@@ -8,6 +8,8 @@
 #'                an object with an [sf::st_sample()] method, or an object
 #'                coercible with [sf::st_bbox] (for much faster sampling from
 #'                a rectangular bounding box).
+#' @param coord_x Name of the column holding the x coordinate.
+#' @param coord_y Name of the column holding the y coordinate.
 #' @param ...     Name-value pairs of expressions to be added as fixed attributes
 #'                of the pseudo-absences. See [dplyr::mutate()].
 #' @param N       integer. Number of pseudo-absence points to generate.
@@ -17,8 +19,6 @@
 #' specified in `...`.
 #'
 #' @export
-#'
-#' @examples
 background_sample <- function(region, N, coord_x = "x", coord_y = "y", ...) {
   if (inherits(region, c("sf", "sfc", "sfg"))) {
     bg_sample <- sample_sf(region, N, ...)
@@ -34,7 +34,7 @@ background_sample <- function(region, N, coord_x = "x", coord_y = "y", ...) {
     colnames(bg_sample)[colnames(bg_sample) == "Y"] <- coord_y
   }
 
-  bg_sample
+  dplyr::select(tibble::tibble(bg_sample), -geometry)
 }
 
 #' @noRd

@@ -2,4 +2,6 @@
 .RData
 .Rproj.user
 .env
-analysis/data/derived_data/
+analysis/data/derived_data/dem/*
+analysis/data/derived_data/paleoclim/raw/*
+analysis/data/derived_data/*.Rdata

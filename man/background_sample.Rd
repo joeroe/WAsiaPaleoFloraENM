@@ -14,6 +14,10 @@ a rectangular bounding box).}
 
 \item{N}{integer. Number of pseudo-absence points to generate.}
 
+\item{coord_x}{Name of the column holding the x coordinate.}
+
+\item{coord_y}{Name of the column holding the y coordinate.}
+
 \item{...}{Name-value pairs of expressions to be added as fixed attributes
 of the pseudo-absences. See \code{\link[dplyr:mutate]{dplyr::mutate()}}.}
 }

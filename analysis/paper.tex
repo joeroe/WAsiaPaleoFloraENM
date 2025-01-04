@@ -126,6 +126,13 @@
 \newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{longtable}
+\usepackage{colortbl}
+\usepackage{array}
+\usepackage{anyfontsize}
+\usepackage{multirow}
 \makeatletter
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \AtBeginDocument{%
@@ -174,7 +181,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
-  pdftitle={Biogeography of crop progenitors and wild plant resources during the transition to agriculture in West Asia, 21--8.3 ka},
+  pdftitle={Biogeography of crop progenitors and wild plant resources in West Asia, 21--8.3 ka},
   pdfauthor={Joe Roe; Amaia Arranz-Otaegui},
   colorlinks=true,
   linkcolor={blue},
@@ -188,8 +195,8 @@
 \begin{document}
 
 \begin{frontmatter}
-\title{Biogeography of crop progenitors and wild plant resources during
-the transition to agriculture in West Asia, 21--8.3 ka}
+\title{Biogeography of crop progenitors and wild plant resources in West
+Asia, 21--8.3 ka}
 \author[1,2]{Joe Roe%
 \corref{cor1}%
 }
@@ -212,25 +219,26 @@ Country},country={Spain},countrysep={,},postcodesep={}}
         
 \begin{abstract}
 This paper presents the first comprehensive reconstructions of the
-palaeodistributions of {[}X{]} plant species known to have been gathered
-or cultivated by early agricultural societies in Southwest Asia,
-including the progenitors of the first crops. We used machine learning
-to train an ecological niche model (ENM) of each species based on its
-present-day distribution in relation to climate and environmental
-variables. Predictions of the potential ranges of these species at key
-stages of the Pleistocene--Holocene transition could then be derived
-from these models using hindcast data from palaeoclimate simulations.
-Species ranges were on average {[}X\%{]} {[}larger\textbar smaller{]} in
-the Early Holocene compared to today, indicating {[}\ldots{]}. The
-modelled ranges predict the observed occurrence of these species on
-archaeological sites with {[}low\textbar medium\textbar high{]}
-accuracy. The regional ubiquity of species in the archaeological record
-is {[}not{]} correlated with the predicted size of its range and the
-diversity of archaeobotanical assemblages is {[}not{]} correlated with
-the predicted diversity of its environs. This indicates that trends in
-taxonomic composition of the archaeobotanical record is {[}not{]} likely
-to be influenced by environmental change and species turnover, not just,
-as is often assumed, human economic choices.
+palaeodistributions of 56 plant species found regularly in association
+with early agricultural archaeological sites in West Asia, including the
+progenitors of the first crops. We used machine learning to train an
+ecological niche model of each species based on its present-day
+distribution in relation to climate and environmental variables.
+Predictions of the potential ranges of these species at key stages of
+the Pleistocene--Holocene transition could then be derived from these
+models using hindcast data from palaeoclimate simulations. Species
+ranges are predicted to have been on average {[}X\%{]}
+{[}larger\textbar smaller{]} in the Early Holocene compared to present
+conditions, indicating {[}\ldots{]}. The modelled ranges predict the
+observed occurrence of these species on archaeological sites with
+{[}low\textbar medium\textbar high{]} accuracy. The regional ubiquity of
+species in the archaeological record is {[}not{]} correlated with the
+predicted size of its range and the diversity of archaeobotanical
+assemblages is {[}not{]} correlated with the predicted diversity of its
+environs. This indicates that trends in taxonomic composition of the
+archaeobotanical record is {[}not{]} likely to have been influenced by
+environmental change and species turnover, in addition to human economic
+choices.
 \end{abstract}
 
 
@@ -242,18 +250,8 @@ as is often assumed, human economic choices.
 
 \begin{itemize}
 \tightlist
-\item[$\square$]
-  Finish analysis:
-
-  \begin{itemize}
-  \tightlist
-  \item[$\square$]
-    Add terrain, soil
-  \item[$\square$]
-    Find a resolution that's workable
-  \item[$\square$]
-    Do thresholding?
-  \end{itemize}
+\item[$\boxtimes$]
+  Finish modelling
 \item[$\square$]
   First draft:
 
@@ -268,21 +266,11 @@ as is often assumed, human economic choices.
     \tightlist
     \item[$\square$]
       Biogeography
-    \item[$\square$]
+    \item[$\boxtimes$]
       ENM
     \end{itemize}
   \item[$\boxtimes$]
     Methods \& Materials
-
-    \begin{itemize}
-    \tightlist
-    \item[$\boxtimes$]
-      Occurrence data
-    \item[$\boxtimes$]
-      Predictor data
-    \item[$\boxtimes$]
-      Random Forest model
-    \end{itemize}
   \item[$\square$]
     Results
 
@@ -312,10 +300,14 @@ as is often assumed, human economic choices.
   \begin{itemize}
   \tightlist
   \item[$\square$]
+    tbl-occ-count
+  \item[$\square$]
     tbl-predictors
   \item[$\square$]
     tbl-climate-periods
   \end{itemize}
+\item[$\square$]
+  Clean up package code
 \item[$\square$]
   Appendix with all hindcast predictions
 \item[$\square$]
@@ -520,6 +512,18 @@ circulation models of climate (Brown et al., 2018;
 
 \section{Methods and materials}\label{methods-and-materials}
 
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{paper_files/figure-pdf/fig-region-1.pdf}}
+
+}
+
+\caption{\label{fig-region}Study region}
+
+\end{figure}%
+
 \subsection{Occurrence data}\label{occurrence-data}
 
 We consider X distinct taxa (Table~\ref{tbl-occ-count}) - all the
@@ -529,24 +533,187 @@ Roe, 2023).
 
 Taxonomic names were resolves to the canonical form specified in the
 GBIF Backbone Taxonomy (\textbf{GBIFSecretariat2023?}). So for example
-occurrences for ``Bolboschoenus'' included all species and subspecies,
-including specimens described as \emph{Bolboschoenus sp.},
-\emph{Bolboschoenus maritimus} and \emph{Scirpus maritimus}. Domestic
-species meeting our inclusion criteria were substituted with their wild
-progenitor(s), where known.
+occurrences for \emph{Bolboschoenus maritimus} also include those
+recorded under the older nomenclature \emph{Scirpus maritimus} (see
+Table~\ref{tbl-occ-count}). Domestic species meeting our inclusion
+criteria were substituted with their wild progenitor(s), where known.
 
 \subsection{Occurrence data}\label{occurrence-data-1}
 
-Occurrence data was obtained from the Global Biodiversity Information
-Facility (GBIF) using via its application programming interface and the
-R package rgbif (Chamberlain et al., 2024; Chamberlain and Boettiger,
-2017). Although ENMs have reasonable predictive power even with small
-training samples (Hernandez et al., 2006; Stockwell and Peterson, 2002;
-Wisz et al., 2008), we excluded X taxa with less than fifty recorded
-occurrences in our study region. We also excluded one taxon (\emph{Avena
-sterilis}) with over 47,000 occurrences, as this would have been
+\begin{verbatim}
+Rows: 62 Columns: 5
+-- Column specification --------------------------------------------------------
+Delimiter: "\t"
+chr (2): taxon, taxon_detail
+dbl (3): n_present, p_present, n_occ
+
+i Use `spec()` to retrieve the full column specification for this data.
+i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+\end{verbatim}
+
+\begin{verbatim}
+Warning: HTML tags found, and they will be removed.
+* Set `options(gt.html_tag_check = FALSE)` to disable this check.
+HTML tags found, and they will be removed.
+* Set `options(gt.html_tag_check = FALSE)` to disable this check.
+HTML tags found, and they will be removed.
+* Set `options(gt.html_tag_check = FALSE)` to disable this check.
+HTML tags found, and they will be removed.
+* Set `options(gt.html_tag_check = FALSE)` to disable this check.
+HTML tags found, and they will be removed.
+* Set `options(gt.html_tag_check = FALSE)` to disable this check.
+HTML tags found, and they will be removed.
+* Set `options(gt.html_tag_check = FALSE)` to disable this check.
+HTML tags found, and they will be removed.
+* Set `options(gt.html_tag_check = FALSE)` to disable this check.
+HTML tags found, and they will be removed.
+* Set `options(gt.html_tag_check = FALSE)` to disable this check.
+HTML tags found, and they will be removed.
+* Set `options(gt.html_tag_check = FALSE)` to disable this check.
+HTML tags found, and they will be removed.
+* Set `options(gt.html_tag_check = FALSE)` to disable this check.
+HTML tags found, and they will be removed.
+* Set `options(gt.html_tag_check = FALSE)` to disable this check.
+HTML tags found, and they will be removed.
+* Set `options(gt.html_tag_check = FALSE)` to disable this check.
+\end{verbatim}
+
+\begin{table}
+
+\caption{\label{tbl-occ-count}Recorded occurrence of flora considered in
+this study in Neolithic and contemporary West Asia}
+
+\centering{
+
+\fontsize{12.0pt}{14.4pt}\selectfont
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lrr}
+\toprule
+ & \multicolumn{2}{c}{Occurrences} \\ 
+\cmidrule(lr){2-3}
+Taxon & Neolithic & Present \\ 
+\midrule\addlinespace[2.5pt]
+\emph{Triticum turgidum dicoccum}
+
+incl. \emph{Triticum aestivum}, \emph{Triticum dicoccoides}, \emph{Triticum dicoccum} & 64 (44\%) & 200 \\ 
+\emph{Hordeum spontaneum}
+
+incl. \emph{Hordeum vulgare} & 62 (43\%) & 6912 \\ 
+\emph{Triticum monococcum aegilopoides}
+
+incl. \emph{Triticum boeoticum}, \emph{Triticum monococcum} & 44 (30\%) & 3213 \\ 
+\emph{Bolboschoenus maritimus}
+
+incl. \emph{Scirpus maritimus} & 33 (23\%) & 364 \\ 
+\emph{Vicia ervilia} & 33 (23\%) & 858 \\ 
+\emph{Buglossoides tenuiflora} & 31 (21\%) & 159 \\ 
+\emph{Arnebia decumbens} & 25 (17\%) & 240 \\ 
+\emph{Buglossoides arvensis} & 25 (17\%) & 251 \\ 
+\emph{Medicago radiata} & 21 (14\%) & 883 \\ 
+\emph{Androsace maxima} & 20 (14\%) & 130 \\ 
+\emph{Vicia orientalis}
+
+incl. \emph{Lens culinaris} & 17 (12\%) & 441 \\ 
+\emph{Medicago astroites}
+
+incl. \emph{Trigonella astroites} & 16 (11\%) & 130 \\ 
+\emph{Arnebia linearifolia} & 14 (10\%) & 158 \\ 
+\emph{Linum bienne}
+
+incl. \emph{Linum usitatissimum} & 11 (8\%) & 274 \\ 
+\emph{Gypsophila vaccaria}
+
+incl. \emph{Vaccaria pyramidata} & 11 (8\%) & 326 \\ 
+\emph{Carex divisa} & 10 (7\%) & 330 \\ 
+\emph{Ficus carica} & 10 (7\%) & 4265 \\ 
+\emph{Lathyrus oleraceus}
+
+incl. \emph{Pisum elatius}, \emph{Pisum sativum} & 8 (6\%) & 2269 \\ 
+\emph{Vicia faba} & 8 (6\%) & 2578 \\ 
+\emph{Aizoanthemopsis hispanica}
+
+incl. \emph{Aizoon hispanicum} & 7 (5\%) & 303 \\ 
+\emph{Bolboschoenus glaucus} & 7 (5\%) & 27\textsuperscript{\textit{*}} \\ 
+\emph{Pistacia atlantica} & 7 (5\%) & 928 \\ 
+\emph{Polygonum arenarium arenarium}
+
+incl. \emph{Polygonum venantianum} & 7 (5\%) & 5\textsuperscript{\textit{*}} \\ 
+\emph{Prosopis farcta} & 7 (5\%) & 1205 \\ 
+\emph{Rumex pulcher} & 7 (5\%) & 794 \\ 
+\emph{Ammi majus} & 6 (4\%) & 461 \\ 
+\emph{Cicer reticulatum}
+
+incl. \emph{Cicer arietinum} & 6 (4\%) & 193 \\ 
+\emph{Hordeum bulbosum} & 6 (4\%) & 2036 \\ 
+\emph{Polygonum corrigioloides} & 6 (4\%) & 4\textsuperscript{\textit{*}} \\ 
+\emph{Salsola kali} & 6 (4\%) & 369 \\ 
+\emph{Taeniatherum caput-medusae} & 6 (4\%) & 235 \\ 
+\emph{Capparis spinosa} & 5 (3\%) & 4031 \\ 
+\emph{Chenopodium album} & 5 (3\%) & 357 \\ 
+\emph{Lolium temulentum} & 5 (3\%) & 148 \\ 
+\emph{Poa bulbosa} & 5 (3\%) & 1401 \\ 
+\emph{Aegilops crassa} & 4 (3\%) & 170 \\ 
+\emph{Atriplex prostrata} & 4 (3\%) & 112 \\ 
+\emph{Brachypodium distachyon} & 4 (3\%) & 1581 \\ 
+\emph{Fumaria densiflora} & 4 (3\%) & 194 \\ 
+\emph{Gypsophila pilosa} & 4 (3\%) & 79 \\ 
+\emph{Hordeum murinum} & 4 (3\%) & 1342 \\ 
+\emph{Lathyrus aphaca} & 4 (3\%) & 2085 \\ 
+\emph{Lathyrus sativus} & 4 (3\%) & 297 \\ 
+\emph{Secale cereale} & 4 (3\%) & 1153 \\ 
+\emph{Triticum durum} & 4 (3\%) & 219 \\ 
+\emph{Vitis sylvestris} & 4 (3\%) & 3\textsuperscript{\textit{*}} \\ 
+\emph{Adonis flammea} & 3 (2\%) & 79 \\ 
+\emph{Avena sterilis} & 3 (2\%) & 50001\textsuperscript{\textit{*}} \\ 
+\emph{Bassia arabica} & 3 (2\%) & 230 \\ 
+\emph{Bromus sterilis} & 3 (2\%) & 385 \\ 
+\emph{Cephalaria syriaca} & 3 (2\%) & 144 \\ 
+\emph{Glaucium aleppicum} & 3 (2\%) & 22\textsuperscript{\textit{*}} \\ 
+\emph{Helianthemum ledifolium} & 3 (2\%) & 668 \\ 
+\emph{Lolium rigidum} & 3 (2\%) & 1464 \\ 
+\emph{Phalaris paradoxa} & 3 (2\%) & 370 \\ 
+\emph{Quercus ithaburensis} & 3 (2\%) & 1431 \\ 
+\emph{Triticum aestivum compactum} & 3 (2\%) & 209 \\ 
+\emph{Verbena officinalis} & 3 (2\%) & 1046 \\ 
+\emph{Vicia narbonensis} & 3 (2\%) & 1529 \\ 
+\emph{Triticum urartu} & — & 2033 \\ 
+\emph{Aegilops speltoides} & — & 1429 \\ 
+\emph{Aegilops tauschii} & — & 1395 \\ 
+\bottomrule
+\end{tabular*}
+\begin{minipage}{\linewidth}
+\textsuperscript{\textit{*}}Excluded from modelling due to sample size\\
+\end{minipage}
+
+}
+
+\end{table}%
+
+Georeferenced occurrence data was obtained from the Global Biodiversity
+Information Facility (GBIF) using via its application programming
+interface and the R package `rgbif' (Chamberlain et al., 2024;
+Chamberlain and Boettiger, 2017). GBIF occurrences marked has having
+imprecise or duplicate coordinates were excluded from the training
+dataset, as were fossil records. Although niche models have reasonable
+predictive power even with small training samples (Hernandez et al.,
+2006; Stockwell and Peterson, 2002; Wisz et al., 2008), we excluded 57
+taxa with less than 50 occurrences in West Asia, following
+recommendations for niche models generally and Random Forest-based
+models specifically (Stockwell and Peterson, 2002;
+\textbf{LuanEtAl2020?}). We also excluded one taxon (\emph{Avena
+sterilis}) with over 50,000 occurrences, as this would have been
 computationally prohibitive and we were uncertain what account for such
 a disproportionately high number of records.
+
+\begin{verbatim}
+Rows: 35208 Columns: 11
+-- Column specification --------------------------------------------------------
+Delimiter: "\t"
+chr (5): taxon, taxon_detail, scientific_name, genus, species
+dbl (6): n_present, p_present, n_occ, gbif_key, longitude, latitude
+
+i Use `spec()` to retrieve the full column specification for this data.
+i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+\end{verbatim}
 
 Occurrence data only tells us where a species is present; there is
 rarely definitive information on where the species is \emph{not} found.
@@ -602,14 +769,14 @@ predictor variables (\textbf{?@tbl-predictors}). These included:
 Predictor data was transformed to the same projection system (WGS84 /
 UTM 37 N) and a common resolution of X km.
 
-For hindcasting, we used reconstructed bioclimatic data for key periods
-(\textbf{?@tbl-climate-periods}) generated from downscaled paleoclimate
-simulations from the HadCM3 general circulation model (Brown et al.,
-2018). Terrain and soil predictors were held constant, since
-reconstructions of these variables in the past are not available at
-sufficient scale. It is not likely that either macroscale topography or
-soil characteristics have altered significantly over the period of time
-considered here, so we assume that this does not degrade model
+For hindcasting, we used reconstructed bioclimatic data for 5 key
+periods (\textbf{?@tbl-climate-periods}) generated from downscaled
+paleoclimate simulations from the HadCM3 general circulation model
+(Brown et al., 2018). Terrain and soil predictors were held constant,
+since reconstructions of these variables in the past are not available
+at sufficient scale. It is not likely that either macroscale topography
+or soil characteristics have altered significantly over the period of
+time considered here, so we assume that this does not degrade model
 performance, and may in fact benefit it by providing `anchoring'
 predictors that are independent of climate change.
 
@@ -650,6 +817,24 @@ analyses the predictions together as an assemblage.
 \section{Results}\label{results}
 
 \subsection{Model assessment}\label{model-assessment}
+
+\begin{verbatim}
+Warning: Removed 51 rows containing missing values or values outside the scale range
+(`geom_text_repel()`).
+\end{verbatim}
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{paper_files/figure-pdf/fig-model-accuracy-vs-n_occ-1.pdf}}
+
+}
+
+\caption{\label{fig-model-accuracy-vs-n_occ}Number of taxon occurrences
+and model accuracy on test dataset}
+
+\end{figure}%
 
 \begin{itemize}
 \tightlist
