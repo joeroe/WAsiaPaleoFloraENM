@@ -1,5 +1,5 @@
 ---
-title: Biogeography of crop progenitors and wild plant resources in the Late Pleistocene and Early Holocene of West Asia, 21–8.3 ka
+title: Biogeography of crop progenitors and wild plant resources over in terminal Pleistocene and Early Holocene boundary West Asia, 14.7–8.3 ka
 date: today
 author: 
 - name: Joe Roe
@@ -59,19 +59,20 @@ execute:
     - [ ] Biogeography
     - [x] ENM
   - [x] Methods & Materials
-  - [ ] Results
-    - [ ] Model assessment
+  - [x] Results
   - [ ] Discussion
     - [ ] General trends
     - [ ] Case studies
+    - [x] Comparison with archaeobot
   - [ ] Conclusion
 - [ ] Figures
+  - [x] fig-region
   - [ ] tbl-occ-count (needs pdf cleanup)
   - [ ] tbl-predictors
-  - [ ] tbl-climate-periods
-- [ ] Clean up package code
+- [ ] Outstanding TODOs
 - [ ] Appendix with all hindcast predictions
-- [ ] References & copyediting
+- [ ] Copyedit and finalise references
+- [ ] Clean up package code
 - [ ] Final proofread
 
 ```{r dependencies, message=FALSE}
@@ -134,16 +135,13 @@ archaeo_periods <- tribble(
 
 neolithic <- c("PPNA", "EPPNB", "MPPNB", "LPPNB/C", "Pottery Neolithic")
 
-# TODO: drop LGM and HS1 since there are no sites 
-# (can then maybe increase prediction resolution?)
 climate_periods <- tibble(
-  period = c("Last Glacial Maximum", "Heinrich Stadial 1", "Bølling-Allerød",
-             "Younger Dryas", "Early Holocene", "Current"),
-  code = c("lgm", "hs1", "ba", "yds", "eh", "cur"),
-  label = fct_inorder(c("LGM (21 ka)", "HS1 (17.0-14.7 ka)", "BA (14.7-12.9 ka)", 
-            "YDS (12.9-11.7 ka)", "EH (11.7-8.3 ka)", "current")),
-  start_bp = c(21000, 17000, 14700, 12900, 11700, NA),
-  end_bp = c(17000, 14700, 12900, 11700, 8300, NA)
+  period = c("Bølling-Allerød", "Younger Dryas", "Early Holocene", "Current"),
+  code = c("ba", "yds", "eh", "cur"),
+  label = fct_inorder(c("BA (14.7-12.9 ka)", "YDS (12.9-11.7 ka)", 
+                      "EH (11.7-8.3 ka)", "current")),
+  start_bp = c(14700, 12900, 11700, NA),
+  end_bp = c(12900, 11700, 8300, NA)
 )
 ```
 
@@ -186,7 +184,7 @@ pred_res <- 5000
   * More than the "founder crops"; 
   * More than food
   * (In archaebot., not all intentionally collected)
-  * Regionally and temporally diverse
+  * Geographically and temporally diverse
   * ...so we model lots of species!
 * Regional ecological reconstructions generally rely on the 'expert interpolation' (or what do they call it with isoscapes?) method
   * See CSEAS (AEA-prep) presentation
@@ -252,7 +250,7 @@ ne_land <- read_sf(raw_data("ne"), "ne_10m_land") |>
   st_geometry() |>
   st_crop(buffer_bbox(w_asia, 10)) |>
   st_difference(ne_ocean) |>
-  st_difference(ne_lakes) |>
+  # st_difference(ne_lakes) |>
   st_union()
 
 s_levant_land <- st_intersection(st_as_sfc(s_levant), ne_land)
@@ -335,11 +333,9 @@ archaeo_sites <- summarise(
 
 ```{r fig-region}
 #| fig-cap: Study region (red) and archaeological sites used to generate modelled flora. Solid circles indicate Neolithic sites.
-# TODO: better pallette
 ggplot() + 
   annotation_spatial(ne_land, fill = "#ffffff") +
-  annotation_spatial(ne_rivers, aes(linewidth = strokeweig), colour = "blue") +
-  annotation_spatial(ne_lakes, colour = "blue", fill = "lightblue") +
+  annotation_spatial(ne_rivers, aes(linewidth = strokeweig), colour = "lightblue") +
   layer_spatial(w_asia, colour = "red", fill = NA) +
   layer_spatial(archaeo_sites, shape = 1) +
   layer_spatial(filter(archaeo_sites, period %in% neolithic), shape = 16) +
@@ -497,13 +493,13 @@ GBIF occurrences marked has having imprecise or duplicate coordinates were exclu
 Although niche models have reasonable predictive power even with small training samples [@StockwellPeterson2002; @HernandezEtAl2006; @WiszEtAl2008], we excluded `r english(nrow(filter(flora, n_occ > min_n_occ)))` taxa with less than `r min_n_occ` occurrences in West Asia, following recommendations for niche models generally and Random Forest-based models specifically [@StockwellPeterson2002; @LuanEtAl2020].
 We also excluded one taxon (*Avena sterilis*) with over 50,000 occurrences, as this would have been computationally prohibitive and we were uncertain what account for such a disproportionately high number of records.
 
-```{r filter-flora}
+```{r data-filter-flora}
 flora <- filter(flora, n_occ > min_n_occ)
 # Why are there 50k occurrences of Avena sterilis??
 flora <- filter(flora, taxon != "Avena sterilis")
 ```
 
-```{r fetch-occ}
+```{r data-occ}
 # TODO: further tidying. Ideas:
 # - https://data-blog.gbif.org/post/gbif-filtering-guide/
 # - https://cran.r-project.org/web/packages/CoordinateCleaner/vignettes/Cleaning_GBIF_data_with_CoordinateCleaner.html
@@ -680,7 +676,7 @@ Predictor data was transformed to common equal-area projection and resolution of
 
 ```{r tbl-climate-periods}
 #| fig-cap: Palaeoclimatic periods used for hindcasting, after @BrownEtAl2018
-# TODO: add refs (as footnotes?)
+# TODO: integrate into text
 climate_periods |>
   mutate(
     code = toupper(code),
@@ -776,7 +772,7 @@ We used the Random Forest algorithm implemented in the R package 'ranger' [@Wrig
 To avoid overfitting, we follow @ValaviEtAl2021 in their recommended hyperparameters and use of down-sampling to balance presence and background samples.
 Models for each taxon were fit independently, with redundant zero-variance predictors excluded, and assessed based on balanced training (¾) and test (¼) partitions.
 
-```{r fit-niche-models}
+```{r niche-fit}
 # Fit best model to training data
 if (!file_exists(derived_data("flora_niche_fit.Rdata"))) {
   flora <- mutate(
@@ -792,8 +788,8 @@ flora <- readRDS(derived_data("flora_niche_fit.Rdata"))
 
 # Results
 
-```{r predict}
-# NOTE: very high memory usage
+```{r niche-predict}
+# NOTE: high memory usage
 if (!file_exists(derived_data("flora_niche_predictions.Rdata"))) {
   flora <- flora |>
     mutate(
@@ -814,8 +810,13 @@ Predicted distributions for individual taxa are presented in the appendix and ac
 ```{r data-model-assessment}
 flora <- mutate(
   flora,
-  niche_test_metrics = map(niche, collect_metrics)
-)
+  pred = map(niche, collect_predictions),
+  niche_test_metrics = map(niche, collect_metrics),
+  sensitivity = map(pred, sens, truth = present, estimate = .pred_class,
+                    event_level = "second"), # reference present=TRUE
+  niche_test_metrics = map2(niche_test_metrics, sensitivity, bind_rows)
+) |>
+  select(-sensitivity)
 
 niche_test_metrics <- flora |>
   unnest(niche_test_metrics) |>
@@ -828,25 +829,26 @@ niche_test_metrics <- flora |>
   )
 ```
 
-```{r fig-model-accuracy-vs-n_occ}
-#| fig-cap: Number of taxon occurrences and model accuracy on test dataset
+```{r fig-model-sensitivity-vs-n_occ}
+#| fig-cap: Number of taxon occurrences and model sensitivity on test dataset
 flora |>
   unnest(niche_test_metrics) |>
-  filter(.metric == "accuracy") |>
-  mutate(label = if_else(.estimate < 0.80, taxon, NA_character_)) |>
+  filter(.metric == "sens") |>
+  mutate(label = if_else(.estimate < 0.85, taxon, NA_character_)) |>
   ggplot(aes(n_occ, .estimate)) + 
   geom_smooth(method = "glm", formula = y ~ log(x)) +
   geom_point() + 
   geom_text_repel(aes(label = label), fontface = "italic") +
   scale_x_log10(name = "Occurrences") +
-  scale_y_continuous(name = "Model accuracy", labels = label_percent()) +
+  scale_y_continuous(name = "Sensitivity", labels = label_percent()) +
   theme_minimal_grid() 
 ```
 
 We assessed the predictive performance of the fitted niche models in the contemporary environment based on the reserved test partition.
-Model accuracy (i.e. proportion of correctly classified test samples) ranged between `r percent(filter(niche_test_metrics, .metric == "accuracy")$min)` and `r percent(filter(niche_test_metrics, .metric == "accuracy")$max)`, with an average of `r percent(filter(niche_test_metrics, .metric == "accuracy")$mean)`.
+Model accuracy (proportion of correctly classified presence and background samples) ranged between `r percent(filter(niche_test_metrics, .metric == "accuracy")$min)` and `r percent(filter(niche_test_metrics, .metric == "accuracy")$max)`, with an average of `r percent(filter(niche_test_metrics, .metric == "accuracy")$mean)`.
+Sensitivity (proportion of correctly classified presence samples) ranged between `r percent(filter(niche_test_metrics, .metric == "sens")$min)` and `r percent(filter(niche_test_metrics, .metric == "sens")$max)`, with an average of `r percent(filter(niche_test_metrics, .metric == "sens")$mean)`.
 The area under the models' receiver operating characteristic curves (ROC-AUC) was in the range of `r round(filter(niche_test_metrics, .metric == "roc_auc")$mean, 3)`±`r round(filter(niche_test_metrics, .metric == "accuracy")$sd, 3)`
-Model accuracy is loosely correlated with the number of occurrences available for training (@fig-model-accuracy-vs-n_occ), though the worst-performing models also included some species with relatively large sample sizes: <!-- TODO e.g. -->.
+Model sensitivity is loosely correlated with the number of occurrences available for training (@fig-model-sensitivity-vs-n_occ), with the worst-performing models all having less than 300 recorded occurrences: `r knitr::combine_words(paste0("*", filter(unnest(flora, niche_test_metrics), .metric == "sens" & .estimate < 0.85)$taxon, "*"))`.
 Test metrics and ROC curves for the individual models are included in the appendix.
 
 ```{r niche-archaeo}
@@ -894,12 +896,35 @@ The ability of the hindcast models to predict the occurrence of specific species
 * General trends:
   * Quantified sensitivity of plant ranges to climate change
   * Crop progenitors saw range contractions just before the onset of agriculture? (Moreso than other wild resources??)
-  * How could are reconstructed ranges at predicting archaeological assemblages? (+Implications)
 * Interesting individual case studies:
   * Wheat progenitors
   * ???
 
+## Comparison with archaeobotanical data
+
+The failure of our hindcast models to predict the occurrence of species in archaeobotanical assemblages has several possible explanations.
+Since they do accurately predict the test dataset <!-- TODO: and past negatives? -->, a likely culprit is overfitting of the models to the present environment.
+This implies that the modelled palaeodistributions should be seen as conservative estimates or a minimal range.
+Another obvious flaw in our methodology is that the time slices used for palaeoclimatic reconstruction are very broad—each covering around two millennia—and therefore potentially unrepresentative of the environment around sites at the specific time at which they were occupied.
+The variable quality of the archaeological test dataset, especially in terms of chronology, is also a plausible factor.
+
+At the same time, we cannot rule out more substantive reasons for the discrepency between predicted and observed archaeological occurrences.
+The niches of the modelled species could have changed since the Early Holocene, which would not be captured in a model trained purely on modern specimens.
+Human economic choices—mobility, foraging strategies, cultivation, etc.—could also produce archaeobotanical assemblages whose composition depart significantly from that of the surrounding local flora.
+Further refinement of the methodology for hindcast palaeoecological niche models, for example using more finely resolved palaeoclimate sequences [e.g. @KargerEtAl2023], hyperparameter tuning to avoid overfitting, and improved archaeological datasets, would help disentangle these potential explanations.
+
+<!-- TODO: do model predictions match more aggregated stats e.g. biodiversity? -->
+
 # Conclusion
+
+* We present the first comprehensive reconstructions of the palaeodistributions of 56 plant species found regularly in association with early agricultural archaeological sites in West Asia
+  * R
+* Modelling at scale using random forest, modern occurrences, and hindcasting represents a significant advance in pENM methodology
+  * Relies on recent open ecological and climatic datasets
+  * ...open archaeological datasets still lacking!
+* First (? - check Yaworsky) attempt to verify hindcast models with archaeo. compositional data
+  * Results not to promising, but this doesn't mean the models are useless!
+  * Discrepencies suggests several areas for further research and methodological development
 
 # References {.appendix}
 

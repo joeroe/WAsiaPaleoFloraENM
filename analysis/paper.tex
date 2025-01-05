@@ -150,7 +150,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
-  pdftitle={Biogeography of crop progenitors and wild plant resources in the Late Pleistocene and Early Holocene of West Asia, 21--8.3 ka},
+  pdftitle={Biogeography of crop progenitors and wild plant resources over the Pleistocene/Holocene boundary in West Asia, 14.7--8.3 ka},
   pdfauthor={Joe Roe; Amaia Arranz-Otaegui},
   colorlinks=true,
   linkcolor={blue},
@@ -164,8 +164,8 @@
 \begin{document}
 
 \begin{frontmatter}
-\title{Biogeography of crop progenitors and wild plant resources in the
-Late Pleistocene and Early Holocene of West Asia, 21--8.3 ka}
+\title{Biogeography of crop progenitors and wild plant resources over
+the Pleistocene/Holocene boundary in West Asia, 14.7--8.3 ka}
 \author[1,2]{Joe Roe%
 \corref{cor1}%
 }
@@ -199,16 +199,15 @@ models using hindcast data from palaeoclimate simulations. Species
 ranges are predicted to have been on average {[}X\%{]}
 {[}larger\textbar smaller{]} in the Early Holocene compared to present
 conditions, but did {[}not{]} change as drastically between the Last
-Glacial Maximum and the Early Holocene. The modelled ranges predict the
-observed occurrence of these species on archaeological sites with
-{[}low\textbar medium\textbar high{]} accuracy. The regional ubiquity of
-species in the archaeological record is {[}not{]} correlated with the
-predicted size of its range and the diversity of archaeobotanical
-assemblages is {[}not{]} correlated with the predicted diversity of its
-environs. This indicates that trends in taxonomic composition of the
-archaeobotanical record is {[}not{]} likely to have been influenced by
-environmental change and species turnover, in addition to human economic
-choices.
+Glacial Maximum and the Early Holocene. However, the modelled ranges do
+not predict the observed occurrence of these species on archaeological
+sites with any degree of accuracy. The regional ubiquity of species in
+the archaeological record is {[}not{]} correlated with the predicted
+size of its range and the diversity of archaeobotanical assemblages is
+{[}not{]} correlated with the predicted diversity of its environs. This
+indicates that trends in taxonomic composition of the archaeobotanical
+record is {[}not{]} likely to have been influenced by environmental
+change and species turnover, in addition to human economic choices.
 \end{abstract}
 
 
@@ -248,8 +247,6 @@ choices.
     \tightlist
     \item[$\square$]
       Model assessment
-    \item[$\square$]
-      Hindcasting
     \end{itemize}
   \item[$\square$]
     Discussion
@@ -490,7 +487,9 @@ circulation models of climate
 
 }
 
-\caption{\label{fig-region}Study region}
+\caption{\label{fig-region}Study region (red) and archaeological sites
+used to generate modelled flora. Solid circles indicate Neolithic
+sites.}
 
 \end{figure}%
 
@@ -727,8 +726,6 @@ resolution of 5 km.
 \toprule
 Period & Age, ka \\ 
 \midrule\addlinespace[2.5pt]
-Last Glacial Maximum (LGM) & 21.0–17.0 \\ 
-Heinrich Stadial 1 (HS1) & 17.0–14.7 \\ 
 Bølling-Allerød (BA) & 14.7–12.9 \\ 
 Younger Dryas (YDS) & 12.9–11.7 \\ 
 Early Holocene (EH) & 11.7–8.3 \\ 
@@ -742,7 +739,7 @@ Palaeoclimatic periods used for hindcasting, after \citet{BrownEtAl2018}
 
 \end{table}%
 
-For hindcasting, we used reconstructed bioclimatic data for 5 key
+For hindcasting, we used reconstructed bioclimatic data for 3 key
 periods (Table~\ref{tbl-climate-periods}) generated from downscaled
 paleoclimate simulations from the HadCM3 general circulation model
 \citep{BrownEtAl2018}. Terrain and soil predictors were held constant,
@@ -779,21 +776,22 @@ presence and background samples. Models for each taxon were fit
 independently, with redundant zero-variance predictors excluded, and
 assessed based on balanced training (¾) and test (¼) partitions.
 
-The output of the model is probabilistic. However, this should not be
-understood as an actual probability of occurrence \citep{CITE}, but more
-akin to an estimate of habitat suitability. To simplify interpretation,
-we can convert these predictions into binary presence/absence maps, a
-process called ``thresholding''. We select the threshold value for each
-model individually, using MaxSSS \citep[as recommended
-by][]{LiuEtAl2013}. This also makes it possible to analyses the
-predictions together as an assemblage.
-
 \section{Results}\label{results}
+
+We trained Random Forest models for 56 taxa using contemporary
+occurrence data from GBIF, a random sample of background points, and the
+predictor variables described in \textbf{?@tbl-predictors}. Substituting
+the ``current'' climate predictors for those derived from palaeoclimatic
+simulations \citep{BrownEtAl2018}, we could then generate hindcast
+predictions for reconstructed past environments in 4 key climate periods
+-- a total of 224 modelled palaeodistributions. Predicted distributions
+for individual taxa are presented in the appendix and accompanying
+material.
 
 \subsection{Model assessment}\label{model-assessment}
 
 \begin{verbatim}
-Warning: Removed 55 rows containing missing values or values outside the scale range
+Warning: Removed 51 rows containing missing values or values outside the scale range
 (`geom_text_repel()`).
 \end{verbatim}
 
@@ -801,42 +799,33 @@ Warning: Removed 55 rows containing missing values or values outside the scale r
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{paper_files/figure-pdf/fig-model-accuracy-vs-n_occ-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{paper_files/figure-pdf/fig-model-sensitivity-vs-n_occ-1.pdf}}
 
 }
 
-\caption{\label{fig-model-accuracy-vs-n_occ}Number of taxon occurrences
-and model accuracy on test dataset}
+\caption{\label{fig-model-sensitivity-vs-n_occ}Number of taxon
+occurrences and model sensitivity on test dataset}
 
 \end{figure}%
 
 We assessed the predictive performance of the fitted niche models in the
 contemporary environment based on the reserved test partition. Model
-accuracy (i.e.~proportion of correctly classified test samples) ranged
-between 73\% and 98\%, with an average of 91\%. The area under the
+accuracy (proportion of correctly classified presence and background
+samples) ranged between 72\% and 98\%, with an average of 91\%.
+Sensitivity (proportion of correctly classified presence samples) ranged
+between 80\% and 100\%, with an average of 93\%. The area under the
 models' receiver operating characteristic curves (ROC-AUC) was in the
-range of 0.9734227±0.0596337 Model accuracy is loosely correlated with
-the number of occurrences available for training
-(Figure~\ref{fig-model-accuracy-vs-n_occ}), though the worst-performing
-models also included some species with relatively large sample sizes: .
-Test metrics and ROC curves for the individual models are included in
-the appendix.
+range of 0.973±0.058 Model sensitivity is loosely correlated with the
+number of occurrences available for training
+(Figure~\ref{fig-model-sensitivity-vs-n_occ}), with the worst-performing
+models all having less than 300 recorded occurrences: \emph{Buglossoides
+tenuiflora}, \emph{Cephalaria syriaca}, \emph{Gypsophila pilosa},
+\emph{Lathyrus sativus}, \emph{Triticum turgidum dicoccum}. Test metrics
+and ROC curves for the individual models are included in the appendix.
 
-Overall we assessed all models as performing adequately enough to make
-reliable predictions on the desired scale, and that in general the
-majority of the models had high predictive power. Their predictive
-capability when applied to the past is a seperate question, which we
-address in the next section.
-
-\subsection{Hindcasting}\label{hindcasting}
-
-Sensitivity to climate fluctuations?
-
-\begin{itemize}
-\tightlist
-\item
-  Ability to predict archaeological occurrences
-\end{itemize}
+The ability of the hindcast models to predict the occurrence of specific
+species at archaeological sites is significantly worse, with only 12\%
+of presences in archaeobotanical assemblages successfully predicted.
 
 \section{Discussion}\label{discussion}
 
@@ -852,9 +841,6 @@ Sensitivity to climate fluctuations?
   \item
     Crop progenitors saw range contractions just before the onset of
     agriculture? (Moreso than other wild resources??)
-  \item
-    How could are reconstructed ranges at predicting archaeological
-    assemblages? (+Implications)
   \end{itemize}
 \item
   Interesting individual case studies:
@@ -868,10 +854,42 @@ Sensitivity to climate fluctuations?
   \end{itemize}
 \end{itemize}
 
+\subsection{Comparison with archaeobotanical
+data}\label{comparison-with-archaeobotanical-data}
+
+The failure of our hindcast models to predict the occurrence of species
+in archaeobotanical assemblages has several possible explanations. Since
+they do accurately predict the test dataset , a likely culprit is
+overfitting of the models to the present environment. This implies that
+the modelled palaeodistributions should be seen as conservative
+estimates or a minimal range. Another obvious flaw in our methodology is
+that the time slices used for palaeoclimatic reconstruction are very
+broad---each covering around two millennia---and therefore potentially
+unrepresentative of the environment around sites at the specific time at
+which they were occupied. The variable quality of the archaeological
+test dataset, especially in terms of chronology, is also a plausible
+factor.
+
+At the same time, we cannot rule out more substantive reasons for the
+discrepency between predicted and observed archaeological occurrences.
+The niches of the modelled species could have changed since the Early
+Holocene, which would not be captured in a model trained purely on
+modern specimens. Human economic choices---mobility, foraging
+strategies, cultivation, etc.---could also produce archaeobotanical
+assemblages whose composition depart significantly from that of the
+surrounding local flora. Further refinement of the methodology for
+hindcast palaeoecological niche models, for example using more finely
+resolved palaeoclimate sequences \citep{KargerEtAl2023}, hyperparameter
+tuning to avoid overfitting, and improved archaeological datasets, would
+help disentangle these potential explanations.
+
 \section{Conclusion}\label{conclusion}
 
+\section{References}\label{references}
 
-\renewcommand\refname{References}
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+
   \bibliography{references.bib}
 
 
