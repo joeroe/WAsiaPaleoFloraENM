@@ -150,7 +150,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
-  pdftitle={Biogeography of crop progenitors and wild plant resources over the Pleistocene/Holocene boundary in West Asia, 14.7--8.3 ka},
+  pdftitle={Biogeography of crop progenitors and wild plant resources over in terminal Pleistocene and Early Holocene boundary West Asia, 14.7--8.3 ka},
   pdfauthor={Joe Roe; Amaia Arranz-Otaegui},
   colorlinks=true,
   linkcolor={blue},
@@ -164,8 +164,9 @@
 \begin{document}
 
 \begin{frontmatter}
-\title{Biogeography of crop progenitors and wild plant resources over
-the Pleistocene/Holocene boundary in West Asia, 14.7--8.3 ka}
+\title{Biogeography of crop progenitors and wild plant resources over in
+terminal Pleistocene and Early Holocene boundary West Asia, 14.7--8.3
+ka}
 \author[1,2]{Joe Roe%
 \corref{cor1}%
 }
@@ -187,27 +188,31 @@ Country},country={Spain},countrysep={,},postcodesep={}}
 
         
 \begin{abstract}
-This paper presents the first comprehensive reconstructions of the
-palaeodistributions of 56 plant species found regularly in association
-with early agricultural archaeological sites in West Asia, including the
-progenitors of the first crops. We used machine learning to train an
-ecological niche model of each species based on its present-day
-distribution in relation to climate and environmental variables.
-Predictions of the potential ranges of these species at key stages of
-the Pleistocene--Holocene transition could then be derived from these
-models using hindcast data from palaeoclimate simulations. Species
-ranges are predicted to have been on average {[}X\%{]}
-{[}larger\textbar smaller{]} in the Early Holocene compared to present
-conditions, but did {[}not{]} change as drastically between the Last
-Glacial Maximum and the Early Holocene. However, the modelled ranges do
-not predict the observed occurrence of these species on archaeological
-sites with any degree of accuracy. The regional ubiquity of species in
-the archaeological record is {[}not{]} correlated with the predicted
-size of its range and the diversity of archaeobotanical assemblages is
-{[}not{]} correlated with the predicted diversity of its environs. This
-indicates that trends in taxonomic composition of the archaeobotanical
-record is {[}not{]} likely to have been influenced by environmental
-change and species turnover, in addition to human economic choices.
+This paper presents the first continuous, spatially-explicit
+reconstructions of the palaeodistributions of 56 plant species found
+regularly in association with early agricultural archaeological sites in
+West Asia, including the progenitors of the first crops. We used machine
+learning to train an ecological niche model of each species based on its
+present-day distribution in relation to climate and environmental
+variables. Predictions of the potential ranges of these species at key
+stages of the Pleistocene--Holocene transition could then be derived
+from these models using downsampled data from palaeoclimate simulations.
+Species ranges are predicted to have been on significantly smaller in
+the Early Holocene compared to present conditions, with many species
+that are found throughout the region's `hilly flanks' today indicated to
+have much more restricted distributions centered on the Levant, Cyprus
+and Western Anatolia. Ranges shrunk by on average c.~10\% from the
+terminal Pleistocene to the Early Holocene, with a further c.~10\%
+reduction for the duration of the Younger Dryas. However, modelled
+ranges do not reliably predict the observed occurrence of specific
+species at archaeological sites. {[}\ldots{]} The regional ubiquity of
+species in the archaeological record is {[}not{]} correlated with the
+predicted size of its range and the diversity of archaeobotanical
+assemblages is {[}not{]} correlated with the predicted diversity of its
+environs. This indicates that trends in taxonomic composition of the
+archaeobotanical record is {[}not{]} likely to have been influenced by
+environmental change and species turnover, in addition to human economic
+choices.
 \end{abstract}
 
 
@@ -220,7 +225,7 @@ change and species turnover, in addition to human economic choices.
 \begin{itemize}
 \tightlist
 \item[$\boxtimes$]
-  Finish modelling
+  Stop modelling
 \item[$\square$]
   First draft:
 
@@ -240,14 +245,8 @@ change and species turnover, in addition to human economic choices.
     \end{itemize}
   \item[$\boxtimes$]
     Methods \& Materials
-  \item[$\square$]
+  \item[$\boxtimes$]
     Results
-
-    \begin{itemize}
-    \tightlist
-    \item[$\square$]
-      Model assessment
-    \end{itemize}
   \item[$\square$]
     Discussion
 
@@ -257,6 +256,8 @@ change and species turnover, in addition to human economic choices.
       General trends
     \item[$\square$]
       Case studies
+    \item[$\boxtimes$]
+      Comparison with archaeobot
     \end{itemize}
   \item[$\square$]
     Conclusion
@@ -266,19 +267,25 @@ change and species turnover, in addition to human economic choices.
 
   \begin{itemize}
   \tightlist
+  \item[$\boxtimes$]
+    fig-region
+  \item[$\boxtimes$]
+    fig-occ
   \item[$\square$]
     tbl-occ-count (needs pdf cleanup)
   \item[$\square$]
     tbl-predictors
-  \item[$\square$]
-    tbl-climate-periods
   \end{itemize}
 \item[$\square$]
+  Outstanding TODOs
+\item[$\square$]
+  Add missing references
+\item[$\square$]
+  Copyedit
+\item[$\square$]
+  Appendix with all hindcast predictions (HTML?)
+\item[$\square$]
   Clean up package code
-\item[$\square$]
-  Appendix with all hindcast predictions
-\item[$\square$]
-  References \& copyediting
 \item[$\square$]
   Final proofread
 \end{itemize}
@@ -369,7 +376,7 @@ origins}\label{biogeography-and-agricultural-origins}
   \item
     (In archaebot., not all intentionally collected)
   \item
-    Regionally and temporally diverse
+    Geographically and temporally diverse
   \item
     \ldots so we model lots of species!
   \end{itemize}
@@ -503,7 +510,8 @@ canonical form specified in the GBIF Backbone Taxonomy
 \emph{Bolboschoenus maritimus} also include those recorded under the
 older nomenclature \emph{Scirpus maritimus} (see
 Table~\ref{tbl-occ-count}). Domestic species meeting our inclusion
-criteria were substituted with their wild progenitor(s), where known.
+criteria were substituted with their wild progenitor(s), where
+different.
 
 \subsection{Occurrence data}\label{occurrence-data}
 
@@ -660,6 +668,20 @@ as this would have been computationally prohibitive and we were
 uncertain what account for such a disproportionately high number of
 records.
 
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{paper_files/figure-pdf/fig-occ-map-1.pdf}}
+
+}
+
+\caption{\label{fig-occ-map}Georeferenced occurrence records from West
+Asia for the \texttt{r\ nrow(flora)} modelled taxa
+(N=\texttt{r\ nrow(unnest(flora,\ occ))})}
+
+\end{figure}%
+
 Occurrence data only tells us where a species is present; there is
 rarely definitive information on where the species is \emph{not} found.
 We therefore need to generate random background points or
@@ -757,7 +779,7 @@ approached with a wide range of statistical methods. A substantial
 literature exists on the relatively performance of these approaches and
 their respective parameterisations \citep[reviewed
 in][]{ValaviEtAl2022}. Random Forest, a widely-used machine learning
-algorithm, is amongst the best performing approaches for presence-only
+algorithm, is amongst the best performing methods for presence-only
 species distribution models, providing it is appropriately parameterised
 to account for the class imbalance between presence and background
 samples \citep{ValaviEtAl2021, ValaviEtAl2022}. For our application, it
@@ -820,8 +842,9 @@ number of occurrences available for training
 (Figure~\ref{fig-model-sensitivity-vs-n_occ}), with the worst-performing
 models all having less than 300 recorded occurrences: \emph{Buglossoides
 tenuiflora}, \emph{Cephalaria syriaca}, \emph{Gypsophila pilosa},
-\emph{Lathyrus sativus}, \emph{Triticum turgidum dicoccum}. Test metrics
-and ROC curves for the individual models are included in the appendix.
+\emph{Lathyrus sativus}, and \emph{Triticum turgidum dicoccum}. Test
+metrics and ROC curves for the individual models are included in the
+appendix.
 
 The ability of the hindcast models to predict the occurrence of specific
 species at archaeological sites is significantly worse, with only 12\%
@@ -829,33 +852,122 @@ of presences in archaeobotanical assemblages successfully predicted.
 
 \section{Discussion}\label{discussion}
 
-\begin{itemize}
-\tightlist
-\item
-  General trends:
+\subsection{Reduction in range sizes over the Pleistocene/Holocene
+boundary}\label{reduction-in-range-sizes-over-the-pleistoceneholocene-boundary}
 
-  \begin{itemize}
-  \tightlist
-  \item
-    Quantified sensitivity of plant ranges to climate change
-  \item
-    Crop progenitors saw range contractions just before the onset of
-    agriculture? (Moreso than other wild resources??)
-  \end{itemize}
-\item
-  Interesting individual case studies:
+\begin{figure}
 
-  \begin{itemize}
-  \tightlist
-  \item
-    Wheat progenitors
-  \item
-    ???
-  \end{itemize}
-\end{itemize}
+\centering{
 
-\subsection{Comparison with archaeobotanical
-data}\label{comparison-with-archaeobotanical-data}
+\pandocbounded{\includegraphics[keepaspectratio]{paper_files/figure-pdf/fig-range-density-1.pdf}}
+
+}
+
+\caption{\label{fig-range-density}Distribution of predicted species
+ranges by period. Dashed lines indicate the median range.}
+
+\end{figure}%
+
+Species ranges are predicted to have been signicantly smaller in the
+terminal Pleistocene and Early Holocene that under current conditions
+Figure~\ref{fig-range-density}, though the magnitude of this change is
+likely also to reflect a degree of overfitting in the model (see below).
+Fluctuations in modelled range size between the Bølling-Allerød
+(14.7--12.9 ka), Younger Dryas (12.9--11.7 ka), and Early Holocene
+(11.7--8.3 ka) are more directly comparable. The average range of
+modelled species shrank by 12\% over the Pleistocene--Holocene boundary,
+with a noticeable dip in the Younger Dryas. This perhaps indicates that
+although this period is considered one of climatatic amelioration
+globally \citep{JonesEtAl2019}, the colder conditions of the Pleistocene
+may have supported more extensive plant-based economies in West Asia
+specifically.
+
+Many taxa that occur (or are predicted to occur) across the `hilly
+flanks' today---including most crop progenitors---are reconstructed to
+have had a significantly more restricted distribution in the terminal
+Pleistocene/Early Holocene. These include \emph{Ficus carica} (fig);
+\emph{Hordeum} spp. (wild barleys); \emph{Lathyrus aphaca} and \emph{L.
+sativus} (both marginally edible legumes); \emph{Triticum aestivum
+compactum} (in the N. Levant), \emph{T. monococcum aegilopoides},
+\emph{T. durum}, and \emph{Triticum urartu} (but not the other wheat
+progenitor, \emph{T. turgidum dicoccum} -- see below); \emph{Aegilops
+speltoides}, but not \emph{Aegilops tauschii} (goatgrasses); and
+\emph{Vicia} spp. (vetches), including \emph{Vicia faba} (broad beans).
+Central Anatolia, Northern Mesopotamia, and the Zagros Mountains in
+particular disappear from the predicted ranges of these species, leaving
+the Levant and to a lesser extent Western Anatolia Cyprus as refugia.
+
+Our results for the Levant are consistent with the current understanding
+of this region as developing early intensive foraging economies {[}the
+Natufian culture, @{]} and as a centre of origin of agriculture {[}@{]}.
+It should also be noted that the selection of flora for this study
+(Table~\ref{tbl-occ-count}) is biased towards Levantine fauna due to the
+history of archaeological research in the region, as is the occurrence
+dataset used to train the model Figure~\ref{fig-occ-map}. Within the
+Levant, retreat from the Badia.
+
+Loss of the Northern Mesopotamia--Southeastern Anatolia region from the
+predicted ranges of crop progenitors is interesting in light of the
+`golden triangle' hypothesis \citep{KozlowskiAurenche2005}, which puts
+this region at the centre of the development of agriculture. Multiple
+lines of archaeological evidence have emerged that point away from this
+hypothesis and towards a more geographically diverse origin
+\citep{Asouti2006, cites}, but it remains the area with some of the
+earliest clear evidence of domestication. Comparative genetics also
+points to the Northern Mesopotamia region as the centre of diversity of
+many crops \citep{cite}. But since these studies are based on modern
+genomes, if the wild range of these plants has, as our modelling
+suggests, shifted since the Early Holocene, the apparent centre of
+diversity may have shifted with them. Our reconstructions are consistent
+with the late arrival of intensive plant-based foraging economies in
+this region (cf.~the Natufian of the Levant) and more broadly there need
+not be a link between the core \emph{wild} range of a plant and the core
+area of its domestication. A scenario in which cultivation emerged at
+the edges of the ranges of valuable plant resources---as a means of
+extend their natural niche---is also plausible.
+
+The near-absence of the Zagros in any predicted ranges is also
+surprising, given mounting evidence that domestication took place just
+as early in the eastern \emph{Mashriq} as it did in the west
+\citep{Braidwood, GanjDarehGoats, HillyFlanksStuff}. We consider that
+the most likely explanation for this is that our flora does not include
+the species that were most important to plant subsistence in the east.
+Archaeobotanical data on Neolithic sites in the Zagros is limited
+(compared to the Levant in particular) due to a hiatus in field research
+there from the 1980s to early 2010s \citep{cite}. Recent research
+\citep{Amaia} indicates \ldots{}
+
+Cyprus and W. Anatolia not considered part of the core zone -- maybe
+they should be?
+
+Exceptions to the trend of range reduction include \emph{Cicer
+reticulatum} (wild chickpea), which has a relatively stable range
+centered on Northern Mesopotamia; and \emph{Triticum turgidum dicoccum}
+(wild emmer wheat), which is predicted to have two very restricted
+ranges centered around the Black Sea Coast of Anatolia and the Palmyra
+basin. In the latter case, neither of these areas are part of the
+predicted modern distribution of wild emmer (centered around the
+Caucasus and Northern Mesopotamia), but it would be consistent with
+archaeological evidence for early cultivation at Tell Abu Hureyra and
+other sites in the Upper Euphrates. On the other hand, the model for
+\emph{Triticum turgidum dicoccum} has the lowest predictive performance
+of all our fitted models.
+
+\subsection{Biogeography of crop
+progenitors}\label{biogeography-of-crop-progenitors}
+
+Several crop progenitors reduced in range before cultivation? Reduction
+in range from BA to EH very evident in Hordeum, Pistacia atlantica.
+
+The wheat story.
+
+Flax has a very restricted distribution (consistent with low occurrence
+in founders paper?). As does Pistacia atlantica, Bolboschoenus maritimus
+
+\emph{Secale cereale} = an Anatolian boy
+
+\subsection{Hindcast models do not predict archaeobotanical
+composition}\label{hindcast-models-do-not-predict-archaeobotanical-composition}
 
 The failure of our hindcast models to predict the occurrence of species
 in archaeobotanical assemblages has several possible explanations. Since
@@ -879,11 +991,55 @@ strategies, cultivation, etc.---could also produce archaeobotanical
 assemblages whose composition depart significantly from that of the
 surrounding local flora. Further refinement of the methodology for
 hindcast palaeoecological niche models, for example using more finely
-resolved palaeoclimate sequences \citep{KargerEtAl2023}, hyperparameter
-tuning to avoid overfitting, and improved archaeological datasets, would
-help disentangle these potential explanations.
+resolved palaeoclimate sequences \citep[e.g.][]{KargerEtAl2023},
+hyperparameter tuning to avoid overfitting, and improved archaeological
+datasets, would help disentangle these potential explanations.
 
 \section{Conclusion}\label{conclusion}
+
+\begin{itemize}
+\tightlist
+\item
+  We present the first continuous, spatially explicit models of the
+  palaeodistributions of 56 plant species found regularly in association
+  with early agricultural archaeological sites in West Asia
+
+  \begin{itemize}
+  \tightlist
+  \item
+    A new line of evidence on archaeoecology
+  \item
+    Complementary to archaeobot/pollen/etc. because it is independent
+    from it
+  \item
+    All models are wrong\ldots{} but it's easier to see how these are
+    wrong than lines on maps
+  \end{itemize}
+\item
+  Modelling at scale using random forest, modern occurrences, and
+  hindcasting represents a significant advance in pENM methodology
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Relies on recent open ecological and climatic datasets
+  \item
+    \ldots open archaeological datasets still lacking!
+  \end{itemize}
+\item
+  First (? - check Yaworsky) attempt to verify hindcast models with
+  archaeo. compositional data
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Results not to promising, but this doesn't mean the models are
+    useless!
+  \item
+    Discrepencies suggests several areas for further research and
+    methodological development
+  \end{itemize}
+\end{itemize}
 
 \section{References}\label{references}
 
