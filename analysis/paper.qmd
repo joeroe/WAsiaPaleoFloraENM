@@ -1,5 +1,5 @@
 ---
-title: Biogeography of crop progenitors and wild plant resources in Late Pleistocene–Early Holocene West Asia, 21–8.3 ka
+title: Biogeography of crop progenitors and wild plant resources in the Late Pleistocene and Early Holocene of West Asia, 21–8.3 ka
 date: today
 author: 
 - name: Joe Roe
@@ -29,11 +29,12 @@ abstract: |
   transition could then be derived from these models using hindcast data from 
   palaeoclimate simulations.
   Species ranges are predicted to have been on average [X%] [larger|smaller] in 
-  the Early Holocene compared to present conditions, indicating [...]. 
-  The modelled ranges predict the observed occurrence of these species on 
-  archaeological sites with [low|medium|high] accuracy. The regional ubiquity of 
-  species in the archaeological record is [not] correlated with the predicted 
-  size of its range and the diversity of archaeobotanical assemblages is [not] 
+  the Early Holocene compared to present conditions, but did [not] change as
+  drastically between the Last Glacial Maximum and the Early Holocene. 
+  However, the modelled ranges do not predict the observed occurrence of these 
+  species on archaeological sites with any degree of accuracy. The regional 
+  ubiquity of species in the archaeological record is [not] correlated with the 
+  predicted size of its range and the diversity of archaeobotanical assemblages is [not] 
   correlated with the predicted diversity of its environs. This indicates that 
   trends in taxonomic composition of the archaeobotanical record is [not] likely 
   to have been influenced by environmental change and species turnover, in
@@ -60,7 +61,6 @@ execute:
   - [x] Methods & Materials
   - [ ] Results
     - [ ] Model assessment
-    - [ ] Hindcasting
   - [ ] Discussion
     - [ ] General trends
     - [ ] Case studies
@@ -134,6 +134,8 @@ archaeo_periods <- tribble(
 
 neolithic <- c("PPNA", "EPPNB", "MPPNB", "LPPNB/C", "Pottery Neolithic")
 
+# TODO: drop LGM and HS1 since there are no sites 
+# (can then maybe increase prediction resolution?)
 climate_periods <- tibble(
   period = c("Last Glacial Maximum", "Heinrich Stadial 1", "Bølling-Allerød",
              "Younger Dryas", "Early Holocene", "Current"),
@@ -234,6 +236,8 @@ use_s2 <- sf_use_s2(FALSE)
 
 ne_countries <- read_sf(raw_data("ne"), "ne_10m_admin_0_countries")
 
+ne_rivers <- read_sf(raw_data("ne"), "ne_10m_rivers_lake_centerlines_scale_rank")
+
 ne_lakes <- read_sf(raw_data("ne"), "ne_10m_lakes") |> 
   st_geometry() |>
   st_crop(buffer_bbox(w_asia, 10)) |>
@@ -257,16 +261,6 @@ w_asia_land <- st_intersection(st_as_sfc(w_asia), ne_land)
 # Restore previous setting of s2
 sf_use_s2(use_s2)
 ```
-
-```{r fig-region}
-#| fig-cap: Study region
-ggplot() + 
-  annotation_spatial(ne_land, fill = "#ffffff") +
-  layer_spatial(w_asia, fill = NA) +
-  coord_sf(crs = w_asia_albers)
-```
-
-<!-- TODO define study region and period -->
 
 ```{r data-archaeo-flora}
 # Flora present at archaeological sites
@@ -328,6 +322,32 @@ n_site_neolithic <- archaeo_flora |>
   distinct(site_name) |> 
   nrow()
 ```
+
+```{r data-archaeo-sites}
+archaeo_sites <- summarise(
+  archaeo_flora, 
+  latitude = first(latitude), 
+  longitude = first(longitude), 
+  .by = c(site_name, period)
+) |>
+  st_as_sf(coords = c("longitude", "latitude"), crs = latlong, remove = FALSE)
+```
+
+```{r fig-region}
+#| fig-cap: Study region (red) and archaeological sites used to generate modelled flora. Solid circles indicate Neolithic sites.
+# TODO: better pallette
+ggplot() + 
+  annotation_spatial(ne_land, fill = "#ffffff") +
+  annotation_spatial(ne_rivers, aes(linewidth = strokeweig), colour = "blue") +
+  annotation_spatial(ne_lakes, colour = "blue", fill = "lightblue") +
+  layer_spatial(w_asia, colour = "red", fill = NA) +
+  layer_spatial(archaeo_sites, shape = 1) +
+  layer_spatial(filter(archaeo_sites, period %in% neolithic), shape = 16) +
+  scale_linewidth_identity() +
+  coord_sf(crs = w_asia_albers)
+```
+
+<!-- TODO define study region and period -->
 
 ```{r data-flora}
 if (!file_exists(derived_data("flora.tsv"))) {
@@ -645,9 +665,9 @@ soil_cube <- list(soil) |>
 
 # Resample predictor data to common projection and resolution
 climate_cube <- st_warp(climate, crs = w_asia_albers, 
-                        cellsize = c(pred_res, pred_res))
-terrain_cube <- st_warp(terrain_cube, climate_cube)
-soil_cube <- st_warp(soil_cube, climate_cube)
+                        cellsize = c(pred_res, pred_res), segments = 1000)
+terrain_cube <- st_warp(terrain_cube, climate_cube, segments = 1000)
+soil_cube <- st_warp(soil_cube, climate_cube, segments = 1000)
 
 # Combine into prediction cube
 environment <- c(climate_cube, terrain_cube, soil_cube)
@@ -683,7 +703,7 @@ For hindcasting, we used reconstructed bioclimatic data for `r english(nrow(clim
 Terrain and soil predictors were held constant, since reconstructions of these variables in the past are not available at sufficient scale.
 It is not likely that either macroscale topography or soil characteristics have altered significantly over the period of time considered here, so we assume that this does not degrade model performance, and may in fact benefit it by providing 'anchoring' predictors that are independent of climate change.
 
-```{r extract-predictor-data}
+```{r data-flora-predictors}
 # TODO: factor out
 bind_extract <- function(x, y) {
   extract <- st_extract(y, st_transform(x, st_crs(y)))
@@ -745,7 +765,7 @@ niche_model <- rand_forest(mode = "classification", trees = 1000) |>
   set_engine(
     "ranger", 
     sample.fraction = c(sum(as.logical(.y())) / n_background, 1),
-    probability = TRUE
+    # probability = TRUE
   )
 
 niche_workflow <- workflow(niche_recipe, niche_model)
@@ -768,38 +788,9 @@ if (!file_exists(derived_data("flora_niche_fit.Rdata"))) {
 flora <- readRDS(derived_data("flora_niche_fit.Rdata"))
 ```
 
-<!-- TODO: rewrite to remove thresholding -->
-The output of the model is probabilistic.
-However, this should not be understood as an actual probability of occurrence [@CITE], but more akin to an estimate of habitat suitability.
-To simplify interpretation, we can convert these predictions into binary presence/absence maps, a process called "thresholding".
-We select the threshold value for each model individually, using MaxSSS [as recommended by @LiuEtAl2013].
-This also makes it possible to analyses the predictions together as an assemblage.
+<!-- TODO: prediction, hindcasting and hindcasting assessment methodology -->
 
 # Results
-
-## Model assessment
-
-```{r fig-model-accuracy-vs-n_occ}
-#| fig-cap: Number of taxon occurrences and model accuracy on test dataset
-flora |>
-  mutate(niche_test_fit = map(niche, collect_metrics)) |>
-  unnest(niche_test_fit) |>
-  filter(.metric == "accuracy") |> # TODO: or roc_auc?
-  mutate(label = if_else(.estimate < 0.75, taxon, NA_character_)) |>
-  ggplot(aes(n_occ, .estimate)) + 
-  geom_smooth(method = "glm", formula = y ~ log(x)) +
-  geom_point() + 
-  geom_text_repel(aes(label = label), fontface = "italic") +
-  scale_x_log10(name = "Occurrences") +
-  scale_y_continuous(name = "Model accuracy", labels = label_percent()) +
-  theme_half_open() 
-```
-
-* Modelled ecological niches on current data
-
-## Hindcasting
-
-Sensitivity to climate fluctuations?
 
 ```{r predict}
 # NOTE: very high memory usage
@@ -813,6 +804,106 @@ if (!file_exists(derived_data("flora_niche_predictions.Rdata"))) {
 }
 flora <- readRDS(derived_data("flora_niche_predictions.Rdata"))
 ```
+
+We trained Random Forest models for `r nrow(flora)` taxa using contemporary occurrence data from GBIF, a random sample of background points, and the predictor variables described in @tbl-predictors.
+Substituting the "current" climate predictors for those derived from palaeoclimatic simulations [@BrownEtAl2018], we could then generate hindcast predictions for reconstructed past environments in `r english(nrow(climate_periods))` key climate periods – a total of `r nrow(flora) * nrow(climate_periods)` modelled palaeodistributions.
+Predicted distributions for individual taxa are presented in the appendix and accompanying material.
+
+## Model assessment
+
+```{r data-model-assessment}
+flora <- mutate(
+  flora,
+  niche_test_metrics = map(niche, collect_metrics)
+)
+
+niche_test_metrics <- flora |>
+  unnest(niche_test_metrics) |>
+  summarise(
+    min = min(.estimate),
+    max = max(.estimate),
+    mean = mean(.estimate),
+    sd = sd(.estimate),
+    .by = c(.metric)
+  )
+```
+
+```{r fig-model-accuracy-vs-n_occ}
+#| fig-cap: Number of taxon occurrences and model accuracy on test dataset
+flora |>
+  unnest(niche_test_metrics) |>
+  filter(.metric == "accuracy") |>
+  mutate(label = if_else(.estimate < 0.80, taxon, NA_character_)) |>
+  ggplot(aes(n_occ, .estimate)) + 
+  geom_smooth(method = "glm", formula = y ~ log(x)) +
+  geom_point() + 
+  geom_text_repel(aes(label = label), fontface = "italic") +
+  scale_x_log10(name = "Occurrences") +
+  scale_y_continuous(name = "Model accuracy", labels = label_percent()) +
+  theme_minimal_grid() 
+```
+
+We assessed the predictive performance of the fitted niche models in the contemporary environment based on the reserved test partition.
+Model accuracy (i.e. proportion of correctly classified test samples) ranged between `r percent(filter(niche_test_metrics, .metric == "accuracy")$min)` and `r percent(filter(niche_test_metrics, .metric == "accuracy")$max)`, with an average of `r percent(filter(niche_test_metrics, .metric == "accuracy")$mean)`.
+The area under the models' receiver operating characteristic curves (ROC-AUC) was in the range of `r round(filter(niche_test_metrics, .metric == "roc_auc")$mean, 3)`±`r round(filter(niche_test_metrics, .metric == "accuracy")$sd, 3)`
+Model accuracy is loosely correlated with the number of occurrences available for training (@fig-model-accuracy-vs-n_occ), though the worst-performing models also included some species with relatively large sample sizes: <!-- TODO e.g. -->.
+Test metrics and ROC curves for the individual models are included in the appendix.
+
+```{r niche-archaeo}
+# TODO: factor out
+# TODO: what about negatives?
+archaeo_flora_predictions <- archaeo_flora |>
+  filter(taxon %in% flora$taxon) |>
+  st_as_sf(coords = c("longitude", "latitude"), crs = latlong) |>
+  mutate(
+    prediction = map(taxon, \(x) filter(flora, taxon == x)$prediction[[1]]),
+    prediction = map2(prediction, geometry, function(pred, geom) {
+      sf_point <- st_transform(st_sf(st_sfc(geom, crs = latlong)), w_asia_albers)
+      st_extract(pred, sf_point)
+    }),
+    prediction = map2(prediction, climate_period, function(pred, per) {
+      pred |>
+        as_tibble() |>
+        filter(as.character(period) == per) |>
+        transmute(
+          p_absent = prediction.FALSE.,
+          p_present = prediction.TRUE.,
+          pred_present = p_present > p_absent
+        )
+    })
+  ) |>
+  unnest(c(prediction))
+
+p_archaeo_pred_correct <- sum(archaeo_flora_predictions$pred_present, na.rm = TRUE) / length(!is.na(archaeo_flora_predictions$pred_present))
+
+archaeo_flora_pred_summary <- archaeo_flora_predictions |>
+  as_tibble() |>
+  summarise(
+    n_present = sum(!is.na(pred_present)),
+    n_predicted = sum(pred_present, na.rm = TRUE),
+    p_predicted = n_predicted / n_present,
+    .by = c(climate_period, site_name, phase_code, age_mid)
+  )
+```
+
+The ability of the hindcast models to predict the occurrence of specific species at archaeological sites is significantly worse, with only `r percent(p_archaeo_pred_correct)` of presences in archaeobotanical assemblages successfully predicted.
+<!-- TODO: negative -->
+
+# Discussion
+
+* General trends:
+  * Quantified sensitivity of plant ranges to climate change
+  * Crop progenitors saw range contractions just before the onset of agriculture? (Moreso than other wild resources??)
+  * How could are reconstructed ranges at predicting archaeological assemblages? (+Implications)
+* Interesting individual case studies:
+  * Wheat progenitors
+  * ???
+
+# Conclusion
+
+# References {.appendix}
+
+----
 
 ```{r fig-niche-prediction, eval=FALSE}
 niche_taxon <- "Linum bienne"
@@ -837,9 +928,6 @@ ggplot() +
     plot.title = element_text(face = "italic")
   )
 ```
-
-* Comparison to archaeological occurrences
-
 
 ```{r sum-pred-eh, eval=FALSE}
 flora |>
@@ -869,17 +957,3 @@ ggplot() +
 
 saveRDS(pred_eh, "pred_eh.Rdata")
 ```
-
-# Discussion
-
-* General trends:
-  * Quantified sensitivity of plant ranges to climate change
-  * Crop progenitors saw range contractions just before the onset of agriculture? (Moreso than other wild resources??)
-  * How could are reconstructed ranges at predicting archaeological assemblages? (+Implications)
-* Interesting individual case studies:
-  * Wheat progenitors
-  * ???
-
-# Conclusion
-
-# References {.appendix}

@@ -1,9 +1,15 @@
 # data-soilgrids.R
 # Retrieve SoilGrids <https://www.isric.org/explore/soilgrids> data for W. Asia
 # Based on https://git.wur.nl/isric/soilgrids/soilgrids.notebooks/-/blob/master/markdown/webdav_from_R_terra.md
-# NOTE: relies on an external API (last run 2024-11-28)
+# NOTE: relies on an external API (last run 2024-01-05)
+library("fs")
+library("purrr")
+library("sf")
 library("terra")
+library("whitebox")
+library("BadiaPaleoFloraENM")
 
+w_asia <- st_bbox(c(xmin = 25, xmax = 55, ymin = 22.5, ymax = 42.5), crs = 4326)
 soilgrids_vars <- c("clay", "sand", "silt", "phh2o")
 
 soilgrids <- map(soilgrids_vars, function(var, region) {
@@ -19,11 +25,19 @@ soilgrids <- map(soilgrids_vars, function(var, region) {
 
 names(soilgrids) <- soilgrids_vars
 
+# Write
+temp_path <- dir_create(path_temp("soilgrids"))
 walk2(
   soilgrids,
-  derived_data("soilgrids", paste0("soilgrids_", names(soilgrids), "_0-5cm_mean_w_asia.tif")),
+  path(temp_path, paste0("soilgrids_", names(soilgrids), "_0-5cm_mean_w_asia.tif")),
   writeRaster,
   datatype = "FLT4S",
   overwrite = TRUE
 )
 
+# Fill NA holes (mostly modern reservoirs) using IDW
+walk2(
+  dir_ls(temp_path),
+  derived_data("soilgrids", path_file(dir_ls(temp_path))),
+  wbt_fill_missing_data
+)

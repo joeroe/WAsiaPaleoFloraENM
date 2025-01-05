@@ -150,7 +150,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
-  pdftitle={Biogeography of crop progenitors and wild plant resources in Late Pleistocene--Early Holocene West Asia, 21--8.3 ka},
+  pdftitle={Biogeography of crop progenitors and wild plant resources in the Late Pleistocene and Early Holocene of West Asia, 21--8.3 ka},
   pdfauthor={Joe Roe; Amaia Arranz-Otaegui},
   colorlinks=true,
   linkcolor={blue},
@@ -164,8 +164,8 @@
 \begin{document}
 
 \begin{frontmatter}
-\title{Biogeography of crop progenitors and wild plant resources in Late
-Pleistocene--Early Holocene West Asia, 21--8.3 ka}
+\title{Biogeography of crop progenitors and wild plant resources in the
+Late Pleistocene and Early Holocene of West Asia, 21--8.3 ka}
 \author[1,2]{Joe Roe%
 \corref{cor1}%
 }
@@ -198,7 +198,8 @@ the Pleistocene--Holocene transition could then be derived from these
 models using hindcast data from palaeoclimate simulations. Species
 ranges are predicted to have been on average {[}X\%{]}
 {[}larger\textbar smaller{]} in the Early Holocene compared to present
-conditions, indicating {[}\ldots{]}. The modelled ranges predict the
+conditions, but did {[}not{]} change as drastically between the Last
+Glacial Maximum and the Early Holocene. The modelled ranges predict the
 observed occurrence of these species on archaeological sites with
 {[}low\textbar medium\textbar high{]} accuracy. The regional ubiquity of
 species in the archaeological record is {[}not{]} correlated with the
@@ -792,7 +793,7 @@ predictions together as an assemblage.
 \subsection{Model assessment}\label{model-assessment}
 
 \begin{verbatim}
-Warning: Removed 51 rows containing missing values or values outside the scale range
+Warning: Removed 55 rows containing missing values or values outside the scale range
 (`geom_text_repel()`).
 \end{verbatim}
 
@@ -809,11 +810,23 @@ and model accuracy on test dataset}
 
 \end{figure}%
 
-\begin{itemize}
-\tightlist
-\item
-  Modelled ecological niches on current data
-\end{itemize}
+We assessed the predictive performance of the fitted niche models in the
+contemporary environment based on the reserved test partition. Model
+accuracy (i.e.~proportion of correctly classified test samples) ranged
+between 73\% and 98\%, with an average of 91\%. The area under the
+models' receiver operating characteristic curves (ROC-AUC) was in the
+range of 0.9734227±0.0596337 Model accuracy is loosely correlated with
+the number of occurrences available for training
+(Figure~\ref{fig-model-accuracy-vs-n_occ}), though the worst-performing
+models also included some species with relatively large sample sizes: .
+Test metrics and ROC curves for the individual models are included in
+the appendix.
+
+Overall we assessed all models as performing adequately enough to make
+reliable predictions on the desired scale, and that in general the
+majority of the models had high predictive power. Their predictive
+capability when applied to the past is a seperate question, which we
+address in the next section.
 
 \subsection{Hindcasting}\label{hindcasting}
 
@@ -822,7 +835,7 @@ Sensitivity to climate fluctuations?
 \begin{itemize}
 \tightlist
 \item
-  Comparison to archaeological occurrences
+  Ability to predict archaeological occurrences
 \end{itemize}
 
 \section{Discussion}\label{discussion}

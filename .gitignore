@@ -2,6 +2,7 @@
 .RData
 .Rproj.user
 .env
+analysis/paper_cache/
 analysis/data/derived_data/dem/*
 analysis/data/derived_data/paleoclim/raw/*
 analysis/data/derived_data/*.Rdata
