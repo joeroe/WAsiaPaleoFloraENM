@@ -5,7 +5,7 @@
 %
 \documentclass[
   authoryear,
-  review]{elsarticle}
+  preprint]{elsarticle}
 
 \usepackage{amsmath,amssymb}
 \usepackage{iftex}
@@ -150,7 +150,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
-  pdftitle={Biogeography of crop progenitors and wild plant resources over in terminal Pleistocene and Early Holocene boundary West Asia, 14.7--8.3 ka},
+  pdftitle={Biogeography of crop progenitors and wild plant resources in the terminal Pleistocene and Early Holocene of West Asia, 14.7--8.3 ka},
   pdfauthor={Joe Roe; Amaia Arranz-Otaegui},
   colorlinks=true,
   linkcolor={blue},
@@ -164,9 +164,8 @@
 \begin{document}
 
 \begin{frontmatter}
-\title{Biogeography of crop progenitors and wild plant resources over in
-terminal Pleistocene and Early Holocene boundary West Asia, 14.7--8.3
-ka}
+\title{Biogeography of crop progenitors and wild plant resources in the
+terminal Pleistocene and Early Holocene of West Asia, 14.7--8.3 ka}
 \author[1,2]{Joe Roe%
 \corref{cor1}%
 }
@@ -252,7 +251,7 @@ choices.
 
     \begin{itemize}
     \tightlist
-    \item[$\square$]
+    \item[$\boxtimes$]
       General trends
     \item[$\square$]
       Case studies
@@ -275,6 +274,8 @@ choices.
     tbl-occ-count (needs pdf cleanup)
   \item[$\square$]
     tbl-predictors
+  \item[$\square$]
+    tbl-model-metrics
   \end{itemize}
 \item[$\square$]
   Outstanding TODOs
@@ -292,43 +293,48 @@ choices.
 
 \section{Introduction}\label{introduction}
 
-\begin{itemize}
-\tightlist
-\item
-  The first farming societies had an ecological context
-\item
-  Subsistence is understood (largely) through archaeobotany and
-  zooarchaeology; ecological context from environmental archaeology,
-  palynology, palaeoclimate records, etc.
+The Pleistocene--Holocene transition in West Asia marked a turning point
+in global environmental history, as humans brought the first plants
+under cultivation and began modifying surrounding ecosystems to support
+their own subsistence. West Asia is part of the native range of a
+remarkable number of domesticable plant species, including wild
+relatives of wheat, barley, peas, lentils, and other crops of global
+importance \citep{cite}. Even before the end of the Ice Age, these
+species supported uniquely dense and complex Late Epipalaeolithic
+(15--11.7 ka) societies based on intensive foraging \citep{cite} and
+eventually pre-domestication cultivation \citep{cite}. As they were
+brought under domestication in the Pre-Pottery Neolithic period
+(11.7--8.5 ka), the world's first agriculture was shaped by the
+ecosystems from which it emerged and was embedded in.
 
-  \begin{itemize}
-  \tightlist
-  \item
-    But these have a variety of biases (human selection, taphonomy,
-    etc.)
-  \item
-    And at the end of the day only represent specific places --
-    interpolation to the entire region is not straightforward
-  \item
-    Overlap makes it difficult to see where human choices depart from
-    the environmental background \citep[cf.][]{MartinEtAl2016}
-  \item
-    Or to fully contextualise subsistence strategies and shifts in
-    strategies in response to environmental shifts
-    \citep[e.g.][]{YaworskyEtAl2023}.
-  \end{itemize}
-\item
-  Here we present an alternative approach using ENM
+Decades of research in archaeobotany and zooarchaeology have
+reconstructed the subsistence economies of Late Epipalaeolithic and
+Neolithic sites in great detail \citep{cites}. Together with studies of
+charcoal \citep{cite}, pollen \citep{cite}, soil \citep{cite}, and a
+variety of palaeoclimate archives \citep{JonesEtAl2019}, they also tell
+us much about the environments surrounding these settlements. However,
+each of these sources of evidence is subject to the wide variety of
+taphonomic and recovery biases that are inherent in any direct record of
+the past. They are also, by definition, records of the (human)
+environment at particular times and places. Interpolating these
+snapshots to give a holistic picture of the regional ecologies is not
+straightforward -- to date, it has tended to rely on non-explicit,
+inductive modelling. The majority are also filtered through human
+action, producing a mixed single that makes it difficult to disentangle
+anthropic effects from the background of environmental change in this
+period of rapid climatic alteration.
 
-  \begin{itemize}
-  \tightlist
-  \item
-    Whole region, at multiple climate snapshots
-  \item
-    Independent of archaeobot. and pal. clim. data, so can verify and
-    compare
-  \end{itemize}
-\end{itemize}
+In this paper we present a complementary, deductive approach based on
+ecological niche modelling. Rather than inferring environmental
+conditions from preserved physical evidence, we predict the ranges of
+individual species relevant to human subsistence based on a model of
+their current environmental niche and simulations of past palaeoclimate.
+Though hypothetical, this gives us an independent line of evidence on
+past ecologies that is independent of the environmental archaeological
+and palaeoclimatic records. Our computational approach is also readily
+scaled up, allowing us to model spatially-explicit palaeodistributions
+for a large number of species, for the whole region, under multiple past
+climatologies.
 
 \section{Background}\label{background}
 
@@ -360,7 +366,7 @@ origins}\label{biogeography-and-agricultural-origins}
   \tightlist
   \item
     Distinguish environmental from potentially anthropogenic change
-    \citep{MartinEtAl2017, MartinEtAl2025}
+    \citep{MartinEtAl2016, MartinEtAl2025}
   \item
     Reconstruct sequences of domestication \citep{YeomansEtAl2017}
   \end{itemize}
@@ -439,7 +445,7 @@ occurrence of wild and domestic \emph{Bos} remains at prehistoric
 archaeological sites to map the evolving niche of cattle over the
 Pleistocene--Holocene transition. It has been used to model the
 availability of fauna exploited by humans at wider scales
-\citep[e.g.][]{deAndresHerreroEtAl2018, YaworksyEtAl2023} and, in a West
+\citep[e.g.][]{deAndresHerreroEtAl2018, YaworskyEtAl2023} and, in a West
 Asian context, of foraged plant resources in the landscape around the
 Neolithic site of XX \citep{CollinsEtAl2018}. Modelling the spread of
 crops has been another significant archaeological application
@@ -484,7 +490,7 @@ palaeoclimate data derived from simulation experiments with general
 circulation models of climate
 \citep{BrownEtAl2018, BrownEtAl2020, KargerEtAl2023}.
 
-\section{Methods and materials}\label{methods-and-materials}
+\section{Data and model}\label{data-and-model}
 
 \begin{figure}
 
@@ -542,115 +548,117 @@ HTML tags found, and they will be removed.
 * Set `options(gt.html_tag_check = FALSE)` to disable this check.
 \end{verbatim}
 
-\begin{table}
+\begingroup
+\setlength\LTleft{0\linewidth}
+\setlength\LTright{0\linewidth}\fontsize{8.2pt}{9.9pt}\selectfont
+\setlength{\LTpost}{0mm}
+
+\begin{longtable}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{\dimexpr 0.50\linewidth -2\tabcolsep-1.5\arrayrulewidth}>{\raggedleft\arraybackslash}p{\dimexpr 7.50pt -2\tabcolsep-1.5\arrayrulewidth}>{\raggedleft\arraybackslash}p{\dimexpr 7.50pt -2\tabcolsep-1.5\arrayrulewidth}>{\raggedleft\arraybackslash}p{\dimexpr 15.00pt -2\tabcolsep-1.5\arrayrulewidth}}
 
 \caption{\label{tbl-occ-count}Recorded occurrence of flora considered in
 this study in Neolithic and contemporary West Asia}
 
-\centering{
+\tabularnewline
 
-\fontsize{12.0pt}{14.4pt}\selectfont
-\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lrr}
 \toprule
- & \multicolumn{2}{c}{Occurrences} \\ 
-\cmidrule(lr){2-3}
-Taxon & Neolithic & Present \\ 
+ & \multicolumn{3}{>{\centering\arraybackslash}m{\dimexpr 30.00pt -2\tabcolsep-1.5\arrayrulewidth}}{Occurrences} \\ 
+\cmidrule(lr){2-4}
+Taxon & Neolithic & (\%) & Present \\ 
 \midrule\addlinespace[2.5pt]
 \emph{Triticum turgidum dicoccum}
 
-incl. \emph{Triticum aestivum}, \emph{Triticum dicoccoides}, \emph{Triticum dicoccum} & 64 (44\%) & 200 \\ 
+incl. \emph{Triticum aestivum}, \emph{Triticum dicoccoides}, \emph{Triticum dicoccum} & 64 & 44\% & 200 \\ 
 \emph{Hordeum spontaneum}
 
-incl. \emph{Hordeum vulgare} & 62 (43\%) & 6912 \\ 
+incl. \emph{Hordeum vulgare} & 62 & 43\% & 6912 \\ 
 \emph{Triticum monococcum aegilopoides}
 
-incl. \emph{Triticum boeoticum}, \emph{Triticum monococcum} & 44 (30\%) & 3213 \\ 
+incl. \emph{Triticum boeoticum}, \emph{Triticum monococcum} & 44 & 30\% & 3213 \\ 
 \emph{Bolboschoenus maritimus}
 
-incl. \emph{Scirpus maritimus} & 33 (23\%) & 364 \\ 
-\emph{Vicia ervilia} & 33 (23\%) & 858 \\ 
-\emph{Buglossoides tenuiflora} & 31 (21\%) & 159 \\ 
-\emph{Arnebia decumbens} & 25 (17\%) & 240 \\ 
-\emph{Buglossoides arvensis} & 25 (17\%) & 251 \\ 
-\emph{Medicago radiata} & 21 (14\%) & 883 \\ 
-\emph{Androsace maxima} & 20 (14\%) & 130 \\ 
+incl. \emph{Scirpus maritimus} & 33 & 23\% & 364 \\ 
+\emph{Vicia ervilia} & 33 & 23\% & 858 \\ 
+\emph{Buglossoides tenuiflora} & 31 & 21\% & 159 \\ 
+\emph{Arnebia decumbens} & 25 & 17\% & 240 \\ 
+\emph{Buglossoides arvensis} & 25 & 17\% & 251 \\ 
+\emph{Medicago radiata} & 21 & 14\% & 883 \\ 
+\emph{Androsace maxima} & 20 & 14\% & 130 \\ 
 \emph{Vicia orientalis}
 
-incl. \emph{Lens culinaris} & 17 (12\%) & 441 \\ 
+incl. \emph{Lens culinaris} & 17 & 12\% & 441 \\ 
 \emph{Medicago astroites}
 
-incl. \emph{Trigonella astroites} & 16 (11\%) & 130 \\ 
-\emph{Arnebia linearifolia} & 14 (10\%) & 158 \\ 
+incl. \emph{Trigonella astroites} & 16 & 11\% & 130 \\ 
+\emph{Arnebia linearifolia} & 14 & 10\% & 158 \\ 
 \emph{Linum bienne}
 
-incl. \emph{Linum usitatissimum} & 11 (8\%) & 274 \\ 
+incl. \emph{Linum usitatissimum} & 11 & 8\% & 274 \\ 
 \emph{Gypsophila vaccaria}
 
-incl. \emph{Vaccaria pyramidata} & 11 (8\%) & 326 \\ 
-\emph{Carex divisa} & 10 (7\%) & 330 \\ 
-\emph{Ficus carica} & 10 (7\%) & 4265 \\ 
+incl. \emph{Vaccaria pyramidata} & 11 & 8\% & 326 \\ 
+\emph{Carex divisa} & 10 & 7\% & 330 \\ 
+\emph{Ficus carica} & 10 & 7\% & 4265 \\ 
 \emph{Lathyrus oleraceus}
 
-incl. \emph{Pisum elatius}, \emph{Pisum sativum} & 8 (6\%) & 2269 \\ 
-\emph{Vicia faba} & 8 (6\%) & 2578 \\ 
+incl. \emph{Pisum elatius}, \emph{Pisum sativum} & 8 & 6\% & 2269 \\ 
+\emph{Vicia faba} & 8 & 6\% & 2578 \\ 
 \emph{Aizoanthemopsis hispanica}
 
-incl. \emph{Aizoon hispanicum} & 7 (5\%) & 303 \\ 
-\emph{Bolboschoenus glaucus} & 7 (5\%) & 27\textsuperscript{\textit{*}} \\ 
-\emph{Pistacia atlantica} & 7 (5\%) & 928 \\ 
+incl. \emph{Aizoon hispanicum} & 7 & 5\% & 303 \\ 
+\emph{Bolboschoenus glaucus} & 7 & 5\% & 27\textsuperscript{\textit{*}} \\ 
+\emph{Pistacia atlantica} & 7 & 5\% & 928 \\ 
 \emph{Polygonum arenarium arenarium}
 
-incl. \emph{Polygonum venantianum} & 7 (5\%) & 5\textsuperscript{\textit{*}} \\ 
-\emph{Prosopis farcta} & 7 (5\%) & 1205 \\ 
-\emph{Rumex pulcher} & 7 (5\%) & 794 \\ 
-\emph{Ammi majus} & 6 (4\%) & 461 \\ 
+incl. \emph{Polygonum venantianum} & 7 & 5\% & 5\textsuperscript{\textit{*}} \\ 
+\emph{Prosopis farcta} & 7 & 5\% & 1205 \\ 
+\emph{Rumex pulcher} & 7 & 5\% & 794 \\ 
+\emph{Ammi majus} & 6 & 4\% & 461 \\ 
 \emph{Cicer reticulatum}
 
-incl. \emph{Cicer arietinum} & 6 (4\%) & 193 \\ 
-\emph{Hordeum bulbosum} & 6 (4\%) & 2036 \\ 
-\emph{Polygonum corrigioloides} & 6 (4\%) & 4\textsuperscript{\textit{*}} \\ 
-\emph{Salsola kali} & 6 (4\%) & 369 \\ 
-\emph{Taeniatherum caput-medusae} & 6 (4\%) & 235 \\ 
-\emph{Capparis spinosa} & 5 (3\%) & 4031 \\ 
-\emph{Chenopodium album} & 5 (3\%) & 357 \\ 
-\emph{Lolium temulentum} & 5 (3\%) & 148 \\ 
-\emph{Poa bulbosa} & 5 (3\%) & 1401 \\ 
-\emph{Aegilops crassa} & 4 (3\%) & 170 \\ 
-\emph{Atriplex prostrata} & 4 (3\%) & 112 \\ 
-\emph{Brachypodium distachyon} & 4 (3\%) & 1581 \\ 
-\emph{Fumaria densiflora} & 4 (3\%) & 194 \\ 
-\emph{Gypsophila pilosa} & 4 (3\%) & 79 \\ 
-\emph{Hordeum murinum} & 4 (3\%) & 1342 \\ 
-\emph{Lathyrus aphaca} & 4 (3\%) & 2085 \\ 
-\emph{Lathyrus sativus} & 4 (3\%) & 297 \\ 
-\emph{Secale cereale} & 4 (3\%) & 1153 \\ 
-\emph{Triticum durum} & 4 (3\%) & 219 \\ 
-\emph{Vitis sylvestris} & 4 (3\%) & 3\textsuperscript{\textit{*}} \\ 
-\emph{Adonis flammea} & 3 (2\%) & 79 \\ 
-\emph{Avena sterilis} & 3 (2\%) & 50001\textsuperscript{\textit{*}} \\ 
-\emph{Bassia arabica} & 3 (2\%) & 230 \\ 
-\emph{Bromus sterilis} & 3 (2\%) & 385 \\ 
-\emph{Cephalaria syriaca} & 3 (2\%) & 144 \\ 
-\emph{Glaucium aleppicum} & 3 (2\%) & 22\textsuperscript{\textit{*}} \\ 
-\emph{Helianthemum ledifolium} & 3 (2\%) & 668 \\ 
-\emph{Lolium rigidum} & 3 (2\%) & 1464 \\ 
-\emph{Phalaris paradoxa} & 3 (2\%) & 370 \\ 
-\emph{Quercus ithaburensis} & 3 (2\%) & 1431 \\ 
-\emph{Triticum aestivum compactum} & 3 (2\%) & 209 \\ 
-\emph{Verbena officinalis} & 3 (2\%) & 1046 \\ 
-\emph{Vicia narbonensis} & 3 (2\%) & 1529 \\ 
-\emph{Triticum urartu} & — & 2033 \\ 
-\emph{Aegilops speltoides} & — & 1429 \\ 
-\emph{Aegilops tauschii} & — & 1395 \\ 
+incl. \emph{Cicer arietinum} & 6 & 4\% & 193 \\ 
+\emph{Hordeum bulbosum} & 6 & 4\% & 2036 \\ 
+\emph{Polygonum corrigioloides} & 6 & 4\% & 4\textsuperscript{\textit{*}} \\ 
+\emph{Salsola kali} & 6 & 4\% & 369 \\ 
+\emph{Taeniatherum caput-medusae} & 6 & 4\% & 235 \\ 
+\emph{Capparis spinosa} & 5 & 3\% & 4031 \\ 
+\emph{Chenopodium album} & 5 & 3\% & 357 \\ 
+\emph{Lolium temulentum} & 5 & 3\% & 148 \\ 
+\emph{Poa bulbosa} & 5 & 3\% & 1401 \\ 
+\emph{Aegilops crassa} & 4 & 3\% & 170 \\ 
+\emph{Atriplex prostrata} & 4 & 3\% & 112 \\ 
+\emph{Brachypodium distachyon} & 4 & 3\% & 1581 \\ 
+\emph{Fumaria densiflora} & 4 & 3\% & 194 \\ 
+\emph{Gypsophila pilosa} & 4 & 3\% & 79 \\ 
+\emph{Hordeum murinum} & 4 & 3\% & 1342 \\ 
+\emph{Lathyrus aphaca} & 4 & 3\% & 2085 \\ 
+\emph{Lathyrus sativus} & 4 & 3\% & 297 \\ 
+\emph{Secale cereale} & 4 & 3\% & 1153 \\ 
+\emph{Triticum durum} & 4 & 3\% & 219 \\ 
+\emph{Vitis sylvestris} & 4 & 3\% & 3\textsuperscript{\textit{*}} \\ 
+\emph{Adonis flammea} & 3 & 2\% & 79 \\ 
+\emph{Avena sterilis} & 3 & 2\% & 50001\textsuperscript{\textit{*}} \\ 
+\emph{Bassia arabica} & 3 & 2\% & 230 \\ 
+\emph{Bromus sterilis} & 3 & 2\% & 385 \\ 
+\emph{Cephalaria syriaca} & 3 & 2\% & 144 \\ 
+\emph{Glaucium aleppicum} & 3 & 2\% & 22\textsuperscript{\textit{*}} \\ 
+\emph{Helianthemum ledifolium} & 3 & 2\% & 668 \\ 
+\emph{Lolium rigidum} & 3 & 2\% & 1464 \\ 
+\emph{Phalaris paradoxa} & 3 & 2\% & 370 \\ 
+\emph{Quercus ithaburensis} & 3 & 2\% & 1431 \\ 
+\emph{Triticum aestivum compactum} & 3 & 2\% & 209 \\ 
+\emph{Verbena officinalis} & 3 & 2\% & 1046 \\ 
+\emph{Vicia narbonensis} & 3 & 2\% & 1529 \\ 
+\emph{Triticum urartu} & — & — & 2033 \\ 
+\emph{Aegilops speltoides} & — & — & 1429 \\ 
+\emph{Aegilops tauschii} & — & — & 1395 \\ 
 \bottomrule
-\end{tabular*}
+
+\end{longtable}
+
 \begin{minipage}{\linewidth}
 \textsuperscript{\textit{*}}Excluded from modelling due to sample size\\
 \end{minipage}
-
-}
-
-\end{table}%
+\endgroup
 
 Georeferenced occurrence data was obtained from the Global Biodiversity
 Information Facility (GBIF) using via its application programming
@@ -677,8 +685,7 @@ records.
 }
 
 \caption{\label{fig-occ-map}Georeferenced occurrence records from West
-Asia for the \texttt{r\ nrow(flora)} modelled taxa
-(N=\texttt{r\ nrow(unnest(flora,\ occ))})}
+Asia for the 56 modelled taxa (N=35208}
 
 \end{figure}%
 
@@ -798,7 +805,7 @@ presence and background samples. Models for each taxon were fit
 independently, with redundant zero-variance predictors excluded, and
 assessed based on balanced training (¾) and test (¼) partitions.
 
-\section{Results}\label{results}
+\section{Model assessment}\label{model-assessment}
 
 We trained Random Forest models for 56 taxa using contemporary
 occurrence data from GBIF, a random sample of background points, and the
@@ -810,13 +817,6 @@ predictions for reconstructed past environments in 4 key climate periods
 for individual taxa are presented in the appendix and accompanying
 material.
 
-\subsection{Model assessment}\label{model-assessment}
-
-\begin{verbatim}
-Warning: Removed 51 rows containing missing values or values outside the scale range
-(`geom_text_repel()`).
-\end{verbatim}
-
 \begin{figure}
 
 \centering{
@@ -825,8 +825,8 @@ Warning: Removed 51 rows containing missing values or values outside the scale r
 
 }
 
-\caption{\label{fig-model-sensitivity-vs-n_occ}Number of taxon
-occurrences and model sensitivity on test dataset}
+\caption{\label{fig-model-sensitivity-vs-n_occ}Model sensitivity by
+number of training occurrences}
 
 \end{figure}%
 
@@ -850,7 +850,7 @@ The ability of the hindcast models to predict the occurrence of specific
 species at archaeological sites is significantly worse, with only 12\%
 of presences in archaeobotanical assemblages successfully predicted.
 
-\section{Discussion}\label{discussion}
+\section{Results}\label{results}
 
 \subsection{Reduction in range sizes over the Pleistocene/Holocene
 boundary}\label{reduction-in-range-sizes-over-the-pleistoceneholocene-boundary}
@@ -893,38 +893,37 @@ compactum} (in the N. Levant), \emph{T. monococcum aegilopoides},
 progenitor, \emph{T. turgidum dicoccum} -- see below); \emph{Aegilops
 speltoides}, but not \emph{Aegilops tauschii} (goatgrasses); and
 \emph{Vicia} spp. (vetches), including \emph{Vicia faba} (broad beans).
-Central Anatolia, Northern Mesopotamia, and the Zagros Mountains in
+most of Anatolia, Northern Mesopotamia, and the Zagros Mountains in
 particular disappear from the predicted ranges of these species, leaving
-the Levant and to a lesser extent Western Anatolia Cyprus as refugia.
+the Levant and to a lesser extent the Aegean and Cyprus as refugia.
 
 Our results for the Levant are consistent with the current understanding
 of this region as developing early intensive foraging economies {[}the
 Natufian culture, @{]} and as a centre of origin of agriculture {[}@{]}.
-It should also be noted that the selection of flora for this study
-(Table~\ref{tbl-occ-count}) is biased towards Levantine fauna due to the
-history of archaeological research in the region, as is the occurrence
-dataset used to train the model Figure~\ref{fig-occ-map}. Within the
-Levant, retreat from the Badia.
+Within the Levant, retreat from the Badia.
 
-Loss of the Northern Mesopotamia--Southeastern Anatolia region from the
-predicted ranges of crop progenitors is interesting in light of the
-`golden triangle' hypothesis \citep{KozlowskiAurenche2005}, which puts
-this region at the centre of the development of agriculture. Multiple
-lines of archaeological evidence have emerged that point away from this
-hypothesis and towards a more geographically diverse origin
+Loss of the Northern Mesopotamia--Anatolia region from the predicted
+ranges of crop progenitors is interesting in light of the `golden
+triangle' hypothesis
+\citep{Lev-YadunEtAl2000, KozlowskiAurenche2005, AbboEtAl2010}, which
+puts this region at the centre of the development of agriculture.
+Multiple lines of archaeological evidence have emerged that point away
+from this hypothesis and towards a more geographically diverse origin
 \citep{Asouti2006, cites}, but it remains the area with some of the
-earliest clear evidence of domestication. Comparative genetics also
-points to the Northern Mesopotamia region as the centre of diversity of
-many crops \citep{cite}. But since these studies are based on modern
-genomes, if the wild range of these plants has, as our modelling
-suggests, shifted since the Early Holocene, the apparent centre of
-diversity may have shifted with them. Our reconstructions are consistent
-with the late arrival of intensive plant-based foraging economies in
-this region (cf.~the Natufian of the Levant) and more broadly there need
-not be a link between the core \emph{wild} range of a plant and the core
-area of its domestication. A scenario in which cultivation emerged at
-the edges of the ranges of valuable plant resources---as a means of
-extend their natural niche---is also plausible.
+earliest clear evidence of domestication
+\citep{ZoharyHopfWeiss2012, KabukcuEtAl2021, UlasEtAl2024}. Comparative
+genetics also points to the Northern Mesopotamia region as the centre of
+diversity of many crops \citep[e.g.][]{HaasEtAl2019}. But since these
+studies are based on modern genomes, if the wild range of these plants
+has, as our modelling suggests, shifted since the Early Holocene, the
+apparent centre of diversity may have shifted with them. Our
+reconstructions are consistent with the late arrival of intensive
+plant-based foraging economies in this region (cf.~the Natufian of the
+Levant), and more broadly there need not be a link between the core
+\emph{wild} range of a plant and the core area of its domestication. A
+scenario in which cultivation emerged at the edges of the ranges of
+valuable plant resources---as a means of extend their natural niche---is
+also plausible.
 
 The near-absence of the Zagros in any predicted ranges is also
 surprising, given mounting evidence that domestication took place just
@@ -937,27 +936,55 @@ Archaeobotanical data on Neolithic sites in the Zagros is limited
 there from the 1980s to early 2010s \citep{cite}. Recent research
 \citep{Amaia} indicates \ldots{}
 
-Cyprus and W. Anatolia not considered part of the core zone -- maybe
-they should be?
+Cyprus and the Aegean are not conventionally considered part of the
+primary zone of domestication but rather amongst the first regions that
+acquired agriculture from West Asia. Our analysis complicates this
+picture, as it indicates that the wild ranges of many crop progenitors
+included these regions. Early examples of several domesticates are
+recorded at sites on Cyprus, Western Anatolia and Greece
+\citep{ArranzOtaeguiRoe2023}, and the Aegean region was probably
+connected to West Asia by a land bridge via Anatolia until the Early
+Holocene \citep{AksuHiscott2022}. Were these area part of the same
+broader `interaction sphere' \citep{cite} that produce Neolithic
+agriculture in West Asia?
 
-Exceptions to the trend of range reduction include \emph{Cicer
+Exceptions to the dominant trend of range reduction include \emph{Cicer
 reticulatum} (wild chickpea), which has a relatively stable range
 centered on Northern Mesopotamia; and \emph{Triticum turgidum dicoccum}
-(wild emmer wheat), which is predicted to have two very restricted
-ranges centered around the Black Sea Coast of Anatolia and the Palmyra
-basin. In the latter case, neither of these areas are part of the
-predicted modern distribution of wild emmer (centered around the
-Caucasus and Northern Mesopotamia), but it would be consistent with
-archaeological evidence for early cultivation at Tell Abu Hureyra and
-other sites in the Upper Euphrates. On the other hand, the model for
-\emph{Triticum turgidum dicoccum} has the lowest predictive performance
-of all our fitted models.
+(wild emmer wheat), which is predicted to have two limited ranges
+centered around the Black Sea Coast of Anatolia and the Palmyra basin.
+In the latter case, neither of these areas are part of the predicted
+modern distribution of wild emmer (centered around the Caucasus and
+Northern Mesopotamia), but it would be consistent with archaeological
+evidence for early cultivation at sites in the Upper Euphrates
+\citep{Willcox2024}.
 
 \subsection{Biogeography of crop
 progenitors}\label{biogeography-of-crop-progenitors}
 
-Several crop progenitors reduced in range before cultivation? Reduction
-in range from BA to EH very evident in Hordeum, Pistacia atlantica.
+\begin{itemize}
+\tightlist
+\item
+  Most cereal and legume crops predicted to be Levantine
+\item
+  Cereals show diverging southern/northern ranges (legumes not so much)
+\item
+  Not rye (Anatolia), chickpea (N. Mesopotamia)
+\end{itemize}
+
+Wild barley \textbf{?@fig-hindcast-barely-levant} and pistachio
+\citep[\emph{Pistacia atlantica},][]{fig} show a contraction of their
+predicted ranges from the Pleistocene to the Holocene, concurrent with
+them being brought into cultivation. Plausible that this prompted
+cultivation? These two species \citep{ArranzOtaeguiRoe2023} also see
+marked declines in the archaeobotanical record from the Early PPNA/Early
+PPNB (where they were amongst the most common taxa) to the Late PPNB and
+Late Neolithic. However, this trend is not seen in most other crop
+progenitors.
+
+Cereals / other progenitors (not all) reduced in range before
+cultivation? Reduction in range from BA to EH very evident in Hordeum,
+less so in \ldots{}
 
 The wheat story.
 
@@ -995,7 +1022,11 @@ resolved palaeoclimate sequences \citep[e.g.][]{KargerEtAl2023},
 hyperparameter tuning to avoid overfitting, and improved archaeological
 datasets, would help disentangle these potential explanations.
 
-\section{Conclusion}\label{conclusion}
+Is inconsistent with more ``macro'' trends such as the reduced range of
+Hordeum and Pistacia correlating with its reduced abundance in the
+archaeobotanical record.
+
+\section{Discussion}\label{discussion}
 
 \begin{itemize}
 \tightlist
