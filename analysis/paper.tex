@@ -188,7 +188,7 @@ Country},country={Spain},countrysep={,},postcodesep={}}
         
 \begin{abstract}
 This paper presents the first continuous, spatially-explicit
-reconstructions of the palaeodistributions of 56 plant species found
+reconstructions of the palaeodistributions of 81 plant species found
 regularly in association with early agricultural archaeological sites in
 West Asia, including the progenitors of the first crops. We used machine
 learning to train an ecological niche model of each species based on its
@@ -196,15 +196,15 @@ present-day distribution in relation to climate and environmental
 variables. Predictions of the potential ranges of these species at key
 stages of the Pleistocene--Holocene transition could then be derived
 from these models using downsampled data from palaeoclimate simulations.
-Species ranges are predicted to have been on significantly smaller in
-the Early Holocene compared to present conditions, with many species
-that are found throughout the region's `hilly flanks' today indicated to
-have much more restricted distributions centered on the Levant, Cyprus
-and Western Anatolia. Ranges shrunk by on average c.~10\% from the
-terminal Pleistocene to the Early Holocene, with a further c.~10\%
-reduction for the duration of the Younger Dryas. However, modelled
-ranges do not reliably predict the observed occurrence of specific
-species at archaeological sites. {[}\ldots{]} The regional ubiquity of
+The models predict significant reductions and/or shifts in species
+ranges in the terminal Pleistocene and Early Holocene compared to
+present conditions. Many species that are found throughout the region's
+`hilly flanks' today are indicated to have much more restricted
+distributions centered on the Levant, Cyprus and Western Anatolia. In
+addition, overall ranges shrunk by an average of c.~25\% from the
+terminal Pleistocene to the Early Holocene. Modelled ranges do not
+reliably predict the observed occurrence of specific species at
+archaeological sites, however {[}\ldots{]} The regional ubiquity of
 species in the archaeological record is {[}not{]} correlated with the
 predicted size of its range and the diversity of archaeobotanical
 assemblages is {[}not{]} correlated with the predicted diversity of its
@@ -230,7 +230,7 @@ choices.
 
   \begin{itemize}
   \tightlist
-  \item[$\square$]
+  \item[$\boxtimes$]
     Introduction
   \item[$\square$]
     Background
@@ -283,7 +283,7 @@ choices.
   Add missing references
 \item[$\square$]
   Copyedit
-\item[$\square$]
+\item[$\boxtimes$]
   Appendix with all hindcast predictions (HTML?)
 \item[$\square$]
   Clean up package code
@@ -500,180 +500,54 @@ circulation models of climate
 
 }
 
-\caption{\label{fig-region}Study region (red) and archaeological sites
-used to generate modelled flora. Solid circles indicate Neolithic
-sites.}
+\caption{\label{fig-region}Late Epipalaeolithic \& Pre-Pottery Neolithic
+archaeological sites used to generate modelled flora}
 
 \end{figure}%
 
-We began by considering 62 distinct taxa (Table~\ref{tbl-occ-count}) -
-all the identifiable species known to be present at more than three
-Neolithic (c.~11.7--6.5 ka) sites in West Asia, according to our
-previous study of the regional archaeobotanical data
-\citep{ArranzOtaeguiRoe2023}. Taxonomic names were resolved to the
-canonical form specified in the GBIF Backbone Taxonomy
-\citep{GBIFSecretariat2023}. So for example occurrences for
-\emph{Bolboschoenus maritimus} also include those recorded under the
-older nomenclature \emph{Scirpus maritimus} (see
-Table~\ref{tbl-occ-count}). Domestic species meeting our inclusion
-criteria were substituted with their wild progenitor(s), where
-different.
+The aim of our study was to model the biogeography of species relevant
+to human subsistence economies in West Asia (excluding the Southern
+Arabian peninsula, see Figure~\ref{fig-region}) during the
+archaeological Late Epipalaeolithic (15--11.7 ka) and Pre-Pottery
+Neolithic (11.7--8.3 ka) periods. Our starting point was a list of 96
+taxa (Table~\ref{tbl-taxa}) comprising the identifiable species observed
+at at least two Late Epipalaeolithic/Pre-Pottery Neolithic sites,
+according to our previous study of the regional archaeobotanical data
+\citep{ArranzOtaeguiRoe2023}. This was based on dataset of 117
+assemblages collated from three previously published regional
+archaeobotanical databases: ADEMNES \citep{ADEMNES}, ORIGINS
+\citep{ORIGINS}, and COMPAG \citep{COMPAG}. We did not attempt to
+distinguish between the source of the remains; archaeobotanical
+assemblages are subject to a variety of preservational and recovery
+biases, so by no means were all the species on our list consumed or even
+deliberately collected by people. However, we assume that there presence
+at a site of human settlement at least implies that they were part of
+the wider ecosystem that supported habitation there.
+
+Taxonomic names were resolved to the canonical form specified in the
+GBIF Backbone Taxonomy \citep{GBIFSecretariat2023}. So for example
+occurrences for \emph{Bolboschoenus maritimus} also include those
+recorded under the older nomenclature \emph{Scirpus maritimus} (see
+Table~\ref{tbl-taxa}). Domestic species meeting our inclusion criteria
+were substituted with their wild progenitor(s), where different.
 
 \subsection{Occurrence data}\label{occurrence-data}
 
-\begin{verbatim}
-Warning: HTML tags found, and they will be removed.
-* Set `options(gt.html_tag_check = FALSE)` to disable this check.
-HTML tags found, and they will be removed.
-* Set `options(gt.html_tag_check = FALSE)` to disable this check.
-HTML tags found, and they will be removed.
-* Set `options(gt.html_tag_check = FALSE)` to disable this check.
-HTML tags found, and they will be removed.
-* Set `options(gt.html_tag_check = FALSE)` to disable this check.
-HTML tags found, and they will be removed.
-* Set `options(gt.html_tag_check = FALSE)` to disable this check.
-HTML tags found, and they will be removed.
-* Set `options(gt.html_tag_check = FALSE)` to disable this check.
-HTML tags found, and they will be removed.
-* Set `options(gt.html_tag_check = FALSE)` to disable this check.
-HTML tags found, and they will be removed.
-* Set `options(gt.html_tag_check = FALSE)` to disable this check.
-HTML tags found, and they will be removed.
-* Set `options(gt.html_tag_check = FALSE)` to disable this check.
-HTML tags found, and they will be removed.
-* Set `options(gt.html_tag_check = FALSE)` to disable this check.
-HTML tags found, and they will be removed.
-* Set `options(gt.html_tag_check = FALSE)` to disable this check.
-HTML tags found, and they will be removed.
-* Set `options(gt.html_tag_check = FALSE)` to disable this check.
-\end{verbatim}
-
-\begingroup
-\setlength\LTleft{0\linewidth}
-\setlength\LTright{0\linewidth}\fontsize{8.2pt}{9.9pt}\selectfont
-\setlength{\LTpost}{0mm}
-
-\begin{longtable}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{\dimexpr 0.50\linewidth -2\tabcolsep-1.5\arrayrulewidth}>{\raggedleft\arraybackslash}p{\dimexpr 7.50pt -2\tabcolsep-1.5\arrayrulewidth}>{\raggedleft\arraybackslash}p{\dimexpr 7.50pt -2\tabcolsep-1.5\arrayrulewidth}>{\raggedleft\arraybackslash}p{\dimexpr 15.00pt -2\tabcolsep-1.5\arrayrulewidth}}
-
-\caption{\label{tbl-occ-count}Recorded occurrence of flora considered in
-this study in Neolithic and contemporary West Asia}
-
-\tabularnewline
-
-\toprule
- & \multicolumn{3}{>{\centering\arraybackslash}m{\dimexpr 30.00pt -2\tabcolsep-1.5\arrayrulewidth}}{Occurrences} \\ 
-\cmidrule(lr){2-4}
-Taxon & Neolithic & (\%) & Present \\ 
-\midrule\addlinespace[2.5pt]
-\emph{Triticum turgidum dicoccum}
-
-incl. \emph{Triticum aestivum}, \emph{Triticum dicoccoides}, \emph{Triticum dicoccum} & 64 & 44\% & 200 \\ 
-\emph{Hordeum spontaneum}
-
-incl. \emph{Hordeum vulgare} & 62 & 43\% & 6912 \\ 
-\emph{Triticum monococcum aegilopoides}
-
-incl. \emph{Triticum boeoticum}, \emph{Triticum monococcum} & 44 & 30\% & 3213 \\ 
-\emph{Bolboschoenus maritimus}
-
-incl. \emph{Scirpus maritimus} & 33 & 23\% & 364 \\ 
-\emph{Vicia ervilia} & 33 & 23\% & 858 \\ 
-\emph{Buglossoides tenuiflora} & 31 & 21\% & 159 \\ 
-\emph{Arnebia decumbens} & 25 & 17\% & 240 \\ 
-\emph{Buglossoides arvensis} & 25 & 17\% & 251 \\ 
-\emph{Medicago radiata} & 21 & 14\% & 883 \\ 
-\emph{Androsace maxima} & 20 & 14\% & 130 \\ 
-\emph{Vicia orientalis}
-
-incl. \emph{Lens culinaris} & 17 & 12\% & 441 \\ 
-\emph{Medicago astroites}
-
-incl. \emph{Trigonella astroites} & 16 & 11\% & 130 \\ 
-\emph{Arnebia linearifolia} & 14 & 10\% & 158 \\ 
-\emph{Linum bienne}
-
-incl. \emph{Linum usitatissimum} & 11 & 8\% & 274 \\ 
-\emph{Gypsophila vaccaria}
-
-incl. \emph{Vaccaria pyramidata} & 11 & 8\% & 326 \\ 
-\emph{Carex divisa} & 10 & 7\% & 330 \\ 
-\emph{Ficus carica} & 10 & 7\% & 4265 \\ 
-\emph{Lathyrus oleraceus}
-
-incl. \emph{Pisum elatius}, \emph{Pisum sativum} & 8 & 6\% & 2269 \\ 
-\emph{Vicia faba} & 8 & 6\% & 2578 \\ 
-\emph{Aizoanthemopsis hispanica}
-
-incl. \emph{Aizoon hispanicum} & 7 & 5\% & 303 \\ 
-\emph{Bolboschoenus glaucus} & 7 & 5\% & 27\textsuperscript{\textit{*}} \\ 
-\emph{Pistacia atlantica} & 7 & 5\% & 928 \\ 
-\emph{Polygonum arenarium arenarium}
-
-incl. \emph{Polygonum venantianum} & 7 & 5\% & 5\textsuperscript{\textit{*}} \\ 
-\emph{Prosopis farcta} & 7 & 5\% & 1205 \\ 
-\emph{Rumex pulcher} & 7 & 5\% & 794 \\ 
-\emph{Ammi majus} & 6 & 4\% & 461 \\ 
-\emph{Cicer reticulatum}
-
-incl. \emph{Cicer arietinum} & 6 & 4\% & 193 \\ 
-\emph{Hordeum bulbosum} & 6 & 4\% & 2036 \\ 
-\emph{Polygonum corrigioloides} & 6 & 4\% & 4\textsuperscript{\textit{*}} \\ 
-\emph{Salsola kali} & 6 & 4\% & 369 \\ 
-\emph{Taeniatherum caput-medusae} & 6 & 4\% & 235 \\ 
-\emph{Capparis spinosa} & 5 & 3\% & 4031 \\ 
-\emph{Chenopodium album} & 5 & 3\% & 357 \\ 
-\emph{Lolium temulentum} & 5 & 3\% & 148 \\ 
-\emph{Poa bulbosa} & 5 & 3\% & 1401 \\ 
-\emph{Aegilops crassa} & 4 & 3\% & 170 \\ 
-\emph{Atriplex prostrata} & 4 & 3\% & 112 \\ 
-\emph{Brachypodium distachyon} & 4 & 3\% & 1581 \\ 
-\emph{Fumaria densiflora} & 4 & 3\% & 194 \\ 
-\emph{Gypsophila pilosa} & 4 & 3\% & 79 \\ 
-\emph{Hordeum murinum} & 4 & 3\% & 1342 \\ 
-\emph{Lathyrus aphaca} & 4 & 3\% & 2085 \\ 
-\emph{Lathyrus sativus} & 4 & 3\% & 297 \\ 
-\emph{Secale cereale} & 4 & 3\% & 1153 \\ 
-\emph{Triticum durum} & 4 & 3\% & 219 \\ 
-\emph{Vitis sylvestris} & 4 & 3\% & 3\textsuperscript{\textit{*}} \\ 
-\emph{Adonis flammea} & 3 & 2\% & 79 \\ 
-\emph{Avena sterilis} & 3 & 2\% & 50001\textsuperscript{\textit{*}} \\ 
-\emph{Bassia arabica} & 3 & 2\% & 230 \\ 
-\emph{Bromus sterilis} & 3 & 2\% & 385 \\ 
-\emph{Cephalaria syriaca} & 3 & 2\% & 144 \\ 
-\emph{Glaucium aleppicum} & 3 & 2\% & 22\textsuperscript{\textit{*}} \\ 
-\emph{Helianthemum ledifolium} & 3 & 2\% & 668 \\ 
-\emph{Lolium rigidum} & 3 & 2\% & 1464 \\ 
-\emph{Phalaris paradoxa} & 3 & 2\% & 370 \\ 
-\emph{Quercus ithaburensis} & 3 & 2\% & 1431 \\ 
-\emph{Triticum aestivum compactum} & 3 & 2\% & 209 \\ 
-\emph{Verbena officinalis} & 3 & 2\% & 1046 \\ 
-\emph{Vicia narbonensis} & 3 & 2\% & 1529 \\ 
-\emph{Triticum urartu} & — & — & 2033 \\ 
-\emph{Aegilops speltoides} & — & — & 1429 \\ 
-\emph{Aegilops tauschii} & — & — & 1395 \\ 
-\bottomrule
-
-\end{longtable}
-
-\begin{minipage}{\linewidth}
-\textsuperscript{\textit{*}}Excluded from modelling due to sample size\\
-\end{minipage}
-\endgroup
-
-Georeferenced occurrence data was obtained from the Global Biodiversity
-Information Facility (GBIF) using via its application programming
-interface and the R package `rgbif'
-\citep{ChamberlainBoettiger2017, rgbif}. GBIF occurrences marked has
-having imprecise or duplicate coordinates were excluded from the
-training dataset, as were fossil records. Although niche models have
-reasonable predictive power even with small training samples
+Georeferenced occurrence data for West Asia was obtained from the Global
+Biodiversity Information Facility (GBIF) using via its application
+programming interface and the R package `rgbif'
+\citep{ChamberlainBoettiger2017, rgbif}. GBIF was cleaned to removed
+fossil occurrences, recorded absences, and records with missing,
+imprecise (\textgreater1 km uncertainty), or invalid coordinates.
+Although niche models have reasonable predictive power even with small
+training samples
 \citep{StockwellPeterson2002, HernandezEtAl2006, WiszEtAl2008}, we
-excluded 57 taxa with less than 50 occurrences in West Asia, following
+excluded 81 taxa with less than 50 usable occurrences, following
 recommendations for niche models generally and Random Forest-based
 models specifically \citep{StockwellPeterson2002, LuanEtAl2020}. We also
 excluded one taxon (\emph{Avena sterilis}) with over 50,000 occurrences,
 as this would have been computationally prohibitive and we were
-uncertain what account for such a disproportionately high number of
+uncertain what accounted for such a disproportionately high number of
 records.
 
 \begin{figure}
@@ -685,7 +559,7 @@ records.
 }
 
 \caption{\label{fig-occ-map}Georeferenced occurrence records from West
-Asia for the 56 modelled taxa (N=35208}
+Asia used to train models (N=78222}
 
 \end{figure}%
 
@@ -694,15 +568,15 @@ rarely definitive information on where the species is \emph{not} found.
 We therefore need to generate random background points or
 ``pseudo-absences'' to feed to the model. There are several ways to do
 this. We follow the advice of \citet{BarbetMassinEtAl2012} for
-regression-based species distribution models and use a large (:10000)
+regression-based species distribution models and use a large (≈10000)
 random sample of points, weighted equally against the presences in the
-regression. \citet{ValaviEtAl2022} also recommend using a very large
+regression. \citet{ValaviEtAl2022} also recommend using a large
 background sample for random forest models.
 
 \subsection{Predictor data}\label{predictor-data}
 
 We modelled the occurrence of species as a function of X spatial
-predictor variables (\textbf{?@tbl-predictors}). These included:
+predictor variables (Table~\ref{tbl-predictors}). These included:
 
 \begin{itemize}
 \tightlist
@@ -796,7 +670,7 @@ larger numbers of taxa.
 
 For each taxon we trained a classification model to predict occurrence
 (presence or absence/background) based on our X predictor variables
-(\textbf{?@tbl-predictors}). We used the Random Forest algorithm
+(Table~\ref{tbl-predictors}). We used the Random Forest algorithm
 implemented in the R package `ranger' \citep{WrightZiegler2017} and the
 `tidymodels' \citep{tidymodels} framework for data preprocessing and
 model selection. To avoid overfitting, we follow \citet{ValaviEtAl2021}
@@ -807,15 +681,15 @@ assessed based on balanced training (¾) and test (¼) partitions.
 
 \section{Model assessment}\label{model-assessment}
 
-We trained Random Forest models for 56 taxa using contemporary
+We trained Random Forest models for 81 taxa using contemporary
 occurrence data from GBIF, a random sample of background points, and the
-predictor variables described in \textbf{?@tbl-predictors}. Substituting
-the ``current'' climate predictors for those derived from palaeoclimatic
-simulations \citep{BrownEtAl2018}, we could then generate hindcast
-predictions for reconstructed past environments in 4 key climate periods
--- a total of 224 modelled palaeodistributions. Predicted distributions
-for individual taxa are presented in the appendix and accompanying
-material.
+predictor variables described in Table~\ref{tbl-predictors}.
+Substituting the ``current'' climate predictors for those derived from
+palaeoclimatic simulations \citep{BrownEtAl2018}, we could then generate
+hindcast predictions for reconstructed past environments in 4 key
+climate periods -- a total of 324 modelled palaeodistributions.
+Predicted distributions for individual taxa are presented in the
+appendix and accompanying material.
 
 \begin{figure}
 
@@ -833,24 +707,125 @@ number of training occurrences}
 We assessed the predictive performance of the fitted niche models in the
 contemporary environment based on the reserved test partition. Model
 accuracy (proportion of correctly classified presence and background
-samples) ranged between 72\% and 98\%, with an average of 91\%.
+samples) ranged between 72\% and 99\%, with an average of 92\%.
 Sensitivity (proportion of correctly classified presence samples) ranged
-between 80\% and 100\%, with an average of 93\%. The area under the
+between 79\% and 100\%, with an average of 94\%. The area under the
 models' receiver operating characteristic curves (ROC-AUC) was in the
-range of 0.973±0.058 Model sensitivity is loosely correlated with the
+range of 0.978±0.061 Model sensitivity is loosely correlated with the
 number of occurrences available for training
 (Figure~\ref{fig-model-sensitivity-vs-n_occ}), with the worst-performing
-models all having less than 300 recorded occurrences: \emph{Buglossoides
-tenuiflora}, \emph{Cephalaria syriaca}, \emph{Gypsophila pilosa},
-\emph{Lathyrus sativus}, and \emph{Triticum turgidum dicoccum}. Test
-metrics and ROC curves for the individual models are included in the
-appendix.
+models all having less than 300 recorded occurrences: \emph{Avena
+fatua}, \emph{Lepidium perfoliatum}, \emph{Triticum turgidum dicoccum},
+and \emph{Zygophyllum fabago}. Test metrics and ROC curves for the
+individual models are included in the appendix.
 
 The ability of the hindcast models to predict the occurrence of specific
-species at archaeological sites is significantly worse, with only 12\%
-of presences in archaeobotanical assemblages successfully predicted.
+species at archaeological sites is significantly worse, with only 5\% of
+presences in archaeobotanical assemblages successfully predicted.
 
-\section{Results}\label{results}
+\section{Discussion}\label{discussion}
+
+\begingroup
+\setlength\LTleft{0\linewidth}
+\setlength\LTright{0\linewidth}\fontsize{8.2pt}{9.9pt}\selectfont
+
+\begin{longtable}{@{\extracolsep{\fill}}lrrrrr}
+
+\caption{\label{tbl-taxa}Summary of species modelled}
+
+\tabularnewline
+
+\toprule
+ & \multicolumn{2}{c}{Occurrences} & \multicolumn{3}{c}{Model} \\ 
+\cmidrule(lr){2-3} \cmidrule(lr){4-6}
+Taxon & Archaeological & Present (GBIF) & Accuracy & ROC-AUC & Sensitivity \\ 
+\midrule\addlinespace[2.5pt]
+{\itshape Adonis dentata} & 2 & 715 & 0.99 & 1.00 & 0.99 \\ 
+{\itshape Aegilops crassa} & 4 & 143 & 0.82 & 0.94 & 0.89 \\ 
+{\itshape Aegilops speltoides} & — & 701 & 0.93 & 0.98 & 0.94 \\ 
+{\itshape Aegilops tauschii} & — & 725 & 0.90 & 0.98 & 0.94 \\ 
+{\itshape Aizoanthemopsis hispanica} & 4 & 515 & 0.98 & 0.99 & 0.96 \\ 
+{\itshape Ammi majus} & 4 & 900 & 0.99 & 0.99 & 0.98 \\ 
+{\itshape Androsace maxima} & 17 & 231 & 0.88 & 0.96 & 0.88 \\ 
+{\itshape Arenaria serpyllifolia} & 3 & 139 & 0.85 & 0.94 & 0.91 \\ 
+{\itshape Arnebia decumbens} & 21 & 324 & 0.94 & 0.98 & 0.93 \\ 
+{\itshape Arnebia linearifolia} & 13 & 225 & 0.98 & 1.00 & 0.98 \\ 
+{\itshape Asphodelus aestivus} & 2 & 76 & 0.96 & 0.97 & 0.96 \\ 
+{\itshape Atriplex prostrata} & 4 & 266 & 0.97 & 1.00 & 0.97 \\ 
+{\itshape Avena fatua} & 2 & 579 & 0.85 & 0.93 & 0.85 \\ 
+{\itshape Bassia arabica} & 4 & 264 & 0.98 & 1.00 & 0.98 \\ 
+{\itshape Bolboschoenus maritimus} & 29 & 1040 & 0.98 & 1.00 & 0.99 \\ 
+{\itshape Brachypodium distachyon} & 5 & 2270 & 0.98 & 0.99 & 0.98 \\ 
+{\itshape Bromus sterilis} & 3 & 759 & 0.96 & 1.00 & 0.98 \\ 
+{\itshape Buglossoides arvensis} & 23 & 260 & 0.86 & 0.96 & 0.90 \\ 
+{\itshape Buglossoides tenuiflora} & 26 & 252 & 0.96 & 0.99 & 0.94 \\ 
+{\itshape Capparis spinosa} & 4 & 4938 & 0.97 & 0.99 & 0.97 \\ 
+{\itshape Capsella bursa-pastoris} & 2 & 1329 & 0.94 & 0.99 & 0.94 \\ 
+{\itshape Carex divisa} & 9 & 336 & 0.95 & 0.98 & 0.93 \\ 
+{\itshape Ceratonia siliqua} & 2 & 5072 & 0.98 & 1.00 & 0.99 \\ 
+{\itshape Chenopodium album} & 5 & 480 & 0.93 & 0.98 & 0.92 \\ 
+{\itshape Cicer reticulatum} & 3 & 52 & 0.96 & 1.00 & 0.92 \\ 
+{\itshape Citrullus colocynthis} & 4 & 475 & 0.89 & 0.95 & 0.89 \\ 
+{\itshape Crithopsis delileana} & 3 & 406 & 0.97 & 0.99 & 0.97 \\ 
+{\itshape Erodium ciconium} & 2 & 359 & 0.91 & 0.99 & 0.99 \\ 
+{\itshape Ficus carica} & 8 & 3495 & 0.93 & 0.98 & 0.93 \\ 
+{\itshape Fumaria densiflora} & 4 & 413 & 0.98 & 0.99 & 0.98 \\ 
+{\itshape Gypsophila elegans} & 3 & 76 & 0.93 & 0.96 & 0.85 \\ 
+{\itshape Gypsophila pilosa} & 5 & 173 & 0.93 & 0.99 & 0.95 \\ 
+{\itshape Gypsophila vaccaria} & 8 & 511 & 0.96 & 0.99 & 0.93 \\ 
+{\itshape Halothamnus hierochunticus} & 2 & 57 & 0.99 & 1.00 & 1.00 \\ 
+{\itshape Helianthemum ledifolium} & 2 & 697 & 0.97 & 0.98 & 0.96 \\ 
+{\itshape Helianthemum salicifolium} & 2 & 1400 & 0.98 & 0.99 & 0.97 \\ 
+{\itshape Hordeum bulbosum} & 4 & 2850 & 0.97 & 0.99 & 0.96 \\ 
+{\itshape Hordeum murinum} & 5 & 1949 & 0.95 & 0.99 & 0.96 \\ 
+{\itshape Hordeum spontaneum} & 51 & 4656 & 0.96 & 0.99 & 0.97 \\ 
+{\itshape Juglans regia} & 2 & 821 & 0.85 & 0.96 & 0.94 \\ 
+{\itshape Lathyrus aphaca} & 4 & 2079 & 0.95 & 0.99 & 0.96 \\ 
+{\itshape Lathyrus cicera} & 2 & 591 & 0.90 & 0.98 & 0.94 \\ 
+{\itshape Lathyrus oleraceus} & 6 & 1580 & 0.88 & 0.97 & 0.94 \\ 
+{\itshape Lathyrus sativus} & 4 & 196 & 0.80 & 0.94 & 0.87 \\ 
+{\itshape Lepidium perfoliatum} & 3 & 83 & 0.80 & 0.92 & 0.83 \\ 
+{\itshape Linum bienne} & 9 & 376 & 0.96 & 1.00 & 0.98 \\ 
+{\itshape Lolium rigidum} & 5 & 2529 & 0.98 & 1.00 & 0.98 \\ 
+{\itshape Lolium temulentum} & 3 & 159 & 0.93 & 0.95 & 0.92 \\ 
+{\itshape Medicago astroites} & 15 & 143 & 0.90 & 0.97 & 0.88 \\ 
+{\itshape Medicago minima} & 2 & 1379 & 0.92 & 0.99 & 0.98 \\ 
+{\itshape Medicago radiata} & 20 & 799 & 0.93 & 0.99 & 0.97 \\ 
+{\itshape Moltkia coerulea} & 2 & 71 & 0.86 & 0.99 & 1.00 \\ 
+{\itshape Neotorularia torulosa} & 2 & 539 & 0.98 & 0.99 & 0.96 \\ 
+{\itshape Peganum harmala} & 2 & 917 & 0.91 & 0.98 & 0.95 \\ 
+{\itshape Phalaris paradoxa} & 3 & 1191 & 0.99 & 0.99 & 0.98 \\ 
+{\itshape Phragmites australis} & 4 & 3412 & 0.97 & 0.99 & 0.97 \\ 
+{\itshape Pistacia atlantica} & 6 & 1874 & 0.98 & 1.00 & 0.98 \\ 
+{\itshape Plantago lagopus} & 2 & 1730 & 0.98 & 1.00 & 0.98 \\ 
+{\itshape Poa bulbosa} & 5 & 1880 & 0.95 & 0.98 & 0.90 \\ 
+{\itshape Prosopis farcta} & 5 & 2263 & 0.97 & 1.00 & 0.97 \\ 
+{\itshape Quercus ithaburensis} & 2 & 2216 & 0.98 & 1.00 & 0.99 \\ 
+{\itshape Rumex pulcher} & 6 & 1394 & 0.98 & 1.00 & 0.99 \\ 
+{\itshape Salsola kali} & 6 & 537 & 0.98 & 1.00 & 1.00 \\ 
+{\itshape Salvia absconditiflora} & 3 & 105 & 0.92 & 0.99 & 0.91 \\ 
+{\itshape Secale cereale} & 4 & 268 & 0.79 & 0.95 & 0.92 \\ 
+{\itshape Secale strictum} & 3 & 124 & 0.74 & 0.96 & 0.92 \\ 
+{\itshape Stipa dregeana} & 2 & 79 & 0.93 & 0.99 & 0.97 \\ 
+{\itshape Suaeda fruticosa} & 3 & 238 & 0.99 & 1.00 & 1.00 \\ 
+{\itshape Taeniatherum caput-medusae} & 4 & 262 & 0.82 & 0.96 & 0.92 \\ 
+{\itshape Tribulus terrestris} & 2 & 1091 & 0.91 & 0.97 & 0.93 \\ 
+{\itshape Triticum aestivum compactum} & 2 & 147 & 0.80 & 0.96 & 0.92 \\ 
+{\itshape Triticum durum} & 3 & 95 & 0.90 & 0.94 & 0.88 \\ 
+{\itshape Triticum monococcum aegilopoides} & 36 & 1176 & 0.88 & 0.98 & 0.96 \\ 
+{\itshape Triticum turgidum dicoccum} & 47 & 60 & 0.72 & 0.85 & 0.79 \\ 
+{\itshape Triticum urartu} & — & 424 & 0.93 & 1.00 & 1.00 \\ 
+{\itshape Verbena officinalis} & 3 & 934 & 0.95 & 0.99 & 0.96 \\ 
+{\itshape Vicia ervilia} & 26 & 688 & 0.88 & 0.97 & 0.93 \\ 
+{\itshape Vicia faba} & 7 & 1597 & 0.91 & 0.98 & 0.95 \\ 
+{\itshape Vicia narbonensis} & 3 & 1451 & 0.93 & 0.98 & 0.94 \\ 
+{\itshape Vicia orientalis} & 14 & 353 & 0.84 & 0.95 & 0.88 \\ 
+{\itshape Zygophyllum fabago} & 3 & 263 & 0.89 & 0.95 & 0.84 \\ 
+\bottomrule
+
+\end{longtable}
+
+\endgroup
 
 \subsection{Reduction in range sizes over the Pleistocene/Holocene
 boundary}\label{reduction-in-range-sizes-over-the-pleistoceneholocene-boundary}
@@ -859,43 +834,61 @@ boundary}\label{reduction-in-range-sizes-over-the-pleistoceneholocene-boundary}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{paper_files/figure-pdf/fig-range-density-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{paper_files/figure-pdf/fig-pred-range-density-1.pdf}}
 
 }
 
-\caption{\label{fig-range-density}Distribution of predicted species
+\caption{\label{fig-pred-range-density}Distribution of predicted species
 ranges by period. Dashed lines indicate the median range.}
 
 \end{figure}%
 
-Species ranges are predicted to have been signicantly smaller in the
-terminal Pleistocene and Early Holocene that under current conditions
-Figure~\ref{fig-range-density}, though the magnitude of this change is
-likely also to reflect a degree of overfitting in the model (see below).
-Fluctuations in modelled range size between the Bølling-Allerød
+Our reconstructed palaeodistributions (shown in full in the appendix)
+indicate that the majority of species have experienced a significant
+reduction and/or shift in their ranges since the Early Holocene. 75 of
+81 species have reduced ranges; 65 of more than 10\% or more. Though the
+magnitude of the reduction from prehistory to the present likely
+reflects a degree of overfitting in the model (discussed further below),
+fluctuations in modelled range size between the Bølling-Allerød
 (14.7--12.9 ka), Younger Dryas (12.9--11.7 ka), and Early Holocene
-(11.7--8.3 ka) are more directly comparable. The average range of
-modelled species shrank by 12\% over the Pleistocene--Holocene boundary,
-with a noticeable dip in the Younger Dryas. This perhaps indicates that
-although this period is considered one of climatatic amelioration
-globally \citep{JonesEtAl2019}, the colder conditions of the Pleistocene
-may have supported more extensive plant-based economies in West Asia
+(11.7--8.3 ka) are more directly comparable
+\textbf{?@fig-range-density}. The average range of modelled species was
+25\% in the Early Holocene compared to the Bølling--Allerød, and 32\%
+during the Younger Dryas (i.e.~ranges recovered slightly between the
+Younger Dryas and Early Holocene). This perhaps indicates that although
+this period is considered one of climatatic amelioration globally
+\citep{JonesEtAl2019}, the colder conditions of the Pleistocene may have
+supported more extensive plant-based economies in West Asia
 specifically.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{paper_files/figure-pdf/fig-palaeodist-sum-1.pdf}}
+
+}
+
+\caption{\label{fig-palaeodist-sum}Predicted species richness (sum of
+predicted ranges) by period}
+
+\end{figure}%
 
 Many taxa that occur (or are predicted to occur) across the `hilly
 flanks' today---including most crop progenitors---are reconstructed to
 have had a significantly more restricted distribution in the terminal
-Pleistocene/Early Holocene. These include \emph{Ficus carica} (fig);
-\emph{Hordeum} spp. (wild barleys); \emph{Lathyrus aphaca} and \emph{L.
-sativus} (both marginally edible legumes); \emph{Triticum aestivum
-compactum} (in the N. Levant), \emph{T. monococcum aegilopoides},
-\emph{T. durum}, and \emph{Triticum urartu} (but not the other wheat
-progenitor, \emph{T. turgidum dicoccum} -- see below); \emph{Aegilops
-speltoides}, but not \emph{Aegilops tauschii} (goatgrasses); and
-\emph{Vicia} spp. (vetches), including \emph{Vicia faba} (broad beans).
-most of Anatolia, Northern Mesopotamia, and the Zagros Mountains in
-particular disappear from the predicted ranges of these species, leaving
-the Levant and to a lesser extent the Aegean and Cyprus as refugia.
+Pleistocene/Early Holocene (\textbf{?@fig-sum-palaeodist}). These
+include \emph{Ficus carica} (fig); \emph{Hordeum} spp. (wild barleys);
+\emph{Lathyrus aphaca} and \emph{L. sativus} (both marginally edible
+legumes); \emph{Triticum aestivum compactum} (in the N. Levant),
+\emph{T. monococcum aegilopoides}, \emph{T. durum}, and \emph{Triticum
+urartu} (but not the other wheat progenitor, \emph{T. turgidum dicoccum}
+-- see below); \emph{Aegilops speltoides}, but not \emph{Aegilops
+tauschii} (goatgrasses); and \emph{Vicia} spp. (vetches), including
+\emph{Vicia faba} (broad beans). most of Anatolia, Northern Mesopotamia,
+and the Zagros Mountains in particular disappear from the predicted
+ranges of these species, leaving the Levant and to a lesser extent the
+Aegean and Cyprus as refugia.
 
 Our results for the Levant are consistent with the current understanding
 of this region as developing early intensive foraging economies {[}the
@@ -972,19 +965,26 @@ progenitors}\label{biogeography-of-crop-progenitors}
   Not rye (Anatolia), chickpea (N. Mesopotamia)
 \end{itemize}
 
-Wild barley \textbf{?@fig-hindcast-barely-levant} and pistachio
-\citep[\emph{Pistacia atlantica},][]{fig} show a contraction of their
-predicted ranges from the Pleistocene to the Holocene, concurrent with
-them being brought into cultivation. Plausible that this prompted
-cultivation? These two species \citep{ArranzOtaeguiRoe2023} also see
-marked declines in the archaeobotanical record from the Early PPNA/Early
-PPNB (where they were amongst the most common taxa) to the Late PPNB and
-Late Neolithic. However, this trend is not seen in most other crop
+Wild barley (\emph{Hordeum spontaneum}), its relatives, and pistachio
+(\emph{Pistacia atlantica}) show a contraction of their predicted ranges
+from the Pleistocene to the Holocene, concurrent with them being brought
+into cultivation \textbf{?@fig-palaeodist-barely-pistachio-levant}.
+These two species also see marked declines in the archaeobotanical
+record from the Early PPNA/Early PPNB (where they were amongst the most
+common taxa) to the Late PPNB and Late Neolithic
+\citep{ArranzOtaeguiRoe2023}. Conversely, the various wild wheat species
+native to West Asia show almost no response to Pleistocene/Holocene
+climate change, even within the Levant, and in the archaeobotanical
+record wheat displays the opposite trend to barley and pistachio --
+becoming gradually more abundant through the course of the Neolithic and
+dominant by its end. We hypothesise that climate-linked range shifts
+were a factor driving these changes in the apparent economic important
+of different crops: the decreasing availability of barley and pistachio
+in the terminal Pleistocene may have prompted cultivation as a strategy
+to retain access to them, though in the long run it made them less
+attractive as staple crops compared to the more resilient wheat.
+However, these dynamics are not seen in the majority of crop
 progenitors.
-
-Cereals / other progenitors (not all) reduced in range before
-cultivation? Reduction in range from BA to EH very evident in Hordeum,
-less so in \ldots{}
 
 The wheat story.
 
@@ -1022,17 +1022,17 @@ resolved palaeoclimate sequences \citep[e.g.][]{KargerEtAl2023},
 hyperparameter tuning to avoid overfitting, and improved archaeological
 datasets, would help disentangle these potential explanations.
 
-Is inconsistent with more ``macro'' trends such as the reduced range of
+Is consistent with more ``macro'' trends such as the reduced range of
 Hordeum and Pistacia correlating with its reduced abundance in the
 archaeobotanical record.
 
-\section{Discussion}\label{discussion}
+\section{Conclusion}\label{conclusion}
 
 \begin{itemize}
 \tightlist
 \item
   We present the first continuous, spatially explicit models of the
-  palaeodistributions of 56 plant species found regularly in association
+  palaeodistributions of N plant species found regularly in association
   with early agricultural archaeological sites in West Asia
 
   \begin{itemize}
@@ -1072,11 +1072,8 @@ archaeobotanical record.
   \end{itemize}
 \end{itemize}
 
-\section{References}\label{references}
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-
+\renewcommand\refname{References}
   \bibliography{references.bib}
 
 

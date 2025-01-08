@@ -21,7 +21,7 @@ author:
       country: Spain
 abstract: |
   This paper presents the first continuous, spatially-explicit reconstructions 
-  of the palaeodistributions of 56 plant species found regularly in association 
+  of the palaeodistributions of 81<!-- TODO update --> plant species found regularly in association 
   with early agricultural archaeological sites in West Asia, including the 
   progenitors of the first crops. We used machine learning to train an 
   ecological niche model of each species based on its present-day distribution 
@@ -29,14 +29,14 @@ abstract: |
   potential ranges of these species at key stages of the Pleistocene–Holocene 
   transition could then be derived from these models using downsampled data from 
   palaeoclimate simulations.
-  The models predict significant contactions and/or shifts in species ranges in
+  The models predict significant reductions and/or shifts in species ranges in
   the terminal Pleistocene and Early Holocene compared to present conditions. 
   Many species that are found throughout the region's 'hilly flanks' today 
-  are indicated to have much more restricted distributions centered on the Levant,
-  Cyprus and Western Anatolia. In addition, overall ranges shrunk by an average 
-  of c. 10% from the terminal Pleistocene to the Early Holocene, with a further 
-  c. 10% reduction during the Younger Dryas. Modelled ranges do not reliably 
-  predict the observed  occurrence of specific species at archaeological sites,
+  are indicated to have much more restricted distributions centered on the 
+  Levant, Cyprus and Western Anatolia. In addition, overall ranges shrunk by an 
+  average of c. 25% from the terminal Pleistocene to the Early Holocene. 
+  Modelled ranges do not reliably predict the observed  occurrence of specific 
+  species at archaeological sites,
   however [...]
   The regional ubiquity of species in the archaeological record is [not] correlated with the 
   predicted size of its range and the diversity of archaeobotanical assemblages is [not] 
@@ -79,7 +79,7 @@ execute:
 - [ ] Outstanding TODOs
 - [ ] Add missing references
 - [ ] Copyedit
-- [ ] Appendix with all hindcast predictions (HTML?)
+- [x] Appendix with all hindcast predictions (HTML?)
 - [ ] Clean up package code
 - [ ] Final proofread
 
@@ -143,20 +143,25 @@ archaeo_periods <- tribble(
   "Chalcolithic",      "Agriculture",                         6500,      5000,
 )
 
-neolithic <- c("PPNA", "EPPNB", "MPPNB", "LPPNB/C", "Pottery Neolithic")
+epipal <- c("Late Epipal.")
+ppn <- c("PPNA", "EPPNB", "MPPNB", "LPPNB/C")
 
 climate_periods <- tibble(
   period = c("Bølling-Allerød", "Younger Dryas", "Early Holocene", "Current"),
   code = c("ba", "yds", "eh", "cur"),
-  label = fct_inorder(c("BA (14.7-12.9 ka)", "YDS (12.9-11.7 ka)", 
-                      "EH (11.7-8.3 ka)", "current")),
+  date_range = c("(14.7-12.9 ka)", "(12.9-11.7 ka)", "(11.7-8.3 ka)", ""),
+  label = fct_inorder(paste(toupper(code), date_range)),
+  long_label = fct_inorder(paste(period, date_range)),
   start_bp = c(14700, 12900, 11700, NA),
   end_bp = c(12900, 11700, 8300, NA)
 )
 ```
 
 ```{r define-parameters}
-# Minimum number of GBIF occurrences for modelling
+# Minimum number archaeological occurrences for modelling
+min_n_archaeo <- 1
+
+# Minimum number of present occurrences for modelling
 min_n_occ <- 50
 
 # Number of background samples per taxon
@@ -326,18 +331,12 @@ archaeo_flora <- read_tsv(
       labels = climate_periods[climate_periods$code != "cur",]$code,
       ordered_result = TRUE
     )
-  ) ->
-  archaeo_flora
+  ) |>
+  # Filter to Epipal/Neo
+  filter(period %in% epipal | period %in% ppn)
 
-n_assemb_neolithic <- archaeo_flora |> 
-  distinct(site_name, phase_code, period) |> 
-  filter(period %in% neolithic) |> 
-  nrow()
-
-n_site_neolithic <- archaeo_flora |> 
-  filter(period %in% neolithic) |> 
-  distinct(site_name) |> 
-  nrow()
+n_archaeo_assemb <- nrow(distinct(archaeo_flora, site_name, phase_code))
+n_archaeo_site <- nrow(distinct(archaeo_flora, site_name))
 ```
 
 ```{r data-archaeo-sites}
@@ -351,18 +350,15 @@ archaeo_sites <- summarise(
 ```
 
 ```{r fig-region}
-#| fig-cap: Study region (red) and archaeological sites used to generate modelled flora. Solid circles indicate Neolithic sites.
+#| fig-cap: Late Epipalaeolithic & Pre-Pottery Neolithic archaeological sites used to generate modelled flora
 ggplot() + 
   annotation_spatial(ne_land, fill = "#ffffff") +
   annotation_spatial(ne_rivers, aes(linewidth = strokeweig), colour = "lightblue") +
-  layer_spatial(w_asia, colour = "red", fill = NA) +
-  layer_spatial(archaeo_sites, shape = 1) +
-  layer_spatial(filter(archaeo_sites, period %in% neolithic), shape = 16) +
+  layer_spatial(w_asia, fill = NA) +
+  layer_spatial(archaeo_sites, size = 0.5) +
   scale_linewidth_identity() +
   coord_sf(crs = w_asia_albers)
 ```
-
-<!-- TODO define study region and period -->
 
 ```{r data-flora}
 # TODO: nest archaeo flora in flora to make it easier to keep track of taxon transformations
@@ -370,14 +366,13 @@ if (!file_exists(derived_data("flora.tsv"))) {
   message("Regenerating flora...")
   # Subset of flora to be modelled
   archaeo_flora |>
-    filter(period %in% neolithic) |>
     group_by(taxon) |>
     summarise(
       n_present = length(unique(phase_code)),
-      p_present = n_present / n_assemb_neolithic,
+      p_present = n_present / n_archaeo_assemb,
       .groups = "drop"
     ) |>
-    filter(n_present > 2) |>
+    filter(n_present > min_n_archaeo) |>
     # Exclude taxa not identified to species
     filter(!str_ends(taxon, "sp.")) ->
     flora
@@ -442,16 +437,21 @@ flora <- read_tsv(
 )
 ```
 
-We began by considering `r nrow(flora)` distinct taxa (@tbl-occ-count) - all the identifiable species known to be present at more than three Neolithic (c. 11.7–6.5 ka) sites in West Asia, according to our previous study of the regional archaeobotanical data [@ArranzOtaeguiRoe2023].
-<!-- TODO: something about not distinguishing between source of plant remains? -->
+The aim of our study was to model the biogeography of species relevant to human subsistence economies in West Asia (excluding the Southern Arabian peninsula, see @fig-region) during the archaeological Late Epipalaeolithic (15–11.7 ka) and Pre-Pottery Neolithic (11.7–8.3 ka) periods.
+Our starting point was a list of `r nrow(flora)` taxa (@tbl-taxa) comprising the identifiable species observed at at least two Late Epipalaeolithic/Pre-Pottery Neolithic sites, according to our previous study of the regional archaeobotanical data [@ArranzOtaeguiRoe2023].
+This was based on dataset of `r n_archaeo_assemb` assemblages collated from three previously published regional archaeobotanical databases: ADEMNES [@ADEMNES], ORIGINS [@ORIGINS], and COMPAG [@COMPAG].
+We did not attempt to distinguish between the source of the remains;
+archaeobotanical assemblages are subject to a variety of preservational and recovery biases, so by no means were all the species on our list consumed or even deliberately collected by people.
+However, we assume that there presence at a site of human settlement at least implies that they were part of the wider ecosystem that supported habitation there.
+
 Taxonomic names were resolved to the canonical form specified in the GBIF Backbone Taxonomy [@GBIFSecretariat2023].
-So for example occurrences for *Bolboschoenus maritimus* also include those recorded under the older nomenclature *Scirpus maritimus* (see @tbl-occ-count).
+So for example occurrences for *Bolboschoenus maritimus* also include those recorded under the older nomenclature *Scirpus maritimus* (see @tbl-taxa).
 Domestic species meeting our inclusion criteria were substituted with their wild progenitor(s), where different.
 
 ## Occurrence data
 
-```{r data-occ-count}
-if (!file_exists(derived_data("flora_occ_count.tsv"))) {
+```{r data-n-occ} 
+if (!file_exists(derived_data("flora_n_occ.tsv"))) {
   message("Reacquiring GBIF occurrence counts...")
   flora <- flora |>
     mutate(
@@ -460,82 +460,31 @@ if (!file_exists(derived_data("flora_occ_count.tsv"))) {
                                             hasGeospatialIssue = FALSE,
                                             geometry = bbox_wkt(w_asia)))
     )
-  write_tsv(flora, derived_data("flora_occ_count.tsv"))
+  write_tsv(flora, derived_data("flora_n_occ.tsv"))
 }
+ 
 flora <- read_tsv(
-  derived_data("flora_occ_count.tsv"),
+  derived_data("flora_n_occ.tsv"),
   col_types = cols(
     taxon = col_character(),
     taxon_detail = col_character(),
     n_present = col_double(),
     p_present = col_double(),
-    n_occ = col_double()
+    n_occ = col_integer()
   )
 )
-```
-
-```{r tbl-occ-count}
-#| tbl-cap: "Recorded occurrence of flora considered in this study in Neolithic and contemporary West Asia"
-# TODO: redo with:
-# - alt. taxons as footnotes
-# - check boxes of which (climate?) periods observed in ?
-# - fitted model metrics
-flora |>
-  mutate(
-    exclude = (n_occ < min_n_occ) | (taxon == "Avena sterilis"),
-    label = if_else(
-      !is.na(taxon_detail),
-      glue::glue("*{taxon}*\n\n<small>incl. {taxon_detail}</small>"),
-      paste0("*", taxon, "*")
-    )
-  ) |>
-  select(label, n_present, p_present, n_occ, exclude) |>
-  arrange(-n_present) |>
-  gt() |>
-  cols_label(
-    label = "Taxon",
-    n_present = "Neolithic",
-    p_present = "(%)",
-    n_occ = "Present"
-  ) |>
-  tab_spanner("Occurrences", columns = c(n_present, p_present, n_occ)) |>
-  # cols_merge_n_pct(n_present, p_present) |>
-  cols_hide(exclude) |>
-  tab_footnote(
-    "Excluded from modelling due to sample size", 
-    cells_body(columns = c(n_occ), rows = exclude),
-    placement = "right"
-  ) |>
-  cols_align("left", c(label)) |>
-  cols_align("right", c(n_present, p_present, n_occ)) |>
-  cols_width(label ~ pct(50), n_present ~ 10, p_present ~ 10, n_occ ~ 20) |>
-  fmt_percent(p_present, decimals = 0) |>
-  fmt_markdown(label) |>
-  sub_missing() |>
-  tab_options(
-    footnotes.marks = "*",
-    table.font.size = 11,
-    table.width = pct(100),
-    latex.use_longtable = TRUE
-  )
-```
-
-Georeferenced occurrence data was obtained from the Global Biodiversity Information Facility (GBIF) using via its application programming interface and the R package 'rgbif' [@ChamberlainBoettiger2017; @rgbif].
-GBIF occurrences marked has having imprecise or duplicate coordinates were excluded from the training dataset, as were fossil records.
-Although niche models have reasonable predictive power even with small training samples [@StockwellPeterson2002; @HernandezEtAl2006; @WiszEtAl2008], we excluded `r english(nrow(filter(flora, n_occ > min_n_occ)))` taxa with less than `r min_n_occ` occurrences in West Asia, following recommendations for niche models generally and Random Forest-based models specifically [@StockwellPeterson2002; @LuanEtAl2020].
-We also excluded one taxon (*Avena sterilis*) with over 50,000 occurrences, as this would have been computationally prohibitive and we were uncertain what account for such a disproportionately high number of records.
-
-```{r data-filter-flora}
-flora <- filter(flora, n_occ > min_n_occ)
-# Why are there 50k occurrences of Avena sterilis??
-flora <- filter(flora, taxon != "Avena sterilis")
+ 
+# Filter small samples
+# ...and one very large one (why are there 50k occurrences of Avena sterilis?)
+flora_all <- flora
+flora <- flora |>
+  filter(n_occ > min_n_occ) |>
+  filter(taxon != "Avena sterilis")
 ```
 
 ```{r data-occ}
-# TODO: further tidying. Ideas:
+# Cleaning pipeline based on:
 # - https://data-blog.gbif.org/post/gbif-filtering-guide/
-# - https://cran.r-project.org/web/packages/CoordinateCleaner/vignettes/Cleaning_GBIF_data_with_CoordinateCleaner.html
-# - https://www.r-bloggers.com/2021/03/downloading-and-cleaning-gbif-data-with-r/
 if (!file_exists(derived_data("flora_occ.tsv"))) {
   message("Reacquiring GBIF occurrences...")
   flora <- mutate(
@@ -545,17 +494,25 @@ if (!file_exists(derived_data("flora_occ.tsv"))) {
       hasCoordinate = TRUE, hasGeospatialIssue = FALSE, geometry = w_asia, 
       limit = 100000, .progress = TRUE
     ),
-    occ = map(occ, gbif_drop_imprecise_coords, threshold = 5000),
+    occ = map(occ, filter, occurrenceStatus  == "PRESENT"),
+    occ = map(occ, gbif_drop_imprecise_coords, threshold = 1000),
     occ = map(occ, gbif_drop_fossils),
     occ = map(occ, gbif_drop_duplicate_coords),
     occ = map(occ, gbif_standardise_names),
     occ = map(occ, \(x) {
       select(x, gbif_key = key, scientific_name, genus, species, longitude, 
              latitude)
-    })
+    }),
+    # Update occ count after cleaning
+    n_occ = map_int(occ, nrow)
   )
+  
+  # Refilter based on cleaned records
+  flora <- filter(flora, n_occ > min_n_occ)
+  
   write_tsv(unnest(flora, cols = c(occ)), derived_data("flora_occ.tsv"))
 }
+
 flora <- read_tsv(
   derived_data("flora_occ.tsv"),
   col_types = cols(
@@ -563,7 +520,7 @@ flora <- read_tsv(
     taxon_detail = col_character(),
     n_present = col_double(),
     p_present = col_double(),
-    n_occ = col_double(),
+    n_occ = col_integer(),
     gbif_key = col_double(),
     scientific_name = col_character(),
     genus = col_character(),
@@ -575,7 +532,13 @@ flora <- read_tsv(
   nest(occ = gbif_key:latitude)
 ```
 
-```{r fig-occ-map, fig.cap=paste0("Georeferenced occurrence records from West Asia for the ", nrow(flora), " modelled taxa (N=", nrow(unnest(flora, occ)))}
+
+Georeferenced occurrence data for West Asia was obtained from the Global Biodiversity Information Facility (GBIF) using via its application programming interface and the R package 'rgbif' [@ChamberlainBoettiger2017; @rgbif].
+GBIF was cleaned to removed fossil occurrences, recorded absences, and records with missing, imprecise (>1 km uncertainty), or invalid coordinates.
+Although niche models have reasonable predictive power even with small training samples [@StockwellPeterson2002; @HernandezEtAl2006; @WiszEtAl2008], we excluded `r english(nrow(filter(flora, n_occ > min_n_occ)))` taxa with less than `r min_n_occ` usable occurrences, following recommendations for niche models generally and Random Forest-based models specifically [@StockwellPeterson2002; @LuanEtAl2020].
+We also excluded one taxon (*Avena sterilis*) with over 50,000 occurrences, as this would have been computationally prohibitive and we were uncertain what accounted for such a disproportionately high number of records.
+
+```{r fig-occ-map, fig.cap=paste0("Georeferenced occurrence records from West Asia used to train models (N=", nrow(unnest(flora, occ)))}
 flora |>
  unnest(occ) |>
  distinct(latitude, longitude) |>
@@ -612,10 +575,14 @@ Occurrence data only tells us where a species is present;
 there is rarely definitive information on where the species is *not* found.
 We therefore need to generate random background points or "pseudo-absences" to feed to the model.
 There are several ways to do this. 
-We follow the advice of @BarbetMassinEtAl2012 for regression-based species distribution models and use a large (:10000) random sample of points, weighted equally against the presences in the regression.
-@ValaviEtAl2022 also recommend using a very large background sample for random forest models.
+We follow the advice of @BarbetMassinEtAl2012 for regression-based species distribution models and use a large (≈10000) random sample of points, weighted equally against the presences in the regression.
+@ValaviEtAl2022 also recommend using a large background sample for random forest models.
 
 ## Predictor data
+
+```{r tbl-predictors}
+# TODO
+```
 
 We modelled the occurrence of species as a function of <!-- TODO -->X spatial predictor variables (@tbl-predictors).
 These included:
@@ -841,7 +808,6 @@ Predicted distributions for individual taxa are presented in the appendix and ac
 ```{r data-model-assessment}
 flora <- mutate(
   flora,
-  pred = map(niche, collect_predictions),
   niche_test_metrics = map(niche, collect_metrics),
   sensitivity = map(pred, sens, truth = present, estimate = .pred_class,
                     event_level = "second"), # reference present=TRUE
@@ -849,7 +815,7 @@ flora <- mutate(
 ) |>
   select(-sensitivity)
 
-niche_test_metrics <- flora |>
+niche_test_summary <- flora |>
   unnest(niche_test_metrics) |>
   summarise(
     min = min(.estimate),
@@ -876,9 +842,9 @@ flora |>
 ```
 
 We assessed the predictive performance of the fitted niche models in the contemporary environment based on the reserved test partition.
-Model accuracy (proportion of correctly classified presence and background samples) ranged between `r percent(filter(niche_test_metrics, .metric == "accuracy")$min)` and `r percent(filter(niche_test_metrics, .metric == "accuracy")$max)`, with an average of `r percent(filter(niche_test_metrics, .metric == "accuracy")$mean)`.
-Sensitivity (proportion of correctly classified presence samples) ranged between `r percent(filter(niche_test_metrics, .metric == "sens")$min)` and `r percent(filter(niche_test_metrics, .metric == "sens")$max)`, with an average of `r percent(filter(niche_test_metrics, .metric == "sens")$mean)`.
-The area under the models' receiver operating characteristic curves (ROC-AUC) was in the range of `r round(filter(niche_test_metrics, .metric == "roc_auc")$mean, 3)`±`r round(filter(niche_test_metrics, .metric == "accuracy")$sd, 3)`
+Model accuracy (proportion of correctly classified presence and background samples) ranged between `r percent(filter(niche_test_summary, .metric == "accuracy")$min)` and `r percent(filter(niche_test_summary, .metric == "accuracy")$max)`, with an average of `r percent(filter(niche_test_summary, .metric == "accuracy")$mean)`.
+Sensitivity (proportion of correctly classified presence samples) ranged between `r percent(filter(niche_test_summary, .metric == "sens")$min)` and `r percent(filter(niche_test_summary, .metric == "sens")$max)`, with an average of `r percent(filter(niche_test_summary, .metric == "sens")$mean)`.
+The area under the models' receiver operating characteristic curves (ROC-AUC) was in the range of `r round(filter(niche_test_summary, .metric == "roc_auc")$mean, 3)`±`r round(filter(niche_test_summary, .metric == "accuracy")$sd, 3)`
 Model sensitivity is loosely correlated with the number of occurrences available for training (@fig-model-sensitivity-vs-n_occ), with the worst-performing models all having less than 300 recorded occurrences: `r knitr::combine_words(paste0("*", filter(unnest(flora, niche_test_metrics), .metric == "sens" & .estimate < 0.85)$taxon, "*"))`.
 Test metrics and ROC curves for the individual models are included in the appendix.
 
@@ -934,12 +900,59 @@ area_present <- function(pred, res = pred_res) {
 flora <- mutate(flora, area_present = map(palaeodist, area_present))
 ```
 
+```{r tbl-taxa}
+#| tbl-cap: "Summary of species modelled"
+# TODO missing excluded species
+# TODO: redo with:
+# - alt. taxons as footnotes
+# - check boxes of which (climate?) periods observed in ?
+flora |>
+  # Summarise archaeo occurrences by period
+  
+  # Extract model metrics
+  unnest(c(niche_test_metrics)) |>
+  select(-.estimator, -.config) |>
+  pivot_wider(names_from = .metric, values_from = .estimate) |>
+  # Excluded samples
+  mutate(exclude = (n_occ < min_n_occ) | (taxon == "Avena sterilis")) |>
+  # Prepare table
+  select(taxon, n_present, n_occ, exclude, accuracy, roc_auc, sens) |>
+  arrange(taxon) |>
+  # Table
+  gt() |>
+  cols_label_with(fn = str_to_sentence) |>
+  cols_label(
+    n_present = "Archaeological",
+    n_occ = "Present (GBIF)",
+    roc_auc = "ROC-AUC",
+    sens = "Sensitivity"
+  ) |>
+  tab_spanner("Occurrences", columns = c(n_present, n_occ)) |>
+  tab_spanner("Model", columns = accuracy:sens) |>
+  cols_hide(exclude) |>
+  tab_footnote(
+    "Excluded from modelling due to sample size", 
+    cells_body(columns = c(n_occ), rows = exclude),
+    placement = "right"
+  ) |>
+  cols_align("right") |>
+  cols_align("left", c(taxon)) |>
+  fmt_number(accuracy:sens) |>
+  sub_missing() |>
+  tab_style(cell_text(style = "italic"), cells_body(taxon)) |>
+  tab_options(
+    footnotes.marks = "*",
+    table.font.size = 11,
+    table.width = pct(100),
+    latex.use_longtable = TRUE
+  )
+```
+
 # Discussion
 
 ## Reduction in range sizes over the Pleistocene/Holocene boundary
 
-```{r fig-range-density}
-#| fig-cap: Distribution of predicted species ranges by period. Dashed lines indicate the median range.
+```{r data-pred-range-summary}
 flora_pred_area_present_summary <- flora |>
   unnest(area_present) |>
   summarise(med_area_present = median(area_present) / 1e6, .by = period) |>
@@ -947,7 +960,22 @@ flora_pred_area_present_summary <- flora |>
     period_label = map(period, \(x) filter(climate_periods, code == x)$label),
     period_label = unlist(period_label),
   )
+
+n_reduced_range <- flora |>
+  unnest(area_present) |>
+  pivot_wider(names_from = period, values_from = area_present) |>
+  filter(eh < ba) |>
+  nrow()
+
+n_reduced_range_10 <- flora |>
+  unnest(area_present) |>
+  pivot_wider(names_from = period, values_from = area_present) |>
+  filter(eh <= ba * 0.9) |>
+  nrow()
+```
   
+```{r fig-pred-range-density}
+#| fig-cap: Distribution of predicted species ranges by period. Dashed lines indicate the median range.
 flora |>
   unnest(area_present) |> 
   mutate(
@@ -969,14 +997,37 @@ flora |>
   )
 ```
 
-Species ranges are predicted to have been signicantly smaller in the terminal Pleistocene and Early Holocene that under current conditions [@fig-range-density], though the magnitude of this change is likely also to reflect a degree of overfitting in the model (see below).
-Fluctuations in modelled range size between the Bølling-Allerød (14.7–12.9 ka), Younger Dryas (12.9–11.7 ka), and Early Holocene (11.7–8.3 ka) are more directly comparable.
-The average range of modelled species shrank by `r percent(1 - (filter(flora_pred_area_present_summary, period == "eh")$med_area_present / filter(flora_pred_area_present_summary, period == "ba")$med_area_present))` over the Pleistocene–Holocene boundary, with a noticeable dip in the Younger Dryas.
+Our reconstructed palaeodistributions (shown in full in the appendix) indicate that the majority of species have experienced a significant reduction and/or shift in their ranges since the Early Holocene. 
+`r n_reduced_range` of `r nrow(flora)` species have reduced ranges; `r n_reduced_range_10` of more than 10% or more.
+Though the magnitude of the reduction from prehistory to the present likely reflects a degree of overfitting in the model (discussed further below), fluctuations in modelled range size between the Bølling-Allerød (14.7–12.9 ka), Younger Dryas (12.9–11.7 ka), and Early Holocene (11.7–8.3 ka) are more directly comparable [@fig-range-density].
+The average range of modelled species was `r percent(1 - (filter(flora_pred_area_present_summary, period == "eh")$med_area_present / filter(flora_pred_area_present_summary, period == "ba")$med_area_present))` in the Early Holocene compared to the Bølling–Allerød, and `r percent(1 - (filter(flora_pred_area_present_summary, period == "yds")$med_area_present / filter(flora_pred_area_present_summary, period == "ba")$med_area_present))` during the Younger Dryas (i.e. ranges recovered slightly between the Younger Dryas and Early Holocene).
 This perhaps indicates that although this period is considered one of climatatic amelioration globally [@JonesEtAl2019], the colder conditions of the Pleistocene may have supported more extensive plant-based economies in West Asia specifically.
 
-<!-- TODO: map of sum species abundance? -->
+```{r data-palaeodist-sum}
+palaeodist_sum <- do.call(c, c(flora$palaeodist, list(along = "taxon"))) |>
+  st_apply(c("x", "y", "period"), sum, na.rm = FALSE)
+```
 
-Many taxa that occur (or are predicted to occur) across the 'hilly flanks' today—including most crop progenitors—are reconstructed to have had a significantly more restricted distribution in the terminal Pleistocene/Early Holocene.
+```{r fig-palaeodist-sum}
+#| fig-cap: Predicted species richness (sum of predicted ranges) by period
+# TODO: expand period facet labels
+ggplot() +
+  facet_wrap(vars(factor(period, levels = climate_periods$code, labels = climate_periods$label))) +
+  annotation_spatial(ne_land, fill = "white") +
+  geom_stars(data = select(palaeodist_sum, prediction.TRUE.), 
+             na.action = na.omit) +
+  annotation_spatial(ne_land, fill = NA) +
+  annotation_spatial(w_asia, fill = NA) +
+  scale_fill_batlow(reverse = TRUE) +
+  coord_sf(crs = w_asia_albers) +
+  labs(fill = "Richness", x = NULL, y = NULL) +
+  theme(
+    strip.background = element_blank(),
+    strip.text.y = element_text(face = "italic")
+  )
+```
+
+Many taxa that occur (or are predicted to occur) across the 'hilly flanks' today—including most crop progenitors—are reconstructed to have had a significantly more restricted distribution in the terminal Pleistocene/Early Holocene (@fig-sum-palaeodist).
 These include *Ficus carica* (fig);
 *Hordeum* spp. (wild barleys);
 *Lathyrus aphaca* and *L. sativus* (both marginally edible legumes);
@@ -1018,21 +1069,19 @@ In the latter case, neither of these areas are part of the predicted modern dist
 * Cereals show diverging southern/northern ranges (legumes not so much)
 * Not rye (Anatolia), chickpea (N. Mesopotamia)
 
-```{r fig-hindcast-barely-levant, eval=FALSE, cache=TRUE}
-#| fig-cap: Predicted palaeodistribution of wild barleys in the Levant
+```{r fig.height=10, fig-palaeodist-barely-pistachio-levant, eval=FALSE, cache=TRUE}
+#| fig-cap: Contraction of reconstructed range of of wild barleys and pistachio in the Levant
 palaeodist_hordeum <- do.call(c, c(
-  filter(flora, str_starts(taxon, "Hordeum"))$palaeodist,
-  list(along = list(taxon = filter(flora, str_starts(taxon, "Hordeum"))$taxon))
+  filter(flora, str_starts(taxon, "Hordeum") | taxon == "Pistacia atlantica")$palaeodist,
+  list(along = list(taxon = filter(flora, str_starts(taxon, "Hordeum") | taxon == "Pistacia atlantica")$taxon))
 ))
 
-# TODO: expand period facet labels
 ggplot() +
-  facet_grid(taxon ~ period) +
+  facet_grid(taxon ~ fct_relabel(period, toupper)) +
   annotation_spatial(ne_land, fill = "white") +
   geom_stars(data = select(palaeodist_hordeum, prediction.TRUE.), 
              na.action = na.omit) +
   annotation_spatial(ne_land, fill = NA) +
-  annotation_spatial(w_asia, fill = NA) +
   scale_x_continuous(breaks = c(34, 36, 38)) +
   scale_fill_batlow(reverse = TRUE) +
   coord_sf(
@@ -1046,45 +1095,14 @@ ggplot() +
   )
 ```
 
-```{r fig-hindcast-wheat-levant, eval=FALSE, cache=TRUE}
-#| fig-cap: Predicted palaeodistribution of wild wheat in the Levant
-palaeodist_triticum <- do.call(c, c(
-  filter(flora, str_starts(taxon, "Triticum"))$palaeodist,
-  list(along = list(taxon = filter(flora, str_starts(taxon, "Triticum"))$taxon))
-))
-
-# TODO: expand period facet labels
-ggplot() +
-  facet_grid(taxon ~ period) +
-  annotation_spatial(ne_land, fill = "white") +
-  geom_stars(data = select(palaeodist_triticum, prediction.TRUE.)) + 
-  annotation_spatial(ne_land, fill = NA) +
-  annotation_spatial(w_asia, fill = NA) +
-  scale_x_continuous(breaks = c(34, 36, 38)) +
-  scale_fill_batlow(reverse = TRUE) +
-  coord_sf(
-    xlim = c(33, 39), ylim = c(30, 38),
-    crs = w_asia_albers, default_crs = latlong
-  ) +
-  labs(fill = "P(present)", x = NULL, y = NULL) +
-  theme(
-    strip.background = element_blank(),
-    strip.text.y = element_text(face = "italic")
-  )
-```
-
-<!-- TODO binarized range figure other founder crops? -->
-
-Wild barley [*Hordeum spontaneum*, @fig-hindcast-barely-levant] and pistachio [*Pistacia atlantica*, @fig] show a contraction of their predicted ranges from the Pleistocene to the Holocene,
-concurrent with them being brought into cultivation.
-Plausible that this prompted cultivation?
-These two species [@ArranzOtaeguiRoe2023] also see marked declines in the archaeobotanical record from the Early PPNA/Early PPNB (where they were amongst the most common taxa) to the Late PPNB and Late Neolithic.
-However, this trend is not seen in most other crop progenitors.
-
-Cereals / other progenitors (not all) reduced in range before cultivation?
-Reduction in range from BA to EH very evident in Hordeum, less so in ...
-
-<!-- TODO: composite wheat progentor figure -->
+Wild barley (*Hordeum spontaneum*), its relatives, and pistachio (*Pistacia atlantica*) show a contraction of their predicted ranges from the Pleistocene to the Holocene,
+concurrent with them being brought into cultivation [@fig-palaeodist-barely-pistachio-levant].
+These two species also see marked declines in the archaeobotanical record from the Early PPNA/Early PPNB (where they were amongst the most common taxa) to the Late PPNB and Late Neolithic [@ArranzOtaeguiRoe2023].
+Conversely, the various wild wheat species native to West Asia show almost no response to Pleistocene/Holocene climate change, even within the Levant, and in the archaeobotanical record wheat displays the opposite trend to barley and pistachio – becoming gradually more abundant through the course of the Neolithic and dominant by its end.
+We hypothesise that climate-linked range shifts were a factor driving these changes in the apparent economic important of different crops:
+the decreasing availability of barley and pistachio in the terminal Pleistocene may have prompted cultivation as a strategy to retain access to them,
+though in the long run it made them less attractive as staple crops compared to the more resilient wheat.
+However, these dynamics are not seen in the majority of crop progenitors.
 
 The wheat story.
 
@@ -1111,11 +1129,11 @@ Human economic choices—mobility, foraging strategies, cultivation, etc.—coul
 Further refinement of the methodology for hindcast palaeoecological niche models, for example using more finely resolved palaeoclimate sequences [e.g. @KargerEtAl2023], hyperparameter tuning to avoid overfitting, and improved archaeological datasets, would help disentangle these potential explanations.
 
 <!-- TODO: do model predictions match more aggregated stats e.g. biodiversity? -->
-Is inconsistent with more "macro" trends such as the reduced range of Hordeum and Pistacia correlating with its reduced abundance in the archaeobotanical record.
+Is consistent with more "macro" trends such as the reduced range of Hordeum and Pistacia correlating with its reduced abundance in the archaeobotanical record.
 
 # Conclusion
 
-* We present the first continuous, spatially explicit models of the palaeodistributions of 56 plant species found regularly in association with early agricultural archaeological sites in West Asia
+* We present the first continuous, spatially explicit models of the palaeodistributions of N plant species found regularly in association with early agricultural archaeological sites in West Asia
   * A new line of evidence on archaeoecology
   * Complementary to archaeobot/pollen/etc. because it is independent from it
   * All models are wrong... but it's easier to see how these are wrong than lines on maps
@@ -1127,79 +1145,3 @@ Is inconsistent with more "macro" trends such as the reduced range of Hordeum an
   * Discrepencies suggests several areas for further research and methodological development
 
 # References {.appendix}
-
-----
-
-```{r fig-niche-prediction, eval=FALSE}
-# "Adonis flammea"                   "Aegilops crassa"                  "Aizoanthemopsis hispanica"       
-# "Ammi majus"                       "Androsace maxima"                 "Arnebia decumbens"               
-# "Arnebia linearifolia"             "Atriplex prostrata"               "Bassia arabica"                  
-# "Bolboschoenus maritimus"          "Brachypodium distachyon"          "Bromus sterilis"                 
-# "Buglossoides arvensis"            "Buglossoides tenuiflora"          "Capparis spinosa"                
-# "Carex divisa"                     "Cephalaria syriaca"               "Chenopodium album"               
-# "Cicer reticulatum"                "Ficus carica"                     "Fumaria densiflora"              
-# "Gypsophila pilosa"                "Helianthemum ledifolium"          "Hordeum bulbosum"                
-# "Hordeum murinum"                  "Hordeum spontaneum"               "Lathyrus aphaca"                 
-# "Lathyrus sativus"                 "Vicia orientalis"                 "Linum bienne"                    
-# "Lolium rigidum"                   "Lolium temulentum"                "Medicago radiata"                
-# "Phalaris paradoxa"                "Pistacia atlantica"               "Lathyrus oleraceus"              
-# "Poa bulbosa"                      "Prosopis farcta"                  "Quercus ithaburensis"            
-# "Rumex pulcher"                    "Salsola kali"                     "Secale cereale"                  
-# "Taeniatherum caput-medusae"       "Medicago astroites"               "Triticum aestivum compactum"     
-# "Triticum turgidum dicoccum"       "Triticum monococcum aegilopoides" "Triticum durum"                  
-# "Gypsophila vaccaria"              "Verbena officinalis"              "Vicia ervilia"                   
-# "Vicia faba"                       "Vicia narbonensis"                "Triticum urartu"                 
-# "Aegilops speltoides"              "Aegilops tauschii"               
-
-niche_taxon <- "Lathyrus oleraceus"
-niche_prediction <- filter(flora, taxon == niche_taxon)$palaeodist[[1]]
-
-# Order and relabel periods
-ggplot() + 
-  facet_wrap(~period, ncol = 2) +
-  annotation_spatial(ne_land, fill = "white") +
-  geom_stars(data = select(niche_prediction, prediction.TRUE.),
-             na.action = na.omit) +
-  annotation_spatial(ne_land, fill = NA) +
-  annotation_spatial(w_asia, fill = NA) +
-  scale_fill_batlow(reverse = TRUE) +
-  coord_sf(crs = w_asia_albers) +
-  labs(
-    title = niche_taxon,
-    fill = NULL,
-    x = NULL,
-    y = NULL
-  ) +
-  theme(
-    plot.title = element_text(face = "italic")
-  )
-```
-
-```{r sum-pred-eh, eval=FALSE}
-flora |>
-  mutate(pred_eh = map(fit, \(x) predict(climate$EH, model = x, type = "prob"))) ->
-  x
-
-pred_eh <- x$pred_eh
-names(pred_eh) <- x$taxon
-pred_eh <- do.call(c, map(pred_eh, select, .pred_TRUE))
-pred_eh <- merge(pred_eh, name = "taxon")
-sum_pred_eh <- st_apply(pred_eh, c("x", "y"), sum, na.rm = TRUE)
-```
-
-```{r fig-sum-pred-eh, eval=FALSE}
-#| fig-cap: predicted species richness for the early Holocene
-ggplot() + 
-  geom_stars(data = sum_pred_eh) +
-  scale_fill_batlow(reverse = FALSE) +
-  coord_sf(crs = latlong) +
-  labs(
-    title = "Predicted species richness",
-    subtitle = "Early Holocene (11.7–8.326 ka)",
-    fill = NULL,
-    x = NULL,
-    y = NULL
-  )
-
-saveRDS(pred_eh, "pred_eh.Rdata")
-```

@@ -1,63 +1,97 @@
 taxon	taxon_detail	n_present	p_present
-Adonis flammea	NA	3	0.020689655172413793
-Aegilops crassa	NA	4	0.027586206896551724
-Aizoanthemopsis hispanica	*Aizoon hispanicum*	7	0.04827586206896552
-Ammi majus	NA	6	0.041379310344827586
-Androsace maxima	NA	20	0.13793103448275862
-Arnebia decumbens	NA	25	0.1724137931034483
-Arnebia linearifolia	NA	14	0.09655172413793103
-Atriplex prostrata	NA	4	0.027586206896551724
-Avena sterilis	NA	3	0.020689655172413793
-Bassia arabica	NA	3	0.020689655172413793
-Bolboschoenus glaucus	NA	7	0.04827586206896552
-Bolboschoenus maritimus	*Scirpus maritimus*	33	0.22758620689655173
-Brachypodium distachyon	NA	4	0.027586206896551724
-Bromus sterilis	NA	3	0.020689655172413793
-Buglossoides arvensis	NA	25	0.1724137931034483
-Buglossoides tenuiflora	NA	31	0.21379310344827587
-Capparis spinosa	NA	5	0.034482758620689655
-Carex divisa	NA	10	0.06896551724137931
-Cephalaria syriaca	NA	3	0.020689655172413793
-Chenopodium album	NA	5	0.034482758620689655
-Cicer reticulatum	*Cicer arietinum*	6	0.041379310344827586
-Ficus carica	NA	10	0.06896551724137931
-Fumaria densiflora	NA	4	0.027586206896551724
-Glaucium aleppicum	NA	3	0.020689655172413793
-Gypsophila pilosa	NA	4	0.027586206896551724
-Helianthemum ledifolium	NA	3	0.020689655172413793
-Hordeum bulbosum	NA	6	0.041379310344827586
-Hordeum murinum	NA	4	0.027586206896551724
-Hordeum spontaneum	*Hordeum vulgare*	62	0.42758620689655175
-Lathyrus aphaca	NA	4	0.027586206896551724
-Lathyrus sativus	NA	4	0.027586206896551724
-Vicia orientalis	*Lens culinaris*	17	0.11724137931034483
-Linum bienne	*Linum usitatissimum*	11	0.07586206896551724
-Lolium rigidum	NA	3	0.020689655172413793
-Lolium temulentum	NA	5	0.034482758620689655
-Medicago radiata	NA	21	0.14482758620689656
-Phalaris paradoxa	NA	3	0.020689655172413793
-Pistacia atlantica	NA	7	0.04827586206896552
-Lathyrus oleraceus	*Pisum elatius*, *Pisum sativum*	8	0.05517241379310345
-Poa bulbosa	NA	5	0.034482758620689655
-Polygonum corrigioloides	NA	6	0.041379310344827586
-Polygonum arenarium arenarium	*Polygonum venantianum*	7	0.04827586206896552
-Prosopis farcta	NA	7	0.04827586206896552
-Quercus ithaburensis	NA	3	0.020689655172413793
-Rumex pulcher	NA	7	0.04827586206896552
-Salsola kali	NA	6	0.041379310344827586
-Secale cereale	NA	4	0.027586206896551724
-Taeniatherum caput-medusae	NA	6	0.041379310344827586
-Medicago astroites	*Trigonella astroites*	16	0.1103448275862069
-Triticum aestivum compactum	NA	3	0.020689655172413793
-Triticum turgidum dicoccum	*Triticum aestivum*, *Triticum dicoccoides*, *Triticum dicoccum*	64	0.4413793103448276
-Triticum monococcum aegilopoides	*Triticum boeoticum*, *Triticum monococcum*	44	0.30344827586206896
-Triticum durum	NA	4	0.027586206896551724
-Gypsophila vaccaria	*Vaccaria pyramidata*	11	0.07586206896551724
-Verbena officinalis	NA	3	0.020689655172413793
-Vicia ervilia	NA	33	0.22758620689655173
-Vicia faba	NA	8	0.05517241379310345
-Vicia narbonensis	NA	3	0.020689655172413793
-Vitis sylvestris	NA	4	0.027586206896551724
+Adonis dentata	NA	2	0.017094017094017096
+Aegilops crassa	NA	4	0.03418803418803419
+Aizoanthemopsis hispanica	*Aizoon hispanicum*	4	0.03418803418803419
+Ammi majus	NA	4	0.03418803418803419
+Androsace maxima	NA	17	0.1452991452991453
+Arenaria serpyllifolia	NA	3	0.02564102564102564
+Arnebia decumbens	NA	21	0.1794871794871795
+Arnebia linearifolia	NA	13	0.1111111111111111
+Asphodelus aestivus	NA	2	0.017094017094017096
+Atriplex prostrata	NA	4	0.03418803418803419
+Avena fatua	NA	2	0.017094017094017096
+Avena sterilis	NA	5	0.042735042735042736
+Bassia arabica	NA	4	0.03418803418803419
+Bassia prostrata	NA	2	0.017094017094017096
+Bolboschoenus glaucus	NA	5	0.042735042735042736
+Bolboschoenus maritimus	*Scirpus maritimus*	29	0.24786324786324787
+Brachypodium distachyon	NA	5	0.042735042735042736
+Bromus sterilis	NA	3	0.02564102564102564
+Buglossoides arvensis	NA	23	0.19658119658119658
+Buglossoides tenuiflora	NA	26	0.2222222222222222
+Camphorosma monspeliaca	NA	2	0.017094017094017096
+Capparis spinosa	NA	4	0.03418803418803419
+Capsella bursa-pastoris	NA	2	0.017094017094017096
+Carex divisa	NA	9	0.07692307692307693
+Celtis tournefortii	NA	2	0.017094017094017096
+Ceratonia siliqua	NA	2	0.017094017094017096
+Chenopodium album	NA	5	0.042735042735042736
+Cicer reticulatum	*Cicer arietinum*	3	0.02564102564102564
+Citrullus colocynthis	NA	4	0.03418803418803419
+Crithopsis delileana	NA	3	0.02564102564102564
+Erodium ciconium	NA	2	0.017094017094017096
+Euclidium syriacum	NA	3	0.02564102564102564
+Ficus carica	NA	8	0.06837606837606838
+Fumaria densiflora	NA	4	0.03418803418803419
+Gypsophila elegans	NA	3	0.02564102564102564
+Gypsophila pilosa	NA	5	0.042735042735042736
+Halothamnus hierochunticus	NA	2	0.017094017094017096
+Helianthemum ledifolium	NA	2	0.017094017094017096
+Helianthemum salicifolium	NA	2	0.017094017094017096
+Moltkia angustifolia	NA	2	0.017094017094017096
+Henrardia pubescens	NA	3	0.02564102564102564
+Hordeum bulbosum	NA	4	0.03418803418803419
+Hordeum murinum	NA	5	0.042735042735042736
+Hordeum spontaneum	*Hordeum vulgare*	51	0.4358974358974359
+Juglans regia	NA	2	0.017094017094017096
+Krascheninnikovia ceratoides	NA	2	0.017094017094017096
+Lathyrus aphaca	NA	4	0.03418803418803419
+Lathyrus cicera	NA	2	0.017094017094017096
+Lathyrus sativus	NA	4	0.03418803418803419
+Vicia orientalis	*Lens culinaris*	14	0.11965811965811966
+Lepidium perfoliatum	NA	3	0.02564102564102564
+Lepidium ruderale	NA	2	0.017094017094017096
+Linum bienne	*Linum usitatissimum*	9	0.07692307692307693
+Lolium rigidum	NA	5	0.042735042735042736
+Lolium temulentum	NA	3	0.02564102564102564
+Medicago minima	NA	2	0.017094017094017096
+Medicago radiata	NA	20	0.17094017094017094
+Minuartia rubella	NA	2	0.017094017094017096
+Moltkia coerulea	NA	2	0.017094017094017096
+Peganum harmala	NA	2	0.017094017094017096
+Phalaris paradoxa	NA	3	0.02564102564102564
+Phragmites australis	NA	4	0.03418803418803419
+Pistacia atlantica	NA	6	0.05128205128205128
+Lathyrus oleraceus	*Pisum elatius*, *Pisum sativum*	6	0.05128205128205128
+Plantago lagopus	NA	2	0.017094017094017096
+Poa bulbosa	NA	5	0.042735042735042736
+Polygonum corrigioloides	NA	6	0.05128205128205128
+Polygonum arenarium arenarium	*Polygonum venantianum*	7	0.05982905982905983
+Prosopis farcta	NA	5	0.042735042735042736
+Quercus ithaburensis	NA	2	0.017094017094017096
+Rumex pulcher	NA	6	0.05128205128205128
+Salsola kali	NA	6	0.05128205128205128
+Salvia absconditiflora	*Salvia cryptantha*	3	0.02564102564102564
+Secale cereale	NA	4	0.03418803418803419
+Secale strictum	*Secale montanum*	3	0.02564102564102564
+Stipa dregeana	NA	2	0.017094017094017096
+Suaeda fruticosa	NA	3	0.02564102564102564
+Taeniatherum caput-medusae	NA	4	0.03418803418803419
+Neotorularia torulosa	*Torularia torulosa*	2	0.017094017094017096
+Tribulus terrestris	NA	2	0.017094017094017096
+Medicago astroites	*Trigonella astroites*	15	0.1282051282051282
+Triticum aestivum compactum	NA	2	0.017094017094017096
+Triticum turgidum dicoccum	*Triticum aestivum*, *Triticum dicoccoides*, *Triticum dicoccum*	47	0.4017094017094017
+Triticum monococcum aegilopoides	*Triticum boeoticum*, *Triticum monococcum*	36	0.3076923076923077
+Triticum durum	NA	3	0.02564102564102564
+Triticum aestivum spelta	*Triticum spelta*	2	0.017094017094017096
+Gypsophila vaccaria	*Vaccaria pyramidata*	8	0.06837606837606838
+Verbena officinalis	NA	3	0.02564102564102564
+Vicia ervilia	NA	26	0.2222222222222222
+Vicia faba	NA	7	0.05982905982905983
+Vicia narbonensis	NA	3	0.02564102564102564
+Vitis sylvestris	NA	3	0.02564102564102564
+Zygophyllum fabago	NA	3	0.02564102564102564
 Triticum urartu	NA	NA	NA
 Aegilops speltoides	NA	NA	NA
 Aegilops tauschii	NA	NA	NA
