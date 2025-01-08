@@ -29,16 +29,16 @@ abstract: |
   potential ranges of these species at key stages of the Pleistocene–Holocene 
   transition could then be derived from these models using downsampled data from 
   palaeoclimate simulations.
-  The models predict significant contactions and/or shifts in species ranges in
-  the terminal Pleistocene and Early Holocene compared to present conditions. 
-  Many species that are found throughout the region's 'hilly flanks' today 
-  are indicated to have much more restricted distributions centered on the Levant,
-  Cyprus and Western Anatolia. In addition, overall ranges shrunk by an average 
-  of c. 10% from the terminal Pleistocene to the Early Holocene, with a further 
-  c. 10% reduction during the Younger Dryas. Modelled ranges do not reliably 
-  predict the observed  occurrence of specific species at archaeological sites,
-  however [...]
-  The regional ubiquity of species in the archaeological record is [not] correlated with the 
+  Species ranges are predicted to have been on significantly smaller in the 
+  Early Holocene compared to present conditions, with many species that are 
+  found throughout the region's 'hilly flanks' today indicated to have much more
+  restricted distributions centered on the Levant, Cyprus and Western Anatolia. 
+  Ranges shrunk by on average c. 10% from the terminal Pleistocene to the Early 
+  Holocene, with a further c. 10% reduction for the duration of the Younger 
+  Dryas. However, modelled ranges do not reliably predict the observed 
+  occurrence of specific species at archaeological sites. [...]
+  The regional 
+  ubiquity of species in the archaeological record is [not] correlated with the 
   predicted size of its range and the diversity of archaeobotanical assemblages is [not] 
   correlated with the predicted diversity of its environs. This indicates that 
   trends in taxonomic composition of the archaeobotanical record is [not] likely 
@@ -56,6 +56,8 @@ bibliography: references.bib
 execute: 
   echo: false
 ---
+
+
 
 * [x] Stop modelling
 - [ ] First draft:
@@ -82,6 +84,8 @@ execute:
 - [ ] Appendix with all hindcast predictions (HTML?)
 - [ ] Clean up package code
 - [ ] Final proofread
+
+
 
 ```{r dependencies, message=FALSE}
 library("cowplot")
@@ -166,6 +170,8 @@ n_background <- 10000
 pred_res <- 5000
 ```
 
+
+
 # Introduction
 
 The Pleistocene–Holocene transition in West Asia marked a turning point in global environmental history, as humans brought the first plants under cultivation and began modifying surrounding ecosystems to support their own subsistence.
@@ -246,6 +252,8 @@ In this study, we are able to take advantage of the increasing availability of h
 <!-- TODO: mention that GBIF, CHELSA, SoilGrids, WorldClim, DEMs, etc. are also great? -->
 
 # Data and model
+
+
 
 ```{r data-basemap, message=FALSE}
 # Turn off s2 while we deal with Natural Earth's dodgy geometries
@@ -362,10 +370,13 @@ ggplot() +
   coord_sf(crs = w_asia_albers)
 ```
 
+
+
 <!-- TODO define study region and period -->
 
+
+
 ```{r data-flora}
-# TODO: nest archaeo flora in flora to make it easier to keep track of taxon transformations
 if (!file_exists(derived_data("flora.tsv"))) {
   message("Regenerating flora...")
   # Subset of flora to be modelled
@@ -442,6 +453,8 @@ flora <- read_tsv(
 )
 ```
 
+
+
 We began by considering `r nrow(flora)` distinct taxa (@tbl-occ-count) - all the identifiable species known to be present at more than three Neolithic (c. 11.7–6.5 ka) sites in West Asia, according to our previous study of the regional archaeobotanical data [@ArranzOtaeguiRoe2023].
 <!-- TODO: something about not distinguishing between source of plant remains? -->
 Taxonomic names were resolved to the canonical form specified in the GBIF Backbone Taxonomy [@GBIFSecretariat2023].
@@ -449,6 +462,8 @@ So for example occurrences for *Bolboschoenus maritimus* also include those reco
 Domestic species meeting our inclusion criteria were substituted with their wild progenitor(s), where different.
 
 ## Occurrence data
+
+
 
 ```{r data-occ-count}
 if (!file_exists(derived_data("flora_occ_count.tsv"))) {
@@ -476,10 +491,6 @@ flora <- read_tsv(
 
 ```{r tbl-occ-count}
 #| tbl-cap: "Recorded occurrence of flora considered in this study in Neolithic and contemporary West Asia"
-# TODO: redo with:
-# - alt. taxons as footnotes
-# - check boxes of which (climate?) periods observed in ?
-# - fitted model metrics
 flora |>
   mutate(
     exclude = (n_occ < min_n_occ) | (taxon == "Avena sterilis"),
@@ -520,10 +531,14 @@ flora |>
   )
 ```
 
+
+
 Georeferenced occurrence data was obtained from the Global Biodiversity Information Facility (GBIF) using via its application programming interface and the R package 'rgbif' [@ChamberlainBoettiger2017; @rgbif].
 GBIF occurrences marked has having imprecise or duplicate coordinates were excluded from the training dataset, as were fossil records.
 Although niche models have reasonable predictive power even with small training samples [@StockwellPeterson2002; @HernandezEtAl2006; @WiszEtAl2008], we excluded `r english(nrow(filter(flora, n_occ > min_n_occ)))` taxa with less than `r min_n_occ` occurrences in West Asia, following recommendations for niche models generally and Random Forest-based models specifically [@StockwellPeterson2002; @LuanEtAl2020].
 We also excluded one taxon (*Avena sterilis*) with over 50,000 occurrences, as this would have been computationally prohibitive and we were uncertain what account for such a disproportionately high number of records.
+
+
 
 ```{r data-filter-flora}
 flora <- filter(flora, n_occ > min_n_occ)
@@ -607,6 +622,8 @@ flora <- flora |>
   select(-bg)
 ```
 
+
+
 <!-- TODO: rewrite -->
 Occurrence data only tells us where a species is present;
 there is rarely definitive information on where the species is *not* found.
@@ -619,6 +636,8 @@ We follow the advice of @BarbetMassinEtAl2012 for regression-based species distr
 
 We modelled the occurrence of species as a function of <!-- TODO -->X spatial predictor variables (@tbl-predictors).
 These included:
+
+
 
 ```{r data-climate}
 # Reacquire derived_data/paleoclim if needed:
@@ -641,7 +660,11 @@ climate <- st_redimension(climate, name = "period") |>
   split("band")
 ```
 
+
+
 * Sixteen 'bioclimatic' variables derived from monthly temperature and precipitation values, following standard practice for species distribution models [@HijmansEtAl2005]. Contemporary bioclimatic predictor data for West Asia was extracted from the global CHELSA dataset [@KargerEtAl2017], which predicts temperature and precipitation from downscaled general circulation model output at 1 km resolution.
+
+
 
 ```{r data-terrain}
 # Reacquire derived_data/srtm_15plus_w_asia.tif if needed:
@@ -657,7 +680,11 @@ terrain <- read_stars(derived_data("dem", c("srtm_15plus_w_asia.tif",
 names(terrain) <- c("elevation", "slope", "aspect", "wetness")
 ```
 
+
+
 * Terrain aspect and slope, which at high resolution perform well as proxies for solar radiation when modelling plant occurrence [@AustinVanNiel2011; @LeempoelEtAl2015]; and the topographic wetness index (TWI), which serves as a proxy for soil moisture and is particularly important in modelling arid environments [@KopeckyCizkova2010; @CamposEtAl2016; @DiVirgilioEtAl2018]. All three were derived from the SRTM15+ digital elevation model using algorithms from WhiteboxTools [@Lindsay2016].
+
+
 
 ```{r data-soil}
 # Reacquire derived_data/soilgrids if needed:
@@ -671,7 +698,11 @@ names(soil) <- str_split_i(basename(names(soil)), "_", 2)
 soil <- do.call(c, soil)
 ```
 
+
+
 * Edaphic data from SoilGrids [@HenglEtAl2014; @HenglEtAl2017], which improves model performance for plants [@DubuisEtAl2013; @ModEtAl2016; @VelazcoEtAl2017]. Based on a recent assessment of the reliability of SoilGrids data for species distribution modelling [@MillerEtAl2024], we used a subset of four variables relating to soil texture (clay, silt, sand) and pH at the surface (0-5 cm depth).
+
+
 
 ```{r data-environment}
 # Prepare environmental data cube for prediction (not training)
@@ -701,7 +732,11 @@ environment <- c(climate_cube, terrain_cube, soil_cube)
 rm(climate_cube, terrain_cube, soil_cube)
 ```
 
+
+
 Predictor data was transformed to common equal-area projection and resolution of `r pred_res / 1000` km.
+
+
 
 ```{r tbl-climate-periods}
 #| fig-cap: Palaeoclimatic periods used for hindcasting, after @BrownEtAl2018
@@ -724,9 +759,13 @@ climate_periods |>
   sub_missing()
 ```
 
+
+
 For hindcasting, we used reconstructed bioclimatic data for `r english(nrow(climate_periods) - 1)` key periods (@tbl-climate-periods) generated from downscaled paleoclimate simulations from the HadCM3 general circulation model [@BrownEtAl2018].
 Terrain and soil predictors were held constant, since reconstructions of these variables in the past are not available at sufficient scale.
 It is not likely that either macroscale topography or soil characteristics have altered significantly over the period of time considered here, so we assume that this does not degrade model performance, and may in fact benefit it by providing 'anchoring' predictors that are independent of climate change.
+
+
 
 ```{r data-flora-predictors}
 # TODO: factor out
@@ -744,7 +783,11 @@ flora <- flora |>
   )
 ```
 
+
+
 ## Random Forest
+
+
 
 ```{r niche-data}
 # Split training, test (for model assessment) and cross-validation sets (for
@@ -777,10 +820,14 @@ niche_recipe <- recipe(training(flora$occ_split[[1]])) |>
   step_nzv(all_predictors())
 ```
 
+
+
 Ecological niche modelling is a classification problem that can be approached with a wide range of statistical methods.
 A substantial literature exists on the relatively performance of these approaches and their respective parameterisations [reviewed in @ValaviEtAl2022].
 Random Forest, a widely-used machine learning algorithm, is amongst the best performing methods for presence-only species distribution models, providing it is appropriately parameterised to account for the class imbalance between presence and background samples [@ValaviEtAl2021; @ValaviEtAl2022].
 For our application, it also has the advantage of requiring little to no manual parameter tuning to achieve good predictive results, which makes it easier to model a larger numbers of taxa.
+
+
 
 ```{r niche-model}
 # Random Forest Niche Model
@@ -796,10 +843,14 @@ niche_model <- rand_forest(mode = "classification", trees = 1000) |>
 niche_workflow <- workflow(niche_recipe, niche_model)
 ```
 
+
+
 For each taxon we trained a classification model to predict occurrence (presence or absence/background) based on our X<!--TODO--> predictor variables (@tbl-predictors).
 We used the Random Forest algorithm implemented in the R package 'ranger' [@WrightZiegler2017] and the 'tidymodels' [@tidymodels] framework for data preprocessing and model selection.
 To avoid overfitting, we follow @ValaviEtAl2021 in their recommended hyperparameters and use of down-sampling to balance presence and background samples.
 Models for each taxon were fit independently, with redundant zero-variance predictors excluded, and assessed based on balanced training (¾) and test (¼) partitions.
+
+
 
 ```{r niche-fit}
 # Fit best model to training data
@@ -813,9 +864,13 @@ if (!file_exists(derived_data("flora_niche_fit.Rdata"))) {
 flora <- readRDS(derived_data("flora_niche_fit.Rdata"))
 ```
 
+
+
 <!-- TODO: prediction, hindcasting and hindcasting assessment methodology -->
 
 # Model assessment
+
+
 
 ```{r niche-predict}
 # NOTE: high memory usage
@@ -834,9 +889,13 @@ if (!file_exists(derived_data("flora_niche_predictions.Rdata"))) {
 flora <- readRDS(derived_data("flora_niche_predictions.Rdata"))
 ```
 
+
+
 We trained Random Forest models for `r nrow(flora)` taxa using contemporary occurrence data from GBIF, a random sample of background points, and the predictor variables described in @tbl-predictors.
 Substituting the "current" climate predictors for those derived from palaeoclimatic simulations [@BrownEtAl2018], we could then generate hindcast predictions for reconstructed past environments in `r english(nrow(climate_periods))` key climate periods – a total of `r nrow(flora) * nrow(climate_periods)` modelled palaeodistributions.
 Predicted distributions for individual taxa are presented in the appendix and accompanying material.
+
+
 
 ```{r data-model-assessment}
 flora <- mutate(
@@ -875,6 +934,8 @@ flora |>
   theme_minimal_grid() 
 ```
 
+
+
 We assessed the predictive performance of the fitted niche models in the contemporary environment based on the reserved test partition.
 Model accuracy (proportion of correctly classified presence and background samples) ranged between `r percent(filter(niche_test_metrics, .metric == "accuracy")$min)` and `r percent(filter(niche_test_metrics, .metric == "accuracy")$max)`, with an average of `r percent(filter(niche_test_metrics, .metric == "accuracy")$mean)`.
 Sensitivity (proportion of correctly classified presence samples) ranged between `r percent(filter(niche_test_metrics, .metric == "sens")$min)` and `r percent(filter(niche_test_metrics, .metric == "sens")$max)`, with an average of `r percent(filter(niche_test_metrics, .metric == "sens")$mean)`.
@@ -882,8 +943,9 @@ The area under the models' receiver operating characteristic curves (ROC-AUC) wa
 Model sensitivity is loosely correlated with the number of occurrences available for training (@fig-model-sensitivity-vs-n_occ), with the worst-performing models all having less than 300 recorded occurrences: `r knitr::combine_words(paste0("*", filter(unnest(flora, niche_test_metrics), .metric == "sens" & .estimate < 0.85)$taxon, "*"))`.
 Test metrics and ROC curves for the individual models are included in the appendix.
 
+
+
 ```{r niche-archaeo}
-# TODO: need to deal with taxon variants / GBIF normalisation
 # TODO: factor out
 # TODO: what about negatives?
 archaeo_flora_predictions <-  archaeo_flora |>
@@ -920,8 +982,12 @@ archaeo_flora_pred_summary <- archaeo_flora_predictions |>
   )
 ```
 
+
+
 The ability of the hindcast models to predict the occurrence of specific species at archaeological sites is significantly worse, with only `r percent(p_archaeo_pred_correct)` of presences in archaeobotanical assemblages successfully predicted.
 <!-- TODO: negative -->
+
+
 
 ```{r niche-pred-range}
 area_present <- function(pred, res = pred_res) {
@@ -934,9 +1000,13 @@ area_present <- function(pred, res = pred_res) {
 flora <- mutate(flora, area_present = map(palaeodist, area_present))
 ```
 
+
+
 # Discussion
 
 ## Reduction in range sizes over the Pleistocene/Holocene boundary
+
+
 
 ```{r fig-range-density}
 #| fig-cap: Distribution of predicted species ranges by period. Dashed lines indicate the median range.
@@ -968,6 +1038,8 @@ flora |>
     axis.ticks.y = element_blank()
   )
 ```
+
+
 
 Species ranges are predicted to have been signicantly smaller in the terminal Pleistocene and Early Holocene that under current conditions [@fig-range-density], though the magnitude of this change is likely also to reflect a degree of overfitting in the model (see below).
 Fluctuations in modelled range size between the Bølling-Allerød (14.7–12.9 ka), Younger Dryas (12.9–11.7 ka), and Early Holocene (11.7–8.3 ka) are more directly comparable.
@@ -1017,6 +1089,8 @@ In the latter case, neither of these areas are part of the predicted modern dist
 * Most cereal and legume crops predicted to be Levantine
 * Cereals show diverging southern/northern ranges (legumes not so much)
 * Not rye (Anatolia), chickpea (N. Mesopotamia)
+
+
 
 ```{r fig-hindcast-barely-levant, eval=FALSE, cache=TRUE}
 #| fig-cap: Predicted palaeodistribution of wild barleys in the Levant
@@ -1072,6 +1146,8 @@ ggplot() +
     strip.text.y = element_text(face = "italic")
   )
 ```
+
+
 
 <!-- TODO binarized range figure other founder crops? -->
 
@@ -1129,6 +1205,8 @@ Is inconsistent with more "macro" trends such as the reduced range of Hordeum an
 # References {.appendix}
 
 ----
+
+
 
 ```{r fig-niche-prediction, eval=FALSE}
 # "Adonis flammea"                   "Aegilops crassa"                  "Aizoanthemopsis hispanica"       
@@ -1203,3 +1281,4 @@ ggplot() +
 
 saveRDS(pred_eh, "pred_eh.Rdata")
 ```
+

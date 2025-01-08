@@ -1,0 +1,132 @@
+# *`r taxon`*
+
+```{r taxon-detail, eval=!is.na(taxon_detail), results = "asis"}
+cat("Including ", knitr::combine_words(taxon_detail), ".", sep = "")
+```
+
+```{r fig-model, fig.cap=paste0("Fitted model summary for *", taxon, "*")}
+fig_occ <- occ |>
+  filter(as.logical(present)) |>
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) |>
+  ggplot() +
+  annotation_spatial(ne_land, fill = "#ffffff") +
+  annotation_spatial(ne_rivers, aes(linewidth = strokeweig),
+                     colour = "lightblue") +
+  geom_sf(size = 0.5) +
+  layer_spatial(w_asia, fill = NA) +
+  scale_linewidth_identity() +
+  coord_sf(crs = w_asia_albers) +
+  labs(
+    title = "GBIF occurrences",
+    subtitle = paste0("N=", nrow(occ))
+  )
+
+fig_roc_curve <- niche |>
+  collect_predictions() |>
+  roc_curve(.pred_TRUE, truth = present, event_level = "second") |>
+  ggplot() +
+  geom_abline(intercept = c(0, 0), slope = 1, linetype = "dashed") +
+  geom_line(aes(1 - specificity, sensitivity)) +
+  labs(title = "ROC curve") +
+  theme_minimal_grid() +
+  theme(
+    plot.title = element_text(size = 12, face = "plain"),
+    axis.title = element_text(size = 10),
+    axis.text = element_text(size = 10)
+  )
+
+fig_vip <- niche |>
+  extract_fit_engine() |>
+  vip() +
+  labs(
+    title = "Variable importance",
+    subtitle = "Top 10 (impurity)"
+  ) +
+  theme_minimal_grid() +
+  theme(
+    plot.title = element_text(size = 12, face = "plain"),
+    plot.subtitle = element_text(size = 10),
+    axis.title = element_text(size = 10),
+    axis.text = element_text(size = 10)
+  )
+
+fig_occ + (fig_roc_curve / fig_vip) +
+  plot_layout(widths = c(3, 1))
+```
+
+```{r fig-palaeodist, fig.height=16, fig.cap=paste0("Predicted palaeodistributions of *", taxon, "*")}
+ggplot() +
+  facet_wrap(
+    vars(
+      factor(period, levels = climate_periods$code, 
+             labels = climate_periods$long_label)
+    ),
+    ncol = 1
+  ) +
+  annotation_spatial(ne_land, fill = "white") +
+  geom_stars(
+    data = select(palaeodist, prediction.TRUE.), 
+    na.action = na.omit
+  ) +
+  geom_sf(
+    aes(shape = pred_present),
+    data = archaeo |>
+      mutate(
+        period = climate_period, 
+        pred_present = replace_na(pred_present, FALSE)
+      ) |>
+      distinct(longitude, latitude, .keep_all = TRUE) |>
+      st_as_sf(coords = c("longitude", "latitude"), crs = latlong)
+  ) +
+  annotation_spatial(ne_land, fill = NA) +
+  annotation_spatial(w_asia, fill = NA) +
+  scale_fill_batlow(reverse = TRUE) +
+  scale_shape_manual(
+    name = "Archaeological\noccurrences", 
+    values = c(1, 16),
+    labels = c("Not predicted", "Predicted")
+  ) +
+  coord_sf(crs = w_asia_albers) +
+  labs(fill = "P(present)", x = NULL, y = NULL) +
+  theme(
+    strip.background = element_blank(),
+    strip.text.y = element_text(face = "italic")
+  )
+```
+
+```{r tbl-archaeo}
+# TODO shouldn't be necessary
+if (nrow(archaeo) > 0) {
+  archaeo |>
+    drop_na(climate_period) |>
+    summarise(
+      n_assemb = n(),
+      mean_p = mean(prop),
+      age_start = max(age_start),
+      age_end = min(age_end),
+      pred_present = all(pred_present),
+      .by = c(source, climate_period, site_name)
+    ) |>
+    mutate(
+      climate_period = map(climate_period, function(x) {
+        climate_periods[climate_periods$code == x,]$long_label[[1]]
+      }),
+      climate_period = unlist(climate_period),
+      age_start = age_start / 1000,
+      age_end = age_end / 1000
+    )|>
+    group_by(climate_period) |>
+    arrange(desc(age_start)) |>
+    select(climate_period, site_name, age_start, age_end, n_assemb, mean_p, source,
+           pred_present) |>
+    gt(caption = paste0("Archaeological occurrences of *", taxon, "*")) |>
+    cols_label(site_name = "Site", n_assemb = "N assemblages", 
+               mean_p = "Average prop.", source = "Source", 
+               age_start = "Age range", pred_present = "Predicted?") |>
+    cols_merge(c(age_start, age_end), pattern = "{1}–{2} ka") |>
+    fmt_number(c(age_start, age_end), decimals = 1) |>
+    fmt_percent(c(mean_p)) |>
+    fmt_tf(c(pred_present), tf_style = "yes-no") |>
+    sub_missing()
+}
+```
