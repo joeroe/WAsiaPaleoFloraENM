@@ -65,17 +65,13 @@ execute:
     - [x] ENM
   - [x] Methods & Materials
   - [x] Results
-  - [ ] Discussion
-    - [x] General trends
-    - [ ] Case studies
-    - [x] Comparison with archaeobot
+  - [x] Discussion
   - [ ] Conclusion
 - [ ] Figures
   - [x] fig-region
   - [x] fig-occ
   - [ ] tbl-occ-count (needs pdf cleanup)
   - [ ] tbl-predictors
-  - [ ] tbl-model-metrics
 - [ ] Outstanding TODOs
 - [ ] Add missing references
 - [ ] Copyedit
@@ -216,8 +212,7 @@ Our computational approach is also readily scaled up, allowing us to model spati
 
 ## Ecological niche modelling in archaeology
 
-<!-- TODO: more citations? -->
-Ecological niche modelling (ENM) or species distribution modelling (SDM) is widely used by ecologists to predict the geographic range of a species based on a set of environmental predictors.
+Ecological niche modelling or species distribution modelling is widely used by ecologists to predict the geographic range of a species based on a set of environmental predictors [@FranklinMiller2009].
 Essentially, it involves combining records of where an organism has been observed with environmental data (climate, topography, etc.) for those locations to model the range of environmental values at which that species  – its environmental niche.
 This model can then be used to predict the range of the organism in question either in the same or a different environment.
 @CITE suggests reserving the term 'species distribution modelling' for when the method is used to recover the verifiable range of a species in a real and existing environment, and using 'ecological niche modelling' as the broader term covering hypothetical or predictive applications – a convention we follow here when referring to predictive or 'hindcast' models of past ranges.
@@ -248,7 +243,6 @@ This possibily was suggested by @FranklinEtAl2015 but to our knowledge our study
 The major practical limitation of the hindcasting approach is that it relies on spatially explicit, high resolution palaeoenvironmental surfaces with continuous coverage of the region and periods of interest.
 Until recently, this has not been widely available for most applications, which is perhaps why only a minority of studies use it [cf. @YaworskyEtAl2023].
 In this study, we are able to take advantage of the increasing availability of high resolution, global palaeoclimate data derived from simulation experiments with general circulation models of climate [@BrownEtAl2018; @BrownEtAl2020; @KargerEtAl2023].
-<!-- TODO: mention that GBIF, CHELSA, SoilGrids, WorldClim, DEMs, etc. are also great? -->
 
 # Data and model
 
@@ -782,8 +776,6 @@ flora <- readRDS(derived_data("flora_niche_fit.Rdata"))
 
 <!-- TODO: prediction, hindcasting and hindcasting assessment methodology -->
 
-# Model assessment
-
 ```{r niche-predict}
 # NOTE: high memory usage
 if (!file_exists(derived_data("flora_niche_predictions.Rdata"))) {
@@ -799,7 +791,11 @@ if (!file_exists(derived_data("flora_niche_predictions.Rdata"))) {
   saveRDS(flora, derived_data("flora_niche_predictions.Rdata"))
 }
 flora <- readRDS(derived_data("flora_niche_predictions.Rdata"))
+
+# TODO write TIFs
 ```
+
+# Model assessment
 
 We trained Random Forest models for `r nrow(flora)` taxa using contemporary occurrence data from GBIF, a random sample of background points, and the predictor variables described in @tbl-predictors.
 Substituting the "current" climate predictors for those derived from palaeoclimatic simulations [@BrownEtAl2018], we could then generate hindcast predictions for reconstructed past environments in `r english(nrow(climate_periods))` key climate periods – a total of `r nrow(flora) * nrow(climate_periods)` modelled palaeodistributions.
@@ -1014,7 +1010,7 @@ palaeodist_sum <- do.call(c, c(flora$palaeodist, list(along = "taxon"))) |>
 ggplot() +
   facet_wrap(vars(factor(period, levels = climate_periods$code, labels = climate_periods$label))) +
   annotation_spatial(ne_land, fill = "white") +
-  geom_stars(data = select(palaeodist_sum, prediction.TRUE.), 
+  geom_stars(data = select(palaeodist_sum, present), 
              na.action = na.omit) +
   annotation_spatial(ne_land, fill = NA) +
   annotation_spatial(w_asia, fill = NA) +
@@ -1065,15 +1061,71 @@ In the latter case, neither of these areas are part of the predicted modern dist
 
 ## Biogeography of crop progenitors
 
-* Most cereal and legume crops predicted to be Levantine
-* Cereals show diverging southern/northern ranges (legumes not so much)
-* Not rye (Anatolia), chickpea (N. Mesopotamia)
+```{r fig-palaeodist-chickpea-rye}
+#| fig-cap: Predicted palaeodistribution of wild chickpea and rye in the Early Holocene (11.7–8.2 ka)
+chickpea_rye <- c("Secale cereale", "Cicer reticulatum")
+palaeodist_chickpea_rye <- do.call(c, c(
+  filter(flora, taxon %in% chickpea_rye)$palaeodist,
+  list(along = list(taxon = filter(flora, taxon %in% chickpea_rye)$taxon))
+))
 
-```{r fig.height=10, fig-palaeodist-barely-pistachio-levant, eval=FALSE, cache=TRUE}
-#| fig-cap: Contraction of reconstructed range of of wild barleys and pistachio in the Levant
+ggplot() +
+  facet_wrap(vars(taxon)) +
+  annotation_spatial(ne_land, fill = "white") +
+  geom_stars(data = select(palaeodist_chickpea_rye, prediction.TRUE.) |>
+               filter(period == "eh"), 
+             na.action = na.omit) +
+  annotation_spatial(ne_land, fill = NA) +
+  annotation_spatial(w_asia, fill = NA) +
+  scale_fill_batlow(reverse = TRUE) +
+  coord_sf(crs = w_asia_albers) +
+  labs(fill = "P(present)", x = NULL, y = NULL) +
+  theme(
+    strip.background = element_blank(),
+    strip.text = element_text(face = "italic")
+  )
+```
+
+Almost all the cereal and legume crop progenitors we modelled are predicted to have only been found in the Levant during the terminal Pleistocene and Early Holocene (see appendix).
+Part of this may be do with the fact that both our initial flora and training occurrence dataset have a strong bias towards the southern Levant, but strikingly the modelled *current* ranges of these plants do tend to include Anatolia and the Zagros, so this cannot be the only factor.
+One notable exception is the wild ancestor of chickpea (*Cicer reticulatum*), which is predicted to have a distribution centered on Northern Mesopotamia but encompassing much of the the 'hilly flanks' (except the southern Levant, @fig-chickpea-rye). 
+Another is rye (*Secale cereale*), which is inferred to be primarily Western Anatolian [@fig-palaeodist-chickpea-rye].
+This is perhaps relevant to rye's unusual domestication history, as a crop of West Asian origin that was apparently not first cultivated until much later than the 'founder crops', in Europe [@SchreiberEtAl2021].
+
+```{r fig-palaeodist-locals}
+#| fig-cap: Predicted palaeodistribution of flax, pistachio and clubrush in the Early Holocene (11.7–8.2 ka)
+locals <- c("Linum bienne", "Pistacia atlantica", "Bolboschoenus maritimus")
+palaeodist_locals <- do.call(c, c(
+  filter(flora, taxon %in% locals)$palaeodist,
+  list(along = list(taxon = filter(flora, taxon %in% locals)$taxon))
+))
+
+ggplot() +
+  facet_wrap(vars(taxon), nrow = 2) +
+  annotation_spatial(ne_land, fill = "white") +
+  geom_stars(data = select(palaeodist_locals, prediction.TRUE.) |>
+               filter(period == "eh"), 
+             na.action = na.omit) +
+  annotation_spatial(ne_land, fill = NA) +
+  annotation_spatial(w_asia, fill = NA) +
+  scale_fill_batlow(reverse = TRUE) +
+  coord_sf(crs = w_asia_albers) +
+  labs(fill = "P(present)", x = NULL, y = NULL) +
+  theme(
+    strip.background = element_blank(),
+    strip.text = element_text(face = "italic")
+  )
+```
+
+Flax (*Linum bienne*) is predicted to have had a highly concentrated distribution in Cyprus and along the Mediterranean coast of the southern Levant.
+This is consistent with its low ubiquity in archaeobotanical assemblages [@ArranzOtaeguiRoe2023], despite conventionally being considered a 'founder crop', and presumably implies that its domestication was similarly geographically constrained.
+It is the only unambiguous crop progenitor with such a restricted range, though pistachio (*Pistacia atlantica*) and clubrush (*Bolboschoenus maritimus*) are similarly constrained to the Mediterranean coast (and North Africa, in the case of pistachio).
+
+```{r fig.height=10, fig-palaeodist-barely-levant, eval=FALSE, cache=TRUE}
+#| fig-cap: Predicted palaeodistribution of wild barleys in the Levant
 palaeodist_hordeum <- do.call(c, c(
-  filter(flora, str_starts(taxon, "Hordeum") | taxon == "Pistacia atlantica")$palaeodist,
-  list(along = list(taxon = filter(flora, str_starts(taxon, "Hordeum") | taxon == "Pistacia atlantica")$taxon))
+  filter(flora, str_starts(taxon, "Hordeum"))$palaeodist,
+  list(along = list(taxon = filter(flora, str_starts(taxon, "Hordeum"))$taxon))
 ))
 
 ggplot() +
@@ -1095,25 +1147,48 @@ ggplot() +
   )
 ```
 
-Wild barley (*Hordeum spontaneum*), its relatives, and pistachio (*Pistacia atlantica*) show a contraction of their predicted ranges from the Pleistocene to the Holocene,
-concurrent with them being brought into cultivation [@fig-palaeodist-barely-pistachio-levant].
-These two species also see marked declines in the archaeobotanical record from the Early PPNA/Early PPNB (where they were amongst the most common taxa) to the Late PPNB and Late Neolithic [@ArranzOtaeguiRoe2023].
+Wild barley (*Hordeum spontaneum*) its relatives show a contraction of their predicted ranges from the Pleistocene to the Holocene,
+concurrent with it being brought into cultivation [@fig-palaeodist-barely-levant].
+It also sees a marked decline in the archaeobotanical record from the Early PPNA/Early PPNB (where it was amongst the most common taxa) to the Late PPNB and Late Neolithic [@ArranzOtaeguiRoe2023].
+Pistachio (*Pistacia atlantica*) shows similar trends, but it is less certain that this species was cultivated in the Neolithic.
 Conversely, the various wild wheat species native to West Asia show almost no response to Pleistocene/Holocene climate change, even within the Levant, and in the archaeobotanical record wheat displays the opposite trend to barley and pistachio – becoming gradually more abundant through the course of the Neolithic and dominant by its end.
 We hypothesise that climate-linked range shifts were a factor driving these changes in the apparent economic important of different crops:
 the decreasing availability of barley and pistachio in the terminal Pleistocene may have prompted cultivation as a strategy to retain access to them,
 though in the long run it made them less attractive as staple crops compared to the more resilient wheat.
 However, these dynamics are not seen in the majority of crop progenitors.
 
-The wheat story.
+```{r fig-palaeodist-bread}
+#| fig-cap: Combined predicted palaeodistributions of bread wheat progenitors
+bread <- c("Aegilops tauschii", "Aegilops speltoides", 
+           "Triticum turgidum dicoccum", "Triticum urartu")
+palaeodist_bread <- do.call(c, c(
+  filter(flora, taxon %in% bread)$palaeodist,
+  list(along = list(taxon = filter(flora, taxon %in% bread)$taxon))
+)) |>
+  st_apply(c("x", "y", "period"), sum, na.rm = FALSE) |>
+  mutate(present = factor(present))
 
-<!-- TODO: figure with flax, Pistacia, Bolboschoenus --> 
+ggplot() +
+  facet_wrap(vars(fct_relabel(period, toupper))) +
+  annotation_spatial(ne_land, fill = "white") +
+  geom_stars(data = select(palaeodist_bread, present), 
+             na.action = na.omit) +
+  annotation_spatial(ne_land, fill = NA) +
+  annotation_spatial(w_asia, fill = NA) +
+  scale_fill_batlow(reverse = TRUE, discrete = TRUE) +
+  coord_sf(crs = w_asia_albers) +
+  labs(fill = "N present", x = NULL, y = NULL) +
+  theme(
+    strip.background = element_blank(),
+    strip.text.y = element_text(face = "italic")
+  )
+```
 
-Flax has a very restricted distribution (consistent with low occurrence in founders paper?).
-As does Pistacia atlantica, Bolboschoenus maritimus
-
-<!-- TODO: figure with rye -->
-
-*Secale cereale* = an Anatolian boy
+Bread wheat (*Triticum aestivum*), the most common wheat cultivar today, has a complex ancestry that involves two recent hybridisation events [@LevyFeldman2022]:
+most recently between emmer (*Triticum turgidum dicoccum*) and a goatgrass (*Aegilops tauschii*) c. 9 ka, and before that, in emmer, between wild red einkorn (*T. urartu*) and another goatgrass (*Aegilops speltoides*).
+Although there is fairly wide overlap between these species today, according to our modelling the only place all four (or even just three) are predicted to have coincided or been found in close proximity to eachother in the time frame of domestication is a narrow area around the Orontes river in the northern Levant [@fig-palaeodist-bread].
+This area is c. 200 km from the only two sites in our archaeobotanical database where either both species of wheat or both species of wheat and the goatgrasses are found together: Tell Abu Hureyra and El Kowm II [@ArranzOtaeguiRoe2023].^[We are grateful to Benjamin Nowak for pointing this out to us.]
+Taken together this suggests an origin of domesticated bread wheat, otherwise only loosely geographically constrained to the Levant–Upper Euphrates corridor [@LevyFeldman2022], is likely to occur in this vicinity.
 
 ## Hindcast models do not predict archaeobotanical composition
 
@@ -1128,8 +1203,8 @@ The niches of the modelled species could have changed since the Early Holocene, 
 Human economic choices—mobility, foraging strategies, cultivation, etc.—could also produce archaeobotanical assemblages whose composition depart significantly from that of the surrounding local flora.
 Further refinement of the methodology for hindcast palaeoecological niche models, for example using more finely resolved palaeoclimate sequences [e.g. @KargerEtAl2023], hyperparameter tuning to avoid overfitting, and improved archaeological datasets, would help disentangle these potential explanations.
 
-<!-- TODO: do model predictions match more aggregated stats e.g. biodiversity? -->
 Is consistent with more "macro" trends such as the reduced range of Hordeum and Pistacia correlating with its reduced abundance in the archaeobotanical record.
+<!-- TODO: do model predictions match more aggregated stats e.g. biodiversity? -->
 
 # Conclusion
 

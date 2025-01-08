@@ -246,18 +246,8 @@ choices.
     Methods \& Materials
   \item[$\boxtimes$]
     Results
-  \item[$\square$]
+  \item[$\boxtimes$]
     Discussion
-
-    \begin{itemize}
-    \tightlist
-    \item[$\boxtimes$]
-      General trends
-    \item[$\square$]
-      Case studies
-    \item[$\boxtimes$]
-      Comparison with archaeobot
-    \end{itemize}
   \item[$\square$]
     Conclusion
   \end{itemize}
@@ -274,8 +264,6 @@ choices.
     tbl-occ-count (needs pdf cleanup)
   \item[$\square$]
     tbl-predictors
-  \item[$\square$]
-    tbl-model-metrics
   \end{itemize}
 \item[$\square$]
   Outstanding TODOs
@@ -402,23 +390,24 @@ origins}\label{biogeography-and-agricultural-origins}
 \subsection{Ecological niche modelling in
 archaeology}\label{ecological-niche-modelling-in-archaeology}
 
-Ecological niche modelling (ENM) or species distribution modelling (SDM)
-is widely used by ecologists to predict the geographic range of a
-species based on a set of environmental predictors. Essentially, it
-involves combining records of where an organism has been observed with
-environmental data (climate, topography, etc.) for those locations to
-model the range of environmental values at which that species -- its
-environmental niche. This model can then be used to predict the range of
-the organism in question either in the same or a different environment.
-\citet{CITE} suggests reserving the term `species distribution
-modelling' for when the method is used to recover the verifiable range
-of a species in a real and existing environment, and using `ecological
-niche modelling' as the broader term covering hypothetical or predictive
-applications -- a convention we follow here when referring to predictive
-or `hindcast' models of past ranges. Within this overarching framework,
-ecological niche modelling encompasses a wide range of applications and
-a variety of potential environmental predictors, modelling approaches,
-and methodologies, which we will not attempt to review here.
+Ecological niche modelling or species distribution modelling is widely
+used by ecologists to predict the geographic range of a species based on
+a set of environmental predictors \citep{FranklinMiller2009}.
+Essentially, it involves combining records of where an organism has been
+observed with environmental data (climate, topography, etc.) for those
+locations to model the range of environmental values at which that
+species -- its environmental niche. This model can then be used to
+predict the range of the organism in question either in the same or a
+different environment. \citet{CITE} suggests reserving the term `species
+distribution modelling' for when the method is used to recover the
+verifiable range of a species in a real and existing environment, and
+using `ecological niche modelling' as the broader term covering
+hypothetical or predictive applications -- a convention we follow here
+when referring to predictive or `hindcast' models of past ranges. Within
+this overarching framework, ecological niche modelling encompasses a
+wide range of applications and a variety of potential environmental
+predictors, modelling approaches, and methodologies, which we will not
+attempt to review here.
 
 Ecological niche modelling has long been of interest to archaeologists
 as both a means of exploring the biological niche of humans and for
@@ -723,8 +712,6 @@ The ability of the hindcast models to predict the occurrence of specific
 species at archaeological sites is significantly worse, with only 5\% of
 presences in archaeobotanical assemblages successfully predicted.
 
-\section{Discussion}\label{discussion}
-
 \begingroup
 \setlength\LTleft{0\linewidth}
 \setlength\LTright{0\linewidth}\fontsize{8.2pt}{9.9pt}\selectfont
@@ -826,6 +813,8 @@ Taxon & Archaeological & Present (GBIF) & Accuracy & ROC-AUC & Sensitivity \\
 \end{longtable}
 
 \endgroup
+
+\section{Discussion}\label{discussion}
 
 \subsection{Reduction in range sizes over the Pleistocene/Holocene
 boundary}\label{reduction-in-range-sizes-over-the-pleistoceneholocene-boundary}
@@ -955,24 +944,69 @@ evidence for early cultivation at sites in the Upper Euphrates
 \subsection{Biogeography of crop
 progenitors}\label{biogeography-of-crop-progenitors}
 
-\begin{itemize}
-\tightlist
-\item
-  Most cereal and legume crops predicted to be Levantine
-\item
-  Cereals show diverging southern/northern ranges (legumes not so much)
-\item
-  Not rye (Anatolia), chickpea (N. Mesopotamia)
-\end{itemize}
+\begin{figure}
 
-Wild barley (\emph{Hordeum spontaneum}), its relatives, and pistachio
-(\emph{Pistacia atlantica}) show a contraction of their predicted ranges
-from the Pleistocene to the Holocene, concurrent with them being brought
-into cultivation \textbf{?@fig-palaeodist-barely-pistachio-levant}.
-These two species also see marked declines in the archaeobotanical
-record from the Early PPNA/Early PPNB (where they were amongst the most
-common taxa) to the Late PPNB and Late Neolithic
-\citep{ArranzOtaeguiRoe2023}. Conversely, the various wild wheat species
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{paper_files/figure-pdf/fig-palaeodist-chickpea-rye-1.pdf}}
+
+}
+
+\caption{\label{fig-palaeodist-chickpea-rye}Predicted palaeodistribution
+of wild chickpea and rye in the Early Holocene (11.7--8.2 ka)}
+
+\end{figure}%
+
+Almost all the cereal and legume crop progenitors we modelled are
+predicted to have only been found in the Levant during the terminal
+Pleistocene and Early Holocene (see appendix). Part of this may be do
+with the fact that both our initial flora and training occurrence
+dataset have a strong bias towards the southern Levant, but strikingly
+the modelled \emph{current} ranges of these plants do tend to include
+Anatolia and the Zagros, so this cannot be the only factor. One notable
+exception is the wild ancestor of chickpea (\emph{Cicer reticulatum}),
+which is predicted to have a distribution centered on Northern
+Mesopotamia but encompassing much of the the `hilly flanks' (except the
+southern Levant, \textbf{?@fig-chickpea-rye}). Another is rye
+(\emph{Secale cereale}), which is inferred to be primarily Western
+Anatolian Figure~\ref{fig-palaeodist-chickpea-rye}. This is perhaps
+relevant to rye's unusual domestication history, as a crop of West Asian
+origin that was apparently not first cultivated until much later than
+the `founder crops', in Europe \citep{SchreiberEtAl2021}.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{paper_files/figure-pdf/fig-palaeodist-locals-1.pdf}}
+
+}
+
+\caption{\label{fig-palaeodist-locals}Predicted palaeodistribution of
+flax, pistachio and clubrush in the Early Holocene (11.7--8.2 ka)}
+
+\end{figure}%
+
+Flax (\emph{Linum bienne}) is predicted to have had a highly
+concentrated distribution in Cyprus and along the Mediterranean coast of
+the southern Levant. This is consistent with its low ubiquity in
+archaeobotanical assemblages \citep{ArranzOtaeguiRoe2023}, despite
+conventionally being considered a `founder crop', and presumably implies
+that its domestication was similarly geographically constrained. It is
+the only unambiguous crop progenitor with such a restricted range,
+though pistachio (\emph{Pistacia atlantica}) and clubrush
+(\emph{Bolboschoenus maritimus}) are similarly constrained to the
+Mediterranean coast (and North Africa, in the case of pistachio).
+
+Wild barley (\emph{Hordeum spontaneum}) its relatives show a contraction
+of their predicted ranges from the Pleistocene to the Holocene,
+concurrent with it being brought into cultivation
+\textbf{?@fig-palaeodist-barely-levant}. It also sees a marked decline
+in the archaeobotanical record from the Early PPNA/Early PPNB (where it
+was amongst the most common taxa) to the Late PPNB and Late Neolithic
+\citep{ArranzOtaeguiRoe2023}. Pistachio (\emph{Pistacia atlantica})
+shows similar trends, but it is less certain that this species was
+cultivated in the Neolithic. Conversely, the various wild wheat species
 native to West Asia show almost no response to Pleistocene/Holocene
 climate change, even within the Levant, and in the archaeobotanical
 record wheat displays the opposite trend to barley and pistachio --
@@ -986,12 +1020,38 @@ attractive as staple crops compared to the more resilient wheat.
 However, these dynamics are not seen in the majority of crop
 progenitors.
 
-The wheat story.
+\begin{figure}
 
-Flax has a very restricted distribution (consistent with low occurrence
-in founders paper?). As does Pistacia atlantica, Bolboschoenus maritimus
+\centering{
 
-\emph{Secale cereale} = an Anatolian boy
+\pandocbounded{\includegraphics[keepaspectratio]{paper_files/figure-pdf/fig-palaeodist-bread-1.pdf}}
+
+}
+
+\caption{\label{fig-palaeodist-bread}Combined predicted
+palaeodistributions of bread wheat progenitors}
+
+\end{figure}%
+
+Bread wheat (\emph{Triticum aestivum}), the most common wheat cultivar
+today, has a complex ancestry that involves two recent hybridisation
+events \citep{LevyFeldman2022}: most recently between emmer
+(\emph{Triticum turgidum dicoccum}) and a goatgrass (\emph{Aegilops
+tauschii}) c.~9 ka, and before that, in emmer, between wild red einkorn
+(\emph{T. urartu}) and another goatgrass (\emph{Aegilops speltoides}).
+Although there is fairly wide overlap between these species today,
+according to our modelling the only place all four (or even just three)
+are predicted to have coincided or been found in close proximity to
+eachother in the time frame of domestication is a narrow area around the
+Orontes river in the northern Levant Figure~\ref{fig-palaeodist-bread}.
+This area is c.~200 km from the only two sites in our archaeobotanical
+database where either both species of wheat or both species of wheat and
+the goatgrasses are found together: Tell Abu Hureyra and El Kowm II
+\citep{ArranzOtaeguiRoe2023}.\footnote{We are grateful to Benjamin Nowak
+  for pointing this out to us.} Taken together this suggests an origin
+of domesticated bread wheat, otherwise only loosely geographically
+constrained to the Levant--Upper Euphrates corridor
+\citep{LevyFeldman2022}, is likely to occur in this vicinity.
 
 \subsection{Hindcast models do not predict archaeobotanical
 composition}\label{hindcast-models-do-not-predict-archaeobotanical-composition}
