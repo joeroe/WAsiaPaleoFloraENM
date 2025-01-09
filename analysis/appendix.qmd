@@ -34,6 +34,7 @@ abstract: |
 format:
   html:
     toc: true
+    # embed-resources: true
 execute:
   echo: false
 ---
@@ -65,40 +66,8 @@ options(knitr.duplicate.label = "allow")
 ```{r data, message=FALSE}
 # Model
 flora <- readRDS(derived_data("flora_niche_predictions.Rdata"))
-archaeo_flora <- read_tsv(
-  derived_data("archaeo_flora_predictions.tsv"),
-  col_types = cols(
-    source = col_character(),
-    source_id = col_character(),
-    source_site_name = col_character(),
-    site_name = col_character(),
-    latitude = col_double(),
-    longitude = col_double(),
-    phase = col_character(),
-    phase_description = col_character(),
-    phase_code = col_character(),
-    age_start = col_double(),
-    age_end = col_double(),
-    taxon_source = col_character(),
-    n = col_double(),
-    prop = col_double(),
-    reference = col_character(),
-    taxon = col_character(),
-    taxon_group = col_character(),
-    genus = col_character(),
-    family = col_character(),
-    category = col_character(),
-    founder_crop = col_character(),
-    edibility = col_character(),
-    grass_type = col_character(),
-    legume_type = col_character(),
-    age_mid = col_double(),
-    period = col_character(),
-    climate_period = col_character(),
-    pred_present = col_logical(),
-    pred_absent = col_logical()
-  )
-)
+archaeo_pred <- readRDS(derived_data("archaeo_pred.Rdata"))
+flora <- left_join(flora, archaeo_pred)
 
 # Chronology
 climate_periods <- tibble(
@@ -143,15 +112,13 @@ sf_use_s2(use_s2)
 flora <- arrange(flora, taxon)
 content <- pmap(
   flora, 
-  function(taxon, taxon_detail, occ, niche, palaeodist, ...) {
-    archaeo <- archaeo_flora[archaeo_flora$taxon == taxon,]
+  function(taxon, taxon_aliases, archaeo_pred, occ, niche, palaeodist, ...) {
     knitr::knit_child(
       here("analysis", "appendix_section.qmd"),
       envir = environment(),
       quiet = TRUE
     )
-  },
-  archaeo_flora = archaeo_flora, 
+  }
 )
 
 cat(unlist(content), sep = "\n")
