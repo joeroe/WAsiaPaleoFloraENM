@@ -4,11 +4,10 @@
 \alias{get_bioclim}
 \title{Regional Bioclimatic Variables}
 \usage{
-get_bioclim(extent, resolution = 0.5, cache_path = getwd(),
-  quiet = FALSE)
+get_bioclim(extent, resolution = 0.5, cache_path = getwd(), quiet = FALSE)
 }
 \arguments{
-\item{extent}{A \link[raster:Extent]{raster::Extent} object specifying the region of interest,
+\item{extent}{A \link[raster:Extent-class]{raster::Extent} object specifying the region of interest,
 or an object (e.g. matrix, Spatial*) that can be passed to
 \code{\link[raster:extent]{raster::extent()}}}
 

@@ -1,5 +1,28 @@
 # data.R
 
+#' Path helpers
+#'
+#' Helper functions to construct paths relative to the root of the research
+#' compendium.
+#'
+#' @param ... Additional path components passed to [here::here()]
+#'
+#' @rdname path_helpers
+#'
+#' @export
+#'
+#' @examples
+#' raw_data("ne")
+#' derived_data("gbif")
+raw_data <- function(...) {
+  here::here("analysis", "data", "raw_data", ...)
+}
+
+#' @rdname path_helpers
+#' @export
+derived_data <- function(...) {
+  here::here("analysis", "data", "derived_data", ...)
+}
 
 # Occurrence data (GBIF) --------------------------------------------------
 
@@ -115,6 +138,42 @@ get_bioclim <- function(extent, resolution = 0.5, cache_path = getwd(), quiet = 
   if (!quiet) message("Calculating bioclimatic variables...")
   bio <- dismo::biovars(prec, tmin, tmax)
   return(bio)
+}
+
+# PALEOCLIM DATA ----------------------------------------------------------
+
+#' Fetch PaleoClim data
+#'
+#' An interface to [rpaleoclim::paleoclim()] with caching.
+#'
+#' @param period      Character. Time period to fetch.
+#' @param resolution  Character. Resolution to fetch.
+#' @param ext         `Extent` object. Region to fetch.
+#' @param cache_file  Character. Path to cache data in .grd format.
+#' @param redownload  Logical. If `TRUE`, cached data will be ignored. Default: `FALSE`.
+#'
+#' @return
+#'
+#' `RasterStack` object.
+#'
+#' @details
+#'
+#' The raster is always read or re-read from the cached file to ensure consistency.
+#' See [rpaleoclim::paleoclim()] for more details.
+#'
+#' @export
+#'
+#' @examples
+fetch_paleoclim <- function(period, resolution, ext = NULL, cache_file, redownload = FALSE) {
+  if (!file.exists(cache_file) | redownload) {
+    message("Downloading ", period, ", ", resolution, ", from PaleoClim...")
+    rpaleoclim::paleoclim(period, resolution, region = ext) %>%
+      raster::writeRaster(cache_file, format = "raster")
+  }
+
+  message("Reading ", cache_file)
+  raster::stack(cache_file) %>%
+    return()
 }
 
 #' Merge Raster* objects (if necessary)

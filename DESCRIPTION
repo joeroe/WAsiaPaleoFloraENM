@@ -5,30 +5,35 @@ Authors@R:
     person(given = "Joe",
            family = "Roe",
            role = c("aut", "cre"),
-           email = "jwg983@hum.ku.dk")
-Description: 
+           email = "joeroe@hey.com")
+Description: Compendium of data and code for our paper ....
 License: MIT + file LICENSE
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    bookdown,
-    rnaturalearth,
-    dismo,
-    raster,
+    dotenv,
     dplyr,
-    magrittr,
-    purrr,
-    readr,
-    tibble,
-    sf,
-    rgeos,
-    jsonlite,
-    rgdal,
-    lwgeom,
+    fs,
+    furrr,
+    ggplot2,
+    ggspatial,
+    gt,
     here,
+    lwgeom,
+    parsnip,
+    progressr,
+    purrr,
+    ranger,
+    readr,
+    rgbif,
+    rlang,
+    rpaleoclim,
+    sf,
+    snakecase,
+    stars,
     stringr,
-    gdalUtils,
-    broom
+    tibble,
+    tidyr
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 6.1.1
+RoxygenNote: 7.3.2

@@ -1,0 +1,125 @@
+---
+title: "Biogeography of crop progenitors and wild plant resources in the terminal Pleistocene and Early Holocene of West Asia, 14.7–8.3 ka"
+subtitle: "Fitted model summaries and predicted palaeodistributions"
+author: 
+- name: Joe Roe
+  id: jr
+  orcid: 0000-0002-1011-1244
+  email: joeroe@hey.com
+  affiliations:
+    - name: University of Bern
+      country: Switzerland
+    - name: University of Copenhagen
+      country: Denmark
+  corresponding: true
+- name: Amaia Arranz-Otaegui
+  id: aao
+  orcid: 0000-0002-5091-6426
+  affiliation: 
+    - name: University of the Basque Country
+      country: Spain
+abstract: |
+  This appendix describes ecological niche models of 81<!-- TODO keep updated -->
+  plant species relevant to the subsistence of Late Epipalaeolithic (15–11.7 ka) 
+  and Neolithic (11.7–8.2 ka) societies in West Asia. It includes summaries of 
+  the training data and performance metrics of the fitted models together with 
+  predicted palaeodistributions of each species for three simulated 
+  climatologies over the Pleistocene/Holocene boundary (the Bølling–Allerød, 
+  14.7–12.9 ka; Younger Dryas, 12.9–11.7 ka; and Early Holocene, 11.7–8.3 ka) as
+  well as current conditions.
+  For a full description of the methodology, references, and discussion of the 
+  results, please see the main text. The data and R code used to produce the
+  models, as well as the full predicted palaeodistributions in raster format,
+  are achived with Zenodo at <https://doi.org/> <!-- TODO insert Zenodo DOI -->
+format:
+  html:
+    toc: true
+    # embed-resources: true
+execute:
+  echo: false
+---
+
+```{r dependencies, message=FALSE}
+library("cowplot")
+library("dplyr")
+library("here")
+library("forcats")
+library("ggplot2")
+library("ggspatial")
+library("gt")
+library("khroma")
+library("patchwork")
+library("purrr")
+library("readr")
+library("sf")
+library("stars")
+library("tidyr")
+library("tune")
+library("yardstick")
+library("vip")
+
+library("BadiaPaleoFloraENM") # this package, install with devtools::install()
+
+options(knitr.duplicate.label = "allow")
+```
+
+```{r data, message=FALSE}
+# Model
+flora <- readRDS(derived_data("flora_niche_predictions.Rdata"))
+archaeo_pred <- readRDS(derived_data("archaeo_pred.Rdata"))
+flora <- left_join(flora, archaeo_pred)
+
+# Chronology
+climate_periods <- tibble(
+  period = c("Bølling-Allerød", "Younger Dryas", "Early Holocene", "Current"),
+  code = c("ba", "yds", "eh", "cur"),
+  date_range = c("(14.7-12.9 ka)", "(12.9-11.7 ka)", "(11.7-8.3 ka)", ""),
+  label = fct_inorder(paste(toupper(code), date_range)),
+  long_label = fct_inorder(paste(period, date_range)),
+  start_bp = c(14700, 12900, 11700, NA),
+  end_bp = c(12900, 11700, 8300, NA)
+)
+
+# Map
+latlong <- 4326
+w_asia_albers <- "+proj=aea +lat_1=22.5 +lat_2=42.5 +lon_0=40"
+
+w_asia <- st_bbox(c(xmin = 25, xmax = 55, ymin = 22.5, ymax = 42.5), crs = 4326)
+
+# Turn off s2 while we deal with Natural Earth's funky geometries
+use_s2 <- sf_use_s2(FALSE)
+
+ne_countries <- read_sf(raw_data("ne"), "ne_10m_admin_0_countries")
+
+ne_rivers <- read_sf(raw_data("ne"), "ne_10m_rivers_lake_centerlines_scale_rank")
+
+ne_ocean <- read_sf(raw_data("ne"), "ne_10m_ocean") |>
+  st_geometry() |>
+  st_crop(buffer_bbox(w_asia, 10)) |>
+  st_union()
+
+ne_land <- read_sf(raw_data("ne"), "ne_10m_land") |> 
+  st_geometry() |>
+  st_crop(buffer_bbox(w_asia, 10)) |>
+  st_difference(ne_ocean) |>
+  st_union()
+
+# Restore previous setting of s2
+sf_use_s2(use_s2)
+```
+
+```{r content, message=FALSE, results="asis"}
+flora <- arrange(flora, taxon)
+content <- pmap(
+  flora, 
+  function(taxon, taxon_aliases, archaeo_pred, occ, niche, palaeodist, ...) {
+    knitr::knit_child(
+      here("analysis", "appendix_section.qmd"),
+      envir = environment(),
+      quiet = TRUE
+    )
+  }
+)
+
+cat(unlist(content), sep = "\n")
+```

@@ -1,5 +1,8 @@
 .Rhistory
 .RData
 .Rproj.user
-analysis/data/derived_data/
-analysis/data/raw_data/srtm/
+.env
+analysis/paper_cache/
+analysis/data/derived_data/dem/*
+analysis/data/derived_data/paleoclim/raw/*
+analysis/data/derived_data/*.Rdata
