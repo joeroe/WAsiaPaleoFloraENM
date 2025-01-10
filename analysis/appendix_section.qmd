@@ -54,7 +54,7 @@ fig_occ + (fig_roc_curve / fig_vip) +
   plot_layout(widths = c(3, 1))
 ```
 
-```{r fig-palaeodist, fig.height=16, fig.cap=paste0("Predicted palaeodistributions of *", taxon, "*")}
+```{r fig-palaeodist, warning=FALSE, fig.height=16, fig.cap=paste0("Predicted palaeodistributions of *", taxon, "*")}
 if (length(archaeo_pred) > 0) {
   archaeo_geom <- geom_sf(
     aes(shape = .pred_class),

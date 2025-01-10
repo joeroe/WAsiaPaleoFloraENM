@@ -36,14 +36,15 @@ abstract: |
   Levant, Cyprus and Western Anatolia. In addition, overall ranges shrunk by an 
   average of c. 25% from the terminal Pleistocene to the Early Holocene. 
   Modelled ranges do not reliably predict the observed  occurrence of specific 
-  species at archaeological sites,
+  species at archaeological sites, but are aligned with more general trends in
+  the relative abundance of species.<!--
   however [...]
   The regional ubiquity of species in the archaeological record is [not] correlated with the 
   predicted size of its range and the diversity of archaeobotanical assemblages is [not] 
   correlated with the predicted diversity of its environs. This indicates that 
   trends in taxonomic composition of the archaeobotanical record is [not] likely 
   to have been influenced by environmental change and species turnover, in
-  addition to human economic choices.
+  addition to human economic choices.-->
 format: 
   elsevier-pdf:
     keep-tex: true
@@ -176,12 +177,12 @@ pred_res <- 5000
 # Introduction
 
 The Pleistocene–Holocene transition in West Asia marked a turning point in global environmental history, as humans brought the first plants under cultivation and began modifying surrounding ecosystems to support their own subsistence.
-West Asia is part of the native range of a remarkable number of domesticable plant species, including wild relatives of wheat, barley, peas, lentils, and other crops of global importance [@cite].
-These species supported uniquely dense and complex Late Epipalaeolithic (15–11.7 ka) societies based on intensive foraging [@cite] and eventually pre-domestication cultivation [@cite].
+West Asia is part of the native range of a remarkable number of domesticable plant species, including wild relatives of wheat, barley, peas, lentils, and other crops of global importance [@Diamond2002].
+These species supported uniquely dense and complex Late Epipalaeolithic (15–11.7 ka) societies based on intensive foraging [@BarYosef1998; @MaherEtAl2012] and eventually plant management and pre-domestication cultivation [@Harris2007].
 As they were brought under domestication in the Pre-Pottery Neolithic period (11.7–8.5 ka), the world's first agriculture was shaped by the ecosystems from which it emerged and was embedded in.
 
-Decades of research in archaeobotany and zooarchaeology have reconstructed the subsistence economies of Late Epipalaeolithic and Neolithic sites in great detail [@cites].
-Together with studies of charcoal [@cite], pollen [@cite], soil [@cite], and a variety of palaeoclimate archives [@JonesEtAl2019], they also tell us much about the environments surrounding these settlements.
+Decades of research in archaeobotany and zooarchaeology have reconstructed the subsistence economies of Late Epipalaeolithic and Neolithic sites in great detail.
+Together with studies of charcoal, pollen, soil, and a variety of palaeoclimate archives [@JonesEtAl2019], they also tell us much about the environments surrounding these settlements.
 However, each of these sources of evidence is subject to the wide variety of taphonomic and recovery biases that are inherent in any direct record of the past.
 They are also, by definition, records of the (human) environment at particular times and places.
 Interpolating these snapshots to give a holistic picture of the regional ecologies is not straightforward – to date, it has tended to rely on non-explicit, inductive modelling.
@@ -195,7 +196,7 @@ Though hypothetical, this gives us an independent line of evidence on past ecolo
 Our computational approach is also readily scaled up, allowing us to model spatially-explicit palaeodistributions for a large number of species, for the whole region, under multiple past climatologies.
 
 # Background
-
+<!--
 * The transition to agriculture in West Asia was...
 
 ## Biogeography and agricultural origins
@@ -217,11 +218,11 @@ Our computational approach is also readily scaled up, allowing us to model spati
   * Figure: comparisons
 
 ## Ecological niche modelling in archaeology
-
+-->
 Ecological niche modelling or species distribution modelling is widely used by ecologists to predict the geographic range of a species based on a set of environmental predictors [@FranklinMiller2009].
 Essentially, it involves combining records of where an organism has been observed with environmental data (climate, topography, etc.) for those locations to model the range of environmental values at which that species  – its environmental niche.
 This model can then be used to predict the range of the organism in question either in the same or a different environment.
-@CITE suggests reserving the term 'species distribution modelling' for when the method is used to recover the verifiable range of a species in a real and existing environment, and using 'ecological niche modelling' as the broader term covering hypothetical or predictive applications – a convention we follow here when referring to predictive or 'hindcast' models of past ranges.
+@TownsendPetersonSoberon2012 suggests reserving the term 'species distribution modelling' for when the method is used to recover the verifiable range of a species in a real and existing environment, and using 'ecological niche modelling' as the broader term covering hypothetical or predictive applications – a convention we follow here when referring to predictive or 'hindcast' models of past ranges.
 Within this overarching framework, ecological niche modelling encompasses a wide range of applications and a variety of potential environmental predictors, modelling approaches, and methodologies, which we will not attempt to review here.
 
 Ecological niche modelling has long been of interest to archaeologists as both a means of exploring the biological niche of humans and for reconstructing the past environments they inhabited [@DavidPollyEronen2011; @FranklinEtAl2015].
@@ -233,7 +234,7 @@ These applications can be distinguihed from 'palaeoecological niche modelling', 
 @FranklinEtAl2015 review palaeoecological niche modelling and advocate for its greater adoption in environmental archaeology.
 In an early application to West Asia, @ConollyEtAl2012 used the occurrence of wild and domestic *Bos* remains at prehistoric archaeological sites to map the evolving niche of cattle over the Pleistocene–Holocene transition.
 It has been used to model the availability of fauna exploited by humans at wider scales [e.g. @deAndresHerreroEtAl2018; @YaworskyEtAl2023] and, in a West Asian context, of foraged plant resources in the landscape around the Neolithic sites on the Konya Plain [@CollinsEtAl2018].
-Modelling the spread of crops has been another significant archaeological application [e.g. @CremaEtAl], though not as yet applied to West Asia.
+Modelling the spread of crops has been another significant archaeological application [e.g. @KrzyzanskaEtAl2022; @Krzyzanska2023], though not as yet applied to West Asia.
 
 In the majority of studies to date (palaeo)ecological niche modelling has been applied to archaeological data in an 'inductive' fashion, i.e. faunal and botanical remains from ancient sites are used as the occurrence dataset for training a model using either past or present environmental data.
 However, both the zooarchaeological and archaeobotanical records are sparse and subject to a complex array of depositional, taphonomic and recovery biases factors that , many of which are not fully understood and/or cannot be corrected for.
@@ -247,7 +248,7 @@ it reserves archaeological occurrence data as an independent dataset that can be
 This possibily was suggested by @FranklinEtAl2015 but to our knowledge our study represents the first attempt to actually do so.
 
 The major practical limitation of the hindcasting approach is that it relies on spatially explicit, high resolution palaeoenvironmental surfaces with continuous coverage of the region and periods of interest.
-Until recently, this has not been widely available for most applications, which is perhaps why only a minority of studies use it [cf. @YaworskyEtAl2023].
+Until recently, this has not been widely available for most applications, which is perhaps why only a minority of studies use it [cf. @KrzyzanskaEtAl2022; @YaworskyEtAl2023].
 In this study, we are able to take advantage of the increasing availability of high resolution, global palaeoclimate data derived from simulation experiments with general circulation models of climate [@BrownEtAl2018; @BrownEtAl2020; @KargerEtAl2023].
 
 # Data and model
@@ -419,7 +420,7 @@ ggplot() +
 
 The aim of our study was to model the biogeography of species relevant to human subsistence economies in West Asia (excluding the Southern Arabian peninsula, see @fig-region) during the archaeological Late Epipalaeolithic (15–11.7 ka) and Pre-Pottery Neolithic (11.7–8.3 ka) periods.
 Our starting point was a list of `r nrow(flora)` taxa (@tbl-results-summary) comprising the identifiable species observed at at least two Late Epipalaeolithic/Pre-Pottery Neolithic sites, according to our previous study of the regional archaeobotanical data [@ArranzOtaeguiRoe2023].
-This was based on dataset collated from three previously published regional archaeobotanical databases: ADEMNES [@ADEMNES], ORIGINS [@ORIGINS], and COMPAG [@COMPAG].
+This was based on dataset collated from three previously published regional archaeobotanical databases: ADEMNES [@ADEMNES], ORIGINS [@ORIGINS], and COMPAG [@LucasFuller2018; @FullerEtAl2018; based on @ColledgeEtAl2004; @ShennanConolly2007].
 We did not attempt to distinguish between the source of the remains [cf. @WallaceEtAl2018];
 archaeobotanical assemblages are subject to a variety of preservational and recovery biases, so by no means were all the species on our list consumed or even deliberately collected by people.
 However, we assume that there presence at a site of human settlement at least implies that they were part of the wider ecosystem that supported habitation there.
@@ -628,7 +629,6 @@ It is unlikely that either macroscale topography or soil characteristics have al
 For training, test predictions, and archaeological predictions predictor data was left in its native projection and resolution.
 For hindcast palaeodistributions, it was transformed to common equal-area projection and resolution of `r pred_res / 1000` km.
 
-
 ```{r data-flora-predictors}
 # TODO: factor out
 bind_extract <- function(x, y) {
@@ -824,7 +824,7 @@ archaeo_pred_summary <- archaeo_pred |>
     .by = c(taxon)
   )
 
-flora <- left_join(flora, archaeo_pred)
+flora <- left_join(flora, archaeo_pred, join_by(taxon))
 ```
 
 The ability of the hindcast models to predict the occurrence of specific species at archaeological sites is worse, with `r percent(p_archaeo_pred_correct)` of presences in archaeobotanical assemblages successfully predicted.
@@ -1001,27 +1001,27 @@ most of Anatolia, Northern Mesopotamia, and the Zagros Mountains in particular d
 leaving the Levant and to a lesser extent the Aegean and Cyprus as refugia.
 
 <!-- TODO expand/rewrite -->
-Our results for the Levant are consistent with the current understanding of this region as developing early intensive foraging economies [the Natufian culture, @cite] and as a centre of origin of agriculture [@cite].
-Within the Levant, many species show moderate reductions in ranges over the Pleistocene/Holocence boundary, retreating from the Badia/transjordan region [e.g. @fig-palaeodist-barely-levant].
+Our results for the Levant are consistent with the current understanding of this region as developing early intensive foraging economies [the Natufian culture, @BarYosef1998] and as a centre of origin of agriculture [@Zeder2011a].
+Within the Levant, many species show moderate reductions in ranges over the Pleistocene/Holocence boundary, retreating from the Badia/transjordan region (e.g. barley, fig. @fig-palaeodist-barely-levant).
 
 Loss of the Northern Mesopotamia–Anatolia region from the predicted ranges of crop progenitors is interesting in light of the 'golden triangle' hypothesis [@Lev-YadunEtAl2000; @KozlowskiAurenche2005; @AbboEtAl2010], which puts this region at the centre of the development of agriculture.
-Multiple lines of archaeological evidence have emerged that point away from this hypothesis and towards a more geographically diverse origin [@Asouti2006; @cites], but it remains the area with some of the earliest clear evidence of domestication [@ZoharyEtAl2012; @KabukcuEtAl2021; @UlasEtAl2024].
+Multiple lines of archaeological evidence have emerged that point away from this hypothesis and towards a more geographically diverse origin [@Asouti2006; @FullerEtAl2011; @ArranzOtaeguiEtAl2016], but it remains the area with some of the earliest clear evidence of domestication [@ZoharyEtAl2012; @KabukcuEtAl2021; @UlasEtAl2024].
 Comparative genetics also points to the Northern Mesopotamia region as the centre of diversity of many crops [e.g. @HaasEtAl2019].
 But since these studies are based on modern genomes, if the wild range of these plants has, as our modelling suggests, shifted since the Early Holocene, the apparent centre of diversity may have shifted with them.
 Our reconstructions are consistent with the late arrival of intensive plant-based foraging economies in this region (cf. the Natufian of the Levant),
 and more broadly there need not be a link between the core *wild* range of a plant and the core area of its domestication. 
 A scenario in which cultivation emerged at the edges of the ranges of valuable plant resources—as a means of extend their natural niche—is also plausible.
 
-The near-absence of the Zagros in any predicted ranges is also surprising, given mounting evidence that domestication took place just as early in the eastern *Mashriq* as it did in the west [@Braidwood; @GanjDarehGoats; @HillyFlanksStuff].
+The near-absence of the Zagros in any predicted ranges is also surprising, given mounting evidence that domestication took place just as early in the eastern *Mashriq* as it did in the west [@Zeder2024].
 We consider that the most likely explanation for this is that our flora does not include the species that were most important to plant subsistence in the east.
-Archaeobotanical data on Neolithic sites in the Zagros is limited (compared to the Levant in particular) due to a hiatus in field research there from the 1980s to early 2010s [@cite].
-Recent research [@Amaia?] indicates ... <!-- TODO: weird plants -->
+Archaeobotanical data on Neolithic sites in the Zagros is limited (compared to the Levant in particular) due to a hiatus in field research there from the 1980s to early 2010s [@Zeder2024].
+Recent research [@WhitlamEtAl2018; @GonzalezCarreteroEtAl2023] indicates that plant subsistence in this region was based on a distinct set of species, compared to the Levant and Anatolia.
 
 Cyprus and the Aegean are not conventionally considered part of the primary zone of domestication but rather amongst the first regions that acquired agriculture from West Asia.
 Our analysis complicates this picture, as it indicates that the wild ranges of many crop progenitors included these regions.
 Early examples of several domesticates are recorded at sites on Cyprus, Western Anatolia and Greece [@ArranzOtaeguiRoe2023],
 and the Aegean region was probably connected to West Asia by a land bridge via Anatolia until the Early Holocene [@AksuHiscott2022].
-Were these area part of the same broader 'interaction sphere' [@cite] that produce Neolithic agriculture in West Asia?
+Were these area part of the same broader 'interaction sphere' that produce Neolithic agriculture in West Asia?
 
 Exceptions to the dominant trend of range reduction include *Cicer reticulatum* (wild chickpea), which has a relatively stable range centered on Northern Mesopotamia;
 and *Triticum turgidum dicoccum* (wild emmer wheat), which is predicted to have two limited ranges centered around the Black Sea Coast of Anatolia and the Palmyra basin.
@@ -1057,7 +1057,7 @@ ggplot() +
 Almost all the cereal and legume crop progenitors we modelled are predicted to have only been found in the Levant during the terminal Pleistocene and Early Holocene (see appendix).
 Part of this may be do with the fact that both our initial flora and training occurrence dataset have a strong bias towards the southern Levant, but strikingly the modelled *current* ranges of these plants do tend to include Anatolia and the Zagros, so this cannot be the only factor.
 One notable exception is the wild ancestor of chickpea (*Cicer reticulatum*), which is predicted to have a distribution centered on Northern Mesopotamia but encompassing much of the the 'hilly flanks' (except the southern Levant, @fig-palaeodist-chickpea-rye). 
-Another is rye (*Secale cereale*), which is inferred to be primarily Western Anatolian [@fig-palaeodist-chickpea-rye].
+Another is rye (*Secale cereale*), which is inferred to be primarily Western Anatolian (@fig-palaeodist-chickpea-rye).
 This is perhaps relevant to rye's unusual domestication history, as a crop of West Asian origin that was apparently not first cultivated until much later than the 'founder crops', in Europe [@SchreiberEtAl2021].
 
 ```{r fig-palaeodist-locals}
@@ -1117,7 +1117,7 @@ ggplot() +
 ```
 
 Wild barley (*Hordeum spontaneum*) its relatives show a contraction of their predicted ranges from the Pleistocene to the Holocene,
-concurrent with it being brought into cultivation [@fig-palaeodist-barely-levant].
+concurrent with it being brought into cultivation (@fig-palaeodist-barely-levant).
 It also sees a marked decline in the archaeobotanical record from the Early PPNA/Early PPNB (where it was amongst the most common taxa) to the Late PPNB and Late Neolithic [@ArranzOtaeguiRoe2023].
 Pistachio (*Pistacia atlantica*) shows similar trends, but it is less certain that this species was cultivated in the Neolithic.
 Conversely, the various wild wheat species native to West Asia show almost no response to Pleistocene/Holocene climate change, even within the Levant, and in the archaeobotanical record wheat displays the opposite trend to barley and pistachio – becoming gradually more abundant through the course of the Neolithic and dominant by its end.
@@ -1181,15 +1181,15 @@ We present the first continuous, spatially explicit models of the palaeodistribu
 This deductive approach—modelling the niche of a species based on its occurrence in relation to environmental factors today, and using this together with palaeoclimate simulations to infer its past distribution—represents a new line of evidence on the archaeoecology of the world's first agricultural societies.
 It provides a complementary picture to that gleaned from environmental archaeology and climatological archives because it is independent of the taphonomic, anthropic, and recovery-related processes that affect these records.
 
-"All models are wrong" [@cite], but the performance of our models on independent test datasets give confidence in its predictions, which are plausible and consistent with broad-scale patterns in the archaeological record.
-
+"All models are wrong" [@Box1976], but the performance of our models on independent test datasets give confidence in its predictions, which are plausible and consistent with broad-scale patterns in the archaeological record.
+<!--
 * Results w.r.t. to specific archaeologically-attested species not to promising, but this doesn't mean the models are useless!
 * Discrepencies suggests several areas for further research and methodological development
-  
+ --> 
 Modelling a large number of species using machine learning, the substantial occurrence datasets available for the present day, and a hindcasting approach to past distributions also represents a significant advance in the methodology of palaeoecological niche modelling. 
-This approach is enabled by the availability of high quality, global open datasets in ecology [@GBIF2025; @GBIFSecretariat2023], earth science [@SRTM], and climatology [@@KargerEtAl2017; @BrownEtAl2018].
+This approach is enabled by the availability of high quality, global open datasets in ecology [@GBIF2025; @GBIFSecretariat2023], earth science [@SRTM], and climatology [@KargerEtAl2017; @BrownEtAl2018].
 Unfortunately in relation to these fields open data in archaeology lags conspiciously behind.
-Though we have benefitted from the relatively good state of publication of archaeobotanical compilations in our region of study [@ADEMNES; @COMPAG; @ORIGINS], 
+Though we have benefitted from the relatively long tradition of compiling archaeobotanical data in our region of study [@ColledgeEtAl2004; @ShennanConolly2007; @ADEMNES; @LucasFuller2018; @FullerEtAl2018; @WallaceEtAl2018; @ORIGINS], 
 further development of open, comprehensive and up-to-date 'backbone' datasets on site locations and chronologies is needed to advance archaeoecological modelling to the same level.
 
 # References {.appendix}
