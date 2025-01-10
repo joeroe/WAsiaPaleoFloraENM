@@ -1192,4 +1192,8 @@ Unfortunately in relation to these fields open data in archaeology lags conspici
 Though we have benefitted from the relatively long tradition of compiling archaeobotanical data in our region of study [@ColledgeEtAl2004; @ShennanConolly2007; @ADEMNES; @LucasFuller2018; @FullerEtAl2018; @WallaceEtAl2018; @ORIGINS], 
 further development of open, comprehensive and up-to-date 'backbone' datasets on site locations and chronologies is needed to advance archaeoecological modelling to the same level.
 
+# Data availability
+
+The data and R code used to produced is archived with Zenodo at <https://doi.org/10.5281/zenodo.14629984>
+
 # References {.appendix}

@@ -30,7 +30,7 @@ abstract: |
   For a full description of the methodology, references, and discussion of the 
   results, please see the main text. The data and R code used to produce the
   models, as well as the full predicted palaeodistributions in raster format,
-  are achived with Zenodo at <https://doi.org/> <!-- TODO insert Zenodo DOI -->
+  are achived with Zenodo at <https://doi.org/10.5281/zenodo.14629984>.
 format:
   html:
     toc: true
