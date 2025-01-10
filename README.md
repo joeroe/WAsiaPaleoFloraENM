@@ -1,14 +1,19 @@
-# BadiaPaleoFloraENM
+# Data and code for 'Biogeography of crop progenitors and wild plant resources in the terminal Pleistocene and Early Holocene of West Asia, 14.7–8.3 ka'
 
-This package presents ecological niche models (ENM) of paleoflora in the *Badia*, focusing on taxa known to be exploited by Epipalaeolithic foragers in the region c. 14,500 BP.
+This research compendium contains the data and code accompanying our paper:
 
-The analysis is a work in progress.
-See `analysis/analysis.Rmd`.
+> Roe, Joe and Amaia Arranz-Otaegui, in prep. Biogeography of crop progenitors 
+> and wild plant resources in the terminal Pleistocene and Early Holocene of 
+> West Asia, 14.7–8.3 ka
 
-## Usage
+It is a [Quarto manuscript](https://quarto.org/docs/manuscripts/) written in 
+Markdown with embedded R code.
 
+To rerender the manuscript (in PDF format), use `quarto render paper.qmd`.  
+Executing the R code requires that R and the packages listed at the top of 
+`paper.qmd` are installed.
 
-### Large raster data
+## Large raster data
 
 This analysis uses a number of large, remote raster files that cannot be conveniently packaged here in their original forms.
 These include data from [Paleoclim](http://www.paleoclim.org), [SoilGrids](https://www.isric.org/explore/soilgrids), and [OpenTopography](https://opentopography.org) (NASADEM).
