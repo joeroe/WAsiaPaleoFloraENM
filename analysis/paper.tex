@@ -254,12 +254,81 @@ individual species relevant to human subsistence based on a model of
 their current environmental niche and simulations of past palaeoclimate.
 Though hypothetical, this gives us an independent line of evidence on
 past ecologies that is independent of the environmental archaeological
-and palaeoclimatic records. Our computational approach is also readily
-scaled up, allowing us to model spatially-explicit palaeodistributions
-for a large number of species, for the whole region, under multiple past
-climatologies.
+and palaeoclimatic records. This means that the ancient data can be
+reserved for assessing the model's ability to `hindcast' past
+conditions. In this sense, discrepencies between the two records are
+perhaps the most interesting result, as they indicate processes
+affecting one or both records that are not fully accounted for and
+therefore generate new questions. Our computational approach is also
+readily scaled up, allowing us to model spatially-explicit
+palaeodistributions for a large number of species, for the whole region,
+under multiple past climatologies.
 
 \section{Background}\label{background}
+
+\begin{itemize}
+\tightlist
+\item
+  The transition to agriculture in West Asia was\ldots{}
+\end{itemize}
+
+\subsection{Biogeography and agricultural
+origins}\label{biogeography-and-agricultural-origins}
+
+\begin{itemize}
+\tightlist
+\item
+  Has always been important in study of agricultural origins
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Historically: Vavilov, Pumpelly \& Childe
+  \item
+    Genetic studies tell us origin points, but not ranges
+  \end{itemize}
+\item
+  Important to e.g.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Distinguish environmental from potentially anthropogenic change
+    \citep{MartinEtAl2016, MartinEtAl2025}
+  \item
+    Reconstruct sequences of domestication \citep{YeomansEtAl2017}
+  \end{itemize}
+\item
+  Epipal./Neo. plant-based economies were diverse
+
+  \begin{itemize}
+  \tightlist
+  \item
+    More than the ``founder crops'';
+  \item
+    More than food
+  \item
+    (In archaebot., not all intentionally collected)
+  \item
+    Geographically and temporally diverse
+  \item
+    \ldots so we model lots of species!
+  \end{itemize}
+\item
+  Regional ecological reconstructions generally rely on the `expert
+  interpolation' (or what do they call it with isoscapes?) method
+
+  \begin{itemize}
+  \tightlist
+  \item
+    See CSEAS (AEA-prep) presentation
+  \item
+    Figure: comparisons
+  \end{itemize}
+\end{itemize}
+
+\subsection{Ecological niche modelling in
+archaeology}\label{ecological-niche-modelling-in-archaeology}
 
 Ecological niche modelling or species distribution modelling is widely
 used by ecologists to predict the geographic range of a species based on
@@ -428,15 +497,23 @@ Asia used to train models (N=81641}
 
 \end{figure}%
 
-Occurrence data only tells us where a species is present; there is
-rarely definitive information on where the species is \emph{not} found.
-We therefore need to generate random background points or
-``pseudo-absences'' to feed to the model. There are several ways to do
-this. We follow the advice of \citet{BarbetMassinEtAl2012} for
-regression-based species distribution models and use a large (≈10000)
-random sample of points, weighted equally against the presences in the
-regression. \citet{ValaviEtAl2022} also recommend using a large
-background sample for random forest models.
+Random Forest is a presence--absence approach to niche modelling and
+therefore requires not just data on where a species is present, but
+where it is definitely not present. However `absence' data is rarely
+available because it requires exhaustive survey. In practice, most
+applications of niche modelling are `presence-only' and, where absence
+data is required (as for Random Forest), it is supplied as a random
+background sample of `pseudo-absence' points. The purpose of this sample
+is to inform the model about the nature of the underlying environment.
+The stochastic generation process means that some `pseudo-absence'
+points will overlap or fall close to presences, so ensuring the model is
+not overly influenced by background samples is critical to its
+predictive importance \citep{ValaviEtAl2022}. Here we follow the advice
+of \citet{BarbetMassinEtAl2012} for regression-based species
+distribution models and use a large (≈10000) uniform sample of points
+from across the land area of the study region. These points are then
+weighted equally against the presences in the regression to produce a
+`balanced Random Forest' \citep{ValaviEtAl2022}.
 
 \subsection{Predictor data}\label{sec-predictors}
 
@@ -735,18 +812,18 @@ indicate that the majority of species have experienced a significant
 reduction and/or shift in their ranges since the Early Holocene. 75 of
 82 species have reduced ranges; 66 of more than 10\% or more. Though the
 magnitude of the reduction from prehistory to the present likely
-reflects a degree of overfitting in the model (discussed further below),
-fluctuations in modelled range size between the Bølling-Allerød
-(14.7--12.9 ka), Younger Dryas (12.9--11.7 ka), and Early Holocene
-(11.7--8.3 ka) are more directly comparable
-(Figure~\ref{fig-pred-range-density}). The average range of modelled
-species was 16\% in the Early Holocene compared to the Bølling--Allerød,
-and 25\% during the Younger Dryas (i.e.~ranges recovered slightly
-between the Younger Dryas and Early Holocene). This perhaps indicates
-that although this period is considered one of climatatic amelioration
-globally \citep{JonesEtAl2019}, the colder conditions of the Pleistocene
-may have supported more extensive plant-based economies in West Asia
-specifically.
+reflects a degree of overfitting in the model (discussed further in
+Section~\ref{sec-discuss-hindcasting}), fluctuations in modelled range
+size between the Bølling-Allerød (14.7--12.9 ka), Younger Dryas
+(12.9--11.7 ka), and Early Holocene (11.7--8.3 ka) are more directly
+comparable (Figure~\ref{fig-pred-range-density}). The average range of
+modelled species was 16\% in the Early Holocene compared to the
+Bølling--Allerød, and 25\% during the Younger Dryas (i.e.~ranges
+recovered slightly between the Younger Dryas and Early Holocene). This
+perhaps indicates that although this period is considered one of
+climatatic amelioration globally \citep{JonesEtAl2019}, the colder
+conditions of the Pleistocene may have supported more extensive
+plant-based economies in West Asia specifically.
 
 \begin{figure}
 
@@ -770,12 +847,12 @@ include \emph{Ficus carica} (fig); \emph{Hordeum} spp. (wild barleys);
 legumes); \emph{Triticum aestivum compactum} (in the N. Levant),
 \emph{T. monococcum aegilopoides}, \emph{T. durum}, and \emph{Triticum
 urartu} (but not the other wheat progenitor, \emph{T. turgidum dicoccum}
--- see below); \emph{Aegilops speltoides}, but not \emph{Aegilops
-tauschii} (goatgrasses); and \emph{Vicia} spp. (vetches), including
-\emph{Vicia faba} (broad beans). most of Anatolia, Northern Mesopotamia,
-and the Zagros Mountains in particular disappear from the predicted
-ranges of these species, leaving the Levant and to a lesser extent the
-Aegean and Cyprus as refugia.
+-- see Section~\ref{sec-discuss-crops}); \emph{Aegilops speltoides}, but
+not \emph{Aegilops tauschii} (goatgrasses); and \emph{Vicia} spp.
+(vetches), including \emph{Vicia faba} (broad beans). most of Anatolia,
+Northern Mesopotamia, and the Zagros Mountains in particular disappear
+from the predicted ranges of these species, leaving the Levant and to a
+lesser extent the Aegean and Cyprus as refugia.
 
 Our results for the Levant are consistent with the current understanding
 of this region as developing early intensive foraging economies
@@ -844,8 +921,7 @@ Northern Mesopotamia), but it would be consistent with archaeological
 evidence for early cultivation at sites in the Upper Euphrates
 \citep{Willcox2024}.
 
-\subsection{Biogeography of crop
-progenitors}\label{biogeography-of-crop-progenitors}
+\subsection{Biogeography of crop progenitors}\label{sec-discuss-crops}
 
 \begin{figure}
 
@@ -971,7 +1047,7 @@ constrained to the Levant--Upper Euphrates corridor
 \citep{LevyFeldman2022}, is likely to occur in this vicinity.
 
 \subsection{Hindcast models do not predict archaeobotanical
-composition}\label{hindcast-models-do-not-predict-archaeobotanical-composition}
+composition}\label{sec-discuss-hindcasting}
 
 The failure of our hindcast models to predict the occurrence of species
 in archaeobotanical assemblages has several possible explanations. Since
@@ -1020,17 +1096,28 @@ anthropic, and recovery-related processes that affect these records.
 ``All models are wrong'' \citep{Box1976}, but the performance of our
 models on independent test datasets give confidence in its predictions,
 which are plausible and consistent with broad-scale patterns in the
-archaeological record. Modelling a large number of species using machine
-learning, the substantial occurrence datasets available for the present
-day, and a hindcasting approach to past distributions also represents a
-significant advance in the methodology of palaeoecological niche
-modelling. This approach is enabled by the availability of high quality,
-global open datasets in ecology \citep{GBIF2025, GBIFSecretariat2023},
-earth science \citep{SRTM}, and climatology
-\citep{KargerEtAl2017, BrownEtAl2018}. Unfortunately in relation to
-these fields open data in archaeology lags conspiciously behind. Though
-we have benefitted from the relatively long tradition of compiling
-archaeobotanical data in our region of study
+archaeological record.
+
+\begin{itemize}
+\tightlist
+\item
+  Results w.r.t. to specific archaeologically-attested species not to
+  promising, but this doesn't mean the models are useless!
+\item
+  Discrepancies suggests several areas for further research and
+  methodological development
+\end{itemize}
+
+Modelling a large number of species using machine learning, the
+substantial occurrence datasets available for the present day, and a
+hindcasting approach to past distributions also represents a significant
+advance in the methodology of palaeoecological niche modelling. This
+approach is enabled by the availability of high quality, global open
+datasets in ecology \citep{GBIF2025, GBIFSecretariat2023}, earth science
+\citep{SRTM}, and climatology \citep{KargerEtAl2017, BrownEtAl2018}.
+Unfortunately in relation to these fields open data in archaeology lags
+conspiciously behind. Though we have benefited from the relatively long
+tradition of compiling archaeobotanical data in our region of study
 \citep{ColledgeEtAl2004, ShennanConolly2007, ADEMNES, LucasFuller2018, FullerEtAl2018, WallaceEtAl2018, ORIGINS},
 further development of open, comprehensive and up-to-date `backbone'
 datasets on site locations and chronologies is needed to advance
