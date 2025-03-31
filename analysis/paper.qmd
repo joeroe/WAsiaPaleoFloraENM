@@ -185,27 +185,69 @@ This means that the ancient data can be reserved for assessing the model's abili
 In this sense, discrepencies between the two records are perhaps the most interesting result, as they indicate processes affecting one or both records that are not fully accounted for and therefore generate new questions.
 Our computational approach is also readily scaled up, allowing us to model spatially-explicit palaeodistributions for a large number of species, for the whole region, under multiple past climatologies.
 
-# Background
+# Background {#sec-bg}
 
-* The transition to agriculture in West Asia was...
+The transition to agriculture represents one of the most fundamental changes in human history.
+West Asia is one of the regions where this process has been studied in the most detail:
+decades of research have traced the gradual development of a Neolithic way of life and the changes that occurred in the plant species and their geographical distribution as a result.
+Although archaeobotanical assemblages can be biased due to issues of preservation, sampling, recovery techniques, and lab procedures [Dennel 1976, Hastorf and Popper 1988] —and although they include not just food remains but plant resources that were used for other purposes or arrived at the site accidentally [@HastorfPopper1988]—large-scale studies have still revealed coherent patterns in the exploitation of plants over time [Colledge et al. 2004, Arranz-Otaegui et al. 2016].
+
+The possibility of an abrupt, geographically-constrained process of plant domestication was proposed in the 1990s [@HillmanDavies1990; @HillmanDavies1992; @HeunEtAl1997; @OzkanEtAl2002] and developed as an explanatory model in the 2000s [@LevYadunEtAl2000; @GopherEtAl2001; @AbboEtAl2005].
+As part of this model, some authors [Lev-Yadun, Gopher and Abbo 2000, Gopher, Abbo and Lev-Yadun 2001, Abbo, Lev-Yadun and Gopher 2010, 2012] argued that eight plant species, collectively referred to as 'founder crops' or the 'Neolithic crop package' [Zohary and Hopf 1988] were selected and domesticated once, without any phase of pre-domestication cultivation [Abbo, Lev-Yadun and Gopher 2011, p. 177)].
+This process could have been rapid under strong artificial selection [Hillman and Davies 1990, 1992] and may have occurred in a single region or 'core area' – generally located in southeast Turkey [Ladizinsky and Adler 1976, Heun et al. 1997, Özkan et al. 2002, 2005, Mori et al. 2003, Luo et al. 2007]. 
+From this single point of origin, it was supposed that domesticated or semi-domesticated plants radiated outwards to other regions [Abbo et al. 2006, Kilian et al. 2007, Özkan et al. 2011].
+
+The 'short gestation' paradigm was challenged by others [Helbaek 1969, Harris 1989, Kislev 1989, Colledge 2001, Weiss et al. 2004, Willcox et al. 2008, Fuller et al. 2018]. 
+@Helbaek1966 argued that before the appearance of domesticated plants, a phase of cultivation of wild seeds must have taken place. 
+The existence of a phase of cultivation of morphologically wild cereals or 'pre-domestication cultivation' was identified in the archaeological record through the study of plant domestication traits such as grain size, shattering v. non-shattering rachises. 
+The archaeobotanical evidence shows that during the Pre-Pottery Neolithic A (PPNA) cereals exhibited sizes similar to those recorded in domestic species, but their dispersal mechanism was still the same as the one present in morphologically-wild species [i.e. shattering, see Helbaek 1966, Kislev 1989, Hillman et al. 2000, Colledge 2001, Willcox et al. 2008].
+This evidence suggested that wild cereal stands could have been cultivated for as much as a thousand years before non-shattering domestic forms became prevalent in the archaeological record [Tanno and Willcox 2006, 2012, Arranz-Otaegui et al. 2016)].
+Additional archaeobotanical [Colledge 2001, Willcox et al. 2008, 2009, Riehl et al. 2013, Arranz-Otaegui et al. 2016, Weide et al. 2018, Douché and Willcox 2018, Whitlam et al. 2018] and genetic data [Badr et al. 2000, Molina-Cano et al. 2005, Kilian et al. 2007, Özkan et al. 2011, Lob et al. 2023 VHA] in recent years has further challenged the short-gestation model to explain the origins of plant domestication and agriculture in West Asia. 
+
+Similarly, the concept of a limited set of eight 'founder crops' [@ZoharyHopf1988] that were the first species cultivated, domesticated and then spread as the basis of Neolithic agricultural systems, is not supported by the latest evidence.
+Our previous analyses of the composition of available archaeobotanical datasets shows that these crops were of marginal importance during the Epipalaeolithic period [@ArranzOtaeguiEtAl2018] and that Neolithic subsistence did not rely either solely or primarily on the exploitation of these species [Arranz-OtaeguiRoe2023]. 
+Instead, multiple species of grasses, legumes, fruits, nuts, and other plants were exploited over the Late Pleistocene-Early Holocene transition in southwest Asia. 
 
 ## Biogeography and agricultural origins
 
-* Has always been important in study of agricultural origins
-  * Historically: Vavilov, Pumpelly & Childe
-  * Genetic studies tell us origin points, but not ranges
-* Important to e.g.
-  * Distinguish environmental from potentially anthropogenic change [@MartinEtAl2016; @MartinEtAl2025]
-  * Reconstruct sequences of domestication [@YeomansEtAl2017]
-* Epipal./Neo. plant-based economies were diverse
-  * More than the "founder crops"; 
-  * More than food
-  * (In archaebot., not all intentionally collected)
-  * Geographically and temporally diverse
-  * ...so we model lots of species!
-* Regional ecological reconstructions generally rely on the 'expert interpolation' (or what do they call it with isoscapes?) method
-  * See CSEAS (AEA-prep) presentation
-  * Figure: comparisons
+The study of the natural distribution of the progenitors of domesticated crops has been a central part of discussions on the origins of agriculture and plant domestication from the beginning.
+@Humboldt1807 acknowledged the importance of the natural distribution of wild species to explain the origin and domestication of crops like spelt and rye.
+@Candolle1820 integrated the study of plant ecology and biogeography and influenced @Darwin1859, who later reflected in detail about the geographical distribution of plants and species diversity. 
+At that time, there was intense debate about whether there were single or multiple "centres of creation" of species. 
+Researchers aimed to evaluate whether plant and animal species emerged in the same locations where they were currently distributed. 
+
+After Darwin, this early interest in crop origins evolved into more specific discussions about the "centres of plant domestication".
+Vavilov [@Vavilov1926; @Vavilov1950] can be considered one of the first authors that sought to determine the number of regions in which plants had been independently domesticated. 
+His main method was 'differential phytogeography' [@Vavilov1950]: 
+he classified the variation within a crop and established the regions of maximum diversity, to locate the geographic regions in which crops originated. 
+Using this method, Vavilov suggested that there were at least eight centres of origin. 
+However, his work was later criticised by @Harlan1971, who argued that 'centres of origin' and 'centres of diversity' had to be separated. 
+For Harlan, a 'centre' was as an "area in which things originate and out of which things are dispersed" [@Harlan1971, p. 468], and he suggested that three main centres of origin of domesticated crops existed.
+He further indicated that Vavilov's approach to the question was simplistic and that more data proxies had to be considered (e.g. archaeology, history, geology…), an approach more in the tradition of @Candolle1909. 
+Indeed, the inclusion of archaeobotany and genetics in the last decades, together with the study of wild relative distributions has been fundamental in characterising the origins of agriculture [@FullerColledge2008]. 
+As a result of modern interdisciplinary studies, the number of recognised centres of plant domestication has increased considerably, from the three centres suggested by Harlan in 1971 to the six to eight centres argued for in the 1990s [@Smith1995] and up to as much as 24 potential centres reported in 2009 [@PuruggananFuller2009; see also @Fuller2010].
+
+Biogeographic research into the centres of origin and/or domestication of crops has directly informed broader understanding of the process of agricultural origins.
+In particular, Childe's *Man Makes Himself* [-@Childe1936] both set the agenda for much of the archaeological work that took place between the end of the Second World War and the 80s [e.g. @BraidwoodBraidwood1950; @Kenyon1952; @Kenyon1960; @Braidwood1981; @HoleFlannery1968; @Moore1975] and stimulated theoretical discussions on the subject [e.g. @Sauer1952; @Harris1969; @Harris1977; @Harris1989; @Flannery1973; @Hawkes1969]. 
+Childe (unlike for example @Pumpelly before him) correctly located the centre of origin of European agriculture in West Asia, but not based on the region's prehistoric archaeological record, which at that point was barely known.
+Instead he was guided to the region by biogeographic work by Vavilov and @PeakeFleure1927;
+only later was this prediction validated by archaeological work on the Epipalaeolithic and Neolithic of Palestine [@Boyd2018].
+
+Contemporary research on crop origins was pioneered by Harlan and Zohary, who compared the current distribution of the wild progenitors of domesticated plants in southwest Asia [@HarlanZohary1966; @Zohary1969; @Zohary1973; @ZoharyHopf1973] to the rapidly-expanding archaeobotanical record [@Harlan1971; @Harlan1977; see also @ZoharyHopf1988; @HarlanZohary1966].
+They both were interested in evaluating which were the wild ancestors of domesticated crops and studying their natural distribution to understand their domestication process [Zohary 1969, Zohary 1973, 1992, Zohary and Spiegel-Roy 1975]. 
+Indeed, the natural distribution of the wild relatives of domestic plant species was later used as a criterion to infer 'pre-domestic cultivation' in the archaeological record. 
+For example, the presence of seeds of chickpea at Jericho [Hopf 1983, see also Hopf 1969] led the author to interpret the remains as cultivars, as the natural distribution of the wild form of chickpea was located further to the north. 
+The same rationale was applied to the einkorn remains found at several Pre-Pottery Neolithic sites in the southern Levant [Hopf 1969, Colledge 2001], as the wild progenitors of this species was thought to be restricted to the northern Levantine area [Heun et al. 1997, 2009, Zohary and Hopf 2000]. 
+The same idea—presence of plants outside their natural range—has been repeated in the literature more recently by several other authors [Tanno and Willcox 2006, Willcox et al. 2008, Hilman et al. 2000]. 
+
+Despite the importance of biogeography in the development and validation of hypotheses regarding the origins of agriculture, there have been few studies of the wild range of specific crop progenitors or other relevant plant species [cf. for domestic animals, e.g. @YeomansEtAl2017].
+Observations regarding translocation or range expansion must therefore rely on a relatively rough and ahistoric notion of a species' 'natural distribution' – that is, one based primarily on contemporary or recent-historic occurrences.
+Yet we know there has been considerable climatic and environmental change in West Asia since the terminal Pleistocene [@JonesEtAl2019], so it is very unlikely that these ranges were in fact static.
+Reconstructions of broader environments have attempted to trace their fluctuations through time, either for the entire region [e.g. @VanZeistBottema1991; Hillman2000] or parts of it [e.g. @Cordova2007], but these are at the level of the vegetation zone rather than individual species.
+They also invariably rely on what might be called 'expert interpolation' (where the author composes a map based on his or her own knowledge of the relevant data) rather than an explicit modelling process.
+This makes it difficult, if not impossible, for users of such reconstructions to understand exactly how they were derived or what could explain, for example, the significant discrepencies between the predictions of different experts.
+
+<!-- TODO: figure highlighting discrepencies between 'expert interpolation' -->
 
 ## Ecological niche modelling in archaeology
 
@@ -409,6 +451,7 @@ ggplot() +
 ```
 
 The aim of our study was to model the biogeography of species relevant to human subsistence economies in West Asia (excluding the Southern Arabian peninsula, see @fig-region) during the archaeological Late Epipalaeolithic (15–11.7 ka) and Pre-Pottery Neolithic (11.7–8.3 ka) periods.
+Based on current understandings, we assume that plant-based subsistence during this period was broad, geographically- and temporally-varied, and reflects a gradual, geographically decentred, and nonlinear tranistion to greater reliance on cultivars (i.e. agriculture, see @sec-bg).
 Our starting point was a list of `r nrow(flora)` taxa (@tbl-results-summary) comprising the identifiable species observed at at least two Late Epipalaeolithic/Pre-Pottery Neolithic sites, according to our previous study of the regional archaeobotanical data [@ArranzOtaeguiRoe2023].
 This was based on dataset collated from three previously published regional archaeobotanical databases: ADEMNES [@ADEMNES], ORIGINS [@ORIGINS], and COMPAG [@LucasFuller2018; @FullerEtAl2018; based on @ColledgeEtAl2004; @ShennanConolly2007].
 We did not attempt to distinguish between the source of the remains [cf. @WallaceEtAl2018];
@@ -517,7 +560,6 @@ flora <- flora |>
   select(-bg)
 ```
 
-<!-- TODO: rewrite -->
 Random Forest is a presence–absence approach to niche modelling and therefore requires not just data on where a species is present, but where it is definitely not present.
 However 'absence' data is rarely available because it requires exhaustive survey.
 In practice, most applications of niche modelling are 'presence-only' and, where absence data is required (as for Random Forest), it is supplied as a random background sample of 'pseudo-absence' points.
