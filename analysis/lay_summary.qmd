@@ -22,7 +22,7 @@ author:
 format: pdf
 ---
 
-We reconstructed the past ranges of 82 plant species that were used by prehistoric societies in West Asia around 10,000 years ago, including the ancestors of the first crops.
+We used machine learning to reconstruct the past ranges of 82 plant species that were used by prehistoric societies in West Asia around 10,000 years ago, including the ancestors of the first crops.
 Our results suggest that under the cold, arid conditions of that time these were much less widespread than they are now, and that they became even scarcer just before the emergence of agriculture.
 The Mediterranean coast of the Levant and, to our surprise, Cyprus and Western Anatolia appear to have been refugia for many economically important plants.
 Our data introduces an as-yet unexplored new line of evidence on early plant domestication and has implications for how archaeologists interpret the botanical remains they recover from sites, as for example the recovery of a plant from outside its 'native range' is often taken as evidence that it was being managed or cultivated.
