@@ -59,20 +59,14 @@ execute:
 ---
 
 <!--
-
-* [x] Stop modelling
-- [x] First draft:
-- [x] Figures
-- [ ] Biogeography background section
+TODO before publication:
 - [ ] Revise discussion of archaeo verification
 - [ ] Outstanding TODOs
 - [ ] Add missing references
-- [ ] Copyedit
 - [x] Appendix with all hindcast predictions (HTML?)
 - [ ] Clean up package code
 - [ ] Zenodo release
 - [ ] Final proofread
-
 -->
 
 ```{r dependencies, message=FALSE}

@@ -1,5 +1,34 @@
 ---
-title: "lay_summary"
-format: html
+title: "Modelling vegetation around the world's first farms"
+subtitle: "Lay summary of 'Biogeography of crop progenitors and wild plant resources in the terminal Pleistocene and Early Holocene of West Asia, 14.7–8.3 ka'"
+author: 
+- name: Joe Roe
+  id: jr
+  orcid: 0000-0002-1011-1244
+  email: joeroe@hey.com
+  url: https://joeroe.io
+  affiliations:
+    - name: University of Bern
+      country: Switzerland
+    - name: University of Copenhagen
+      country: Denmark
+  corresponding: true
+- name: Amaia Arranz-Otaegui
+  id: aao
+  orcid: 0000-0002-5091-6426
+  affiliation: 
+    - name: University of the Basque Country
+      country: Spain
+format: pdf
 ---
 
+We reconstructed the past ranges of 82 plant species that were used by prehistoric societies in West Asia around 10,000 years ago, including the ancestors of the first crops.
+Our results suggest that under the cold, arid conditions of that time these were much less widespread than they are now, and that they became even scarcer just before the emergence of agriculture.
+The Mediterranean coast of the Levant and, to our surprise, Cyprus and Western Anatolia appear to have been refugia for many economically important plants.
+Our data introduces an as-yet unexplored new line of evidence on early plant domestication and has implications for how archaeologists interpret the botanical remains they recover from sites, as for example the recovery of a plant from outside its 'native range' is often taken as evidence that it was being managed or cultivated.
+It also gives insights into the broader ecosystems from which the world's first agricultural systems emerged.
+
+Our approach was based on 'ecological niche modelling', a technique widely used by ecologists to model the distribution of species now or predict where they will be in the future (for example, under climate change) but which can also be combined with palaeoclimate data to 'retro-dict' where they were in the past.
+In our case, we used palaeoclimate data from the 'CHELSA-TraCE21k' experiment, which took one of the global models used to predict future climate change and essentially turned it backwards.
+Combining this with large open datasets of where plants have been observed growing today, in relation to the same set of environmental variables, we were able to model a large number of species which we know are found at early agricultural sites in West Asia.
+We also used data on the species observed at archaeological sites to test the predictions of our models, though this had mixed results – something we intend to probe further in future research.
