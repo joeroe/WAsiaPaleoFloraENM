@@ -202,10 +202,11 @@ present conditions. Many species that are found throughout the region's
 `hilly flanks' today are indicated to have much more restricted
 distributions centered on the Levant, Cyprus and Western Anatolia. In
 addition, overall ranges shrunk by an average of c.~25\% from the
-terminal Pleistocene to the Early Holocene. Modelled ranges do not
-reliably predict the observed occurrence of specific species at
-archaeological sites, but are aligned with more general trends in the
-relative abundance of species.
+terminal Pleistocene to the Early Holocene. The models performance in
+predicting the occurrence of specific species at archaeological sites is
+highly variable, but in aggregate the predictions are coherent and align
+with broad-scale trends in the ubiquity and relative abundance of
+species in the archaeological record.
 \end{abstract}
 
 
@@ -223,29 +224,32 @@ under cultivation and began modifying surrounding ecosystems to support
 their own subsistence. West Asia is part of the native range of a
 remarkable number of domesticable plant species, including wild
 relatives of wheat, barley, peas, lentils, and other crops of global
-importance \citep{Diamond2002}. These species supported uniquely dense
-and complex Late Epipalaeolithic (15--11.7 ka) societies based on
-intensive foraging \citep{BarYosef1998, MaherEtAl2012} and eventually
-plant management and pre-domestication cultivation \citep{Harris2007}.
-As they were brought under domestication in the Pre-Pottery Neolithic
-period (11.7--8.5 ka), the world's first agriculture was shaped by the
-ecosystems from which it emerged and was embedded in.
+importance \citep{HarlanZohary1966, Diamond2002, ZoharyEtAl2012}. These
+species supported uniquely dense and complex Late Epipalaeolithic
+(15--11.7 ka) societies \citep{BarYosef1998, MaherEtAl2012} based on
+foraging \citep{HarrisHillman1989, Colledge2001, WeissEtAl2004} and
+eventually plant management and pre-domestication cultivation
+\citep{Colledge2001, WeissEtAl2006, Harris2007, WillcoxEtAl2008}. The
+first agro-ecosystems emerged as these plants were domesticated in the
+Pre-Pottery Neolithic period (11.7--8.5 ka) and were shaped by the
+broader ecosystem in which it was embedded.
 
 Decades of research in archaeobotany and zooarchaeology have
 reconstructed the subsistence economies of Late Epipalaeolithic and
-Neolithic sites in great detail. Together with studies of charcoal,
-pollen, soil, and a variety of palaeoclimate archives
-\citep{JonesEtAl2019}, they also tell us much about the environments
-surrounding these settlements. However, each of these sources of
-evidence is subject to the wide variety of taphonomic and recovery
-biases that are inherent in any direct record of the past. They are
-also, by definition, records of the (human) environment at particular
-times and places. Interpolating these snapshots to give a holistic
-picture of the regional ecologies is not straightforward -- to date, it
-has tended to rely on non-explicit, inductive modelling. The majority
-are also filtered through human action, producing a mixed single that
-makes it difficult to disentangle anthropic effects from the background
-of environmental change in this period of rapid climatic alteration.
+Neolithic sites in great detail. Together with studies of other
+environmental archaeological records and a variety of palaeoclimate
+archives \citep{JonesEtAl2019}, they also tell us much about the
+environments surrounding these settlements. However, each of these
+sources of evidence is subject to the wide variety of taphonomic and
+recovery biases that are inherent in any direct record of the past. They
+are also, by definition, records of the (human) environment at
+particular times and places. Interpolating these snapshots to give a
+holistic picture of the regional ecologies is not straightforward -- to
+date, it has tended to rely on non-explicit, inductive modelling. The
+majority are also filtered through human action, producing a mixed
+single that makes it difficult to disentangle anthropic effects from the
+background of environmental change in this period of rapid climatic
+alteration.
 
 In this paper we present a complementary, deductive approach based on
 ecological niche modelling. Rather than inferring environmental
@@ -264,68 +268,187 @@ readily scaled up, allowing us to model spatially-explicit
 palaeodistributions for a large number of species, for the whole region,
 under multiple past climatologies.
 
-\section{Background}\label{background}
+\section{Background}\label{sec-bg}
 
-\begin{itemize}
-\tightlist
-\item
-  The transition to agriculture in West Asia was\ldots{}
-\end{itemize}
+The transition to agriculture represents one of the most fundamental
+changes in human history. West Asia is one of the regions where this
+process has been studied in the most detail: decades of research have
+traced the gradual development of a Neolithic way of life and the
+changes that occurred in the plant species and their geographical
+distribution as a result. Although archaeobotanical assemblages can be
+biased due to issues of preservation, sampling, recovery techniques, and
+lab procedures \citep{Dennel1976, HastorfPopper1988}---and although they
+include not just food remains but plant resources that were used for
+other purposes or arrived at the site accidentally
+\citep{HastorfPopper1988}---large-scale studies have still revealed
+coherent patterns in the exploitation of plants over time
+\citep{ColledgeEtAl2004, ArranzOtaeguiEtAl2016}.
+
+The possibility of an abrupt, geographically-constrained process of
+plant domestication was proposed in the 1990s
+\citep{HillmanDavies1990, HillmanDavies1992, HeunEtAl1997, OzkanEtAl2002}
+and developed as an explanatory model in the 2000s
+\citep{LevYadunEtAl2000, GopherEtAl2001, AbboEtAl2005}. As part of this
+model, some authors
+\citep{LevYadunEtAl2000, GopherEtAl2001, AbboEtAl2010, AbboEtAl2012}
+argued that eight plant species, collectively referred to as `founder
+crops' or the `Neolithic crop package' \citep{ZoharyHopf1988} were
+selected and domesticated once, without any phase of pre-domestication
+cultivation \citep[p.~177]{AbboEtAl2011}. This process could have been
+rapid under strong artificial selection
+\citep{HillmanDavies1990, HillmanDavies1992} and may have occurred in a
+single region or `core area' -- generally located in southeast Turkey
+\citep{LadizinskyAdler1976, HeunEtAl1997, OzkanEtAl2002, OzkanEtAl2005, MoriEtAl2003, LuoEtAl2007}.
+From this single point of origin, it was supposed that domesticated or
+semi-domesticated plants radiated outwards to other regions
+\citep{AbboEtAl2006, KilianEtAl2007, OzkanEtAl2011}.
+
+The `short gestation' paradigm was challenged by others
+\citep{Helbaek1969, Harris1989, Kislev1989, Colledge2001, WeissEtAl2004, WillcoxEtAl2008, FullerEtAl2018}.
+Helbæk \citep[in][]{Kirkbride1966} argued that before the appearance of
+domesticated plants, a phase of cultivation of wild seeds must have
+taken place. The existence of a phase of cultivation of morphologically
+wild cereals or `pre-domestication cultivation' was identified in the
+archaeological record through the study of plant domestication traits
+such as grain size, shattering v. non-shattering rachises. The
+archaeobotanical evidence shows that during the Pre-Pottery Neolithic A
+(PPNA) cereals exhibited sizes similar to those recorded in domestic
+species, but their dispersal mechanism was still the same as the one
+present in morphologically-wild species \citep[i.e.~shattering,
+see][]{Kirkbride1966, Kislev1989, HillmanEtAl2001, Colledge2001, WillcoxEtAl2008}.
+This evidence suggested that wild cereal stands could have been
+cultivated for as much as a thousand years before non-shattering
+domestic forms became prevalent in the archaeological record
+\citep{TannoWillcox2006, TannoWillcox2012, ArranzOtaeguiEtAl2016}.
+Additional archaeobotanical
+\citep{Colledge2001, WillcoxEtAl2008, WillcoxEtAl2009, RiehlEtAl2013, ArranzOtaeguiEtAl2016, WeideEtAl2018, DoucheWillcox2018, WhitlamEtAl2018}
+and genetic data
+\citep{BadrEtAl2000, MolinaCanoEtAl2005, KilianEtAl2007, OzkanEtAl2011, IobBotigue2023}
+in recent years has further challenged the short-gestation model to
+explain the origins of plant domestication and agriculture in West Asia.
+
+Similarly, the concept of a limited set of eight `founder crops'
+\citep{ZoharyHopf1988} that were the first species cultivated,
+domesticated and then spread as the basis of Neolithic agricultural
+systems, is not supported by the latest evidence. Our previous analyses
+of the composition of available archaeobotanical datasets shows that
+these crops were of marginal importance during the Epipalaeolithic
+period \citep{ArranzOtaeguiEtAl2018} and that Neolithic subsistence did
+not rely either solely or primarily on the exploitation of these species
+\citep{ArranzOtaeguiRoe2023}. Instead, multiple species of grasses,
+legumes, fruits, nuts, and other plants were exploited over the Late
+Pleistocene-Early Holocene transition in southwest Asia.
 
 \subsection{Biogeography and agricultural
 origins}\label{biogeography-and-agricultural-origins}
 
-\begin{itemize}
-\tightlist
-\item
-  Has always been important in study of agricultural origins
+The study of the natural distribution of the progenitors of domesticated
+crops has been a central part of discussions on the origins of
+agriculture and plant domestication from the beginning.
+\citet{Humboldt1807} acknowledged the importance of the natural
+distribution of wild species to explain the origin and domestication of
+crops like spelt and rye. \citet{Candolle1886} integrated the study of
+plant ecology and biogeography and influenced \citet{Darwin1859}, who
+later reflected in detail about the geographical distribution of plants
+and species diversity. At that time, there was intense debate about
+whether there were single or multiple ``centres of creation'' of
+species. Researchers aimed to evaluate whether plant and animal species
+emerged in the same locations where they were currently distributed.
 
-  \begin{itemize}
-  \tightlist
-  \item
-    Historically: Vavilov, Pumpelly \& Childe
-  \item
-    Genetic studies tell us origin points, but not ranges
-  \end{itemize}
-\item
-  Important to e.g.
+After Darwin, this early interest in crop origins evolved into more
+specific discussions about the ``centres of plant domestication''.
+\citet{Vavilov1926} was among the first to seek to determine the number
+of regions in which plants had been independently domesticated
+\citep{Harris1990}. His main method was `differential phytogeography':
+he classified the variation within a crop and established the regions of
+maximum diversity, to locate the geographic regions in which crops
+originated. Using this method, Vavilov suggested that there were at
+least eight centres of origin. His work was later criticised by
+\citet{Harlan1971}, who argued that `centres of origin' and `centres of
+diversity' had to be separated. For Harlan, a `centre' was as an ``area
+in which things originate and out of which things are dispersed''
+\citep[p.~468]{Harlan1971}, and he suggested that three main centres of
+origin of domesticated crops existed. He further indicated that
+Vavilov's approach to the question was simplistic and that more data
+proxies had to be considered (e.g.~archaeology, history, geology), an
+approach more in the tradition of \citet{Candolle1886}. Indeed, the
+inclusion of archaeobotany and genetics in the last decades, together
+with the study of wild relative distributions has been fundamental in
+characterising the origins of agriculture \citep{FullerColledge2008}. As
+a result of modern interdisciplinary studies, the number of recognised
+centres of plant domestication has increased considerably, from the
+three centres suggested by Harlan in 1971 to the six to eight centres
+argued for in the 1990s \citep{Smith1995} and up to as much as 24
+potential centres reported in 2009
+\citetext{\citealp{PuruggananFuller2009}; \citealp[see
+also][]{Fuller2010}}.
 
-  \begin{itemize}
-  \tightlist
-  \item
-    Distinguish environmental from potentially anthropogenic change
-    \citep{MartinEtAl2016, MartinEtAl2025}
-  \item
-    Reconstruct sequences of domestication \citep{YeomansEtAl2017}
-  \end{itemize}
-\item
-  Epipal./Neo. plant-based economies were diverse
+Biogeographic research into the centres of origin and/or domestication
+of crops has also long informed broader understanding of the process of
+agricultural origins. In \emph{Man Makes Himself}, \citet{Childe1936}
+correctly located the centre of origin of European agriculture in the
+`Fertile Crescent' of West Asia (unlike for example \citet{Pumpelly1908}
+before him). This was not based on the region's prehistoric
+archaeological record, which at that point was barely known. Instead he
+was guided to the region by biogeographic work by Vavilov and
+\citet{PeakeFleure1927}; only later was this prediction validated by
+archaeological work on the Epipalaeolithic and Neolithic of Palestine
+\citep{Boyd2018}. In subsequent decades, the search for more precise
+origin zones of specific domestic plants relied on the assumption that
+``the locus of domestication of a wild plant would presumably be within
+its area of original distribution in the wild state''
+\citetext{\citealp{Butzer1971}; \citealp[paraphrasing][]{Helbaek1959}}
+-- and that this ``natural habitat'' has not changed significantly over
+the last 12,000 years \citep{Butzer1971}.
 
-  \begin{itemize}
-  \tightlist
-  \item
-    More than the ``founder crops'';
-  \item
-    More than food
-  \item
-    (In archaebot., not all intentionally collected)
-  \item
-    Geographically and temporally diverse
-  \item
-    \ldots so we model lots of species!
-  \end{itemize}
-\item
-  Regional ecological reconstructions generally rely on the `expert
-  interpolation' (or what do they call it with isoscapes?) method
+Contemporary research on crop origins was pioneered by Harlan and
+Zohary, who compared the current distribution of the wild progenitors of
+domesticated plants in southwest Asia
+\citep{HarlanZohary1966, Zohary1969, Zohary1973, ZoharyHopf1973} to the
+rapidly-expanding archaeobotanical record
+\citetext{\citealp{Harlan1971}; \citealp{Harlan1977}; \citealp[see
+also][]{ZoharyHopf1988}; \citealp{HarlanZohary1966}}. They both were
+interested in evaluating which were the wild ancestors of domesticated
+crops and studying their natural distribution to understand their
+domestication process
+\citep{Zohary1969, Zohary1973, ZoharySpiegelRoy1975}. Indeed, the
+natural distribution of the wild relatives of domestic plant species was
+later used as a criterion to infer `pre-domestic cultivation' in the
+archaeological record. For example, the presence of seeds of chickpea at
+Jericho led \citet{Hopf1986} to interpret the remains as cultivars, as
+the natural distribution of the wild form of chickpea was located
+further to the north. The same rationale was applied to the einkorn
+remains found at several Pre-Pottery Neolithic sites in the southern
+Levant \citep{Hopf1969, Colledge2001}, as the wild progenitors of this
+species was thought to be restricted to the northern Levantine area
+\citep{HeunEtAl1997, ZoharyEtAl2012}. The same idea---presence of plants
+outside their natural range---has been repeated in the literature more
+recently by several other authors
+\citep{TannoWillcox2006, WillcoxEtAl2008, HillmanEtAl2001}.
 
-  \begin{itemize}
-  \tightlist
-  \item
-    See CSEAS (AEA-prep) presentation
-  \item
-    Figure: comparisons
-  \end{itemize}
-\end{itemize}
+Despite the importance of biogeography in the development and validation
+of hypotheses regarding the origins of agriculture, there have been few
+studies of the wild range of specific crop progenitors or other relevant
+plant species \citep[cf.~for domestic animals, e.g.][]{YeomansEtAl2017}.
+Observations regarding translocation or range expansion must therefore
+rely on a relatively rough and ahistoric notion of a species' `natural
+distribution' -- that is, one based primarily on contemporary or
+recent-historic occurrences. Yet we know there has been considerable
+climatic and environmental change in West Asia since the terminal
+Pleistocene \citep{JonesEtAl2019}, so it is very unlikely that these
+ranges were in fact static. Reconstructions of broader environments have
+attempted to trace their fluctuations through time, either for the
+entire region
+\citetext{\citealp[e.g.][]{VanZeistBottema1991}; \citealp[Hillman
+in][]{MooreEtAl2000}} or parts of it \citep[e.g.][]{Cordova2007}, but
+these are at the level of the vegetation zone rather than individual
+species. They also invariably rely on what might be called `expert
+interpolation' (where the author composes a map based on his or her own
+knowledge of the relevant data) rather than an explicit modelling
+process. This makes it difficult, if not impossible, for users of such
+reconstructions to understand exactly how they were derived or what
+could explain, for example, the significant discrepencies between the
+predictions of different experts.
 
 \subsection{Ecological niche modelling in
 archaeology}\label{ecological-niche-modelling-in-archaeology}
@@ -439,14 +562,18 @@ The aim of our study was to model the biogeography of species relevant
 to human subsistence economies in West Asia (excluding the Southern
 Arabian peninsula, see Figure~\ref{fig-region}) during the
 archaeological Late Epipalaeolithic (15--11.7 ka) and Pre-Pottery
-Neolithic (11.7--8.3 ka) periods. Our starting point was a list of 97
-taxa (Table~\ref{tbl-results-summary}) comprising the identifiable
-species observed at at least two Late Epipalaeolithic/Pre-Pottery
-Neolithic sites, according to our previous study of the regional
-archaeobotanical data \citep{ArranzOtaeguiRoe2023}. This was based on
-dataset collated from three previously published regional
-archaeobotanical databases: ADEMNES \citep{ADEMNES}, ORIGINS
-\citep{ORIGINS}, and COMPAG
+Neolithic (11.7--8.3 ka) periods. Based on current understandings, we
+assume that plant-based subsistence during this period was broad,
+geographically- and temporally-varied, and reflects a gradual,
+geographically decentred, and nonlinear tranistion to greater reliance
+on cultivars (i.e.~agriculture, see Section~\ref{sec-bg}). Our starting
+point was a list of 97 taxa (Table~\ref{tbl-results-summary}) comprising
+the identifiable species observed at at least two Late
+Epipalaeolithic/Pre-Pottery Neolithic sites, according to our previous
+study of the regional archaeobotanical data
+\citep{ArranzOtaeguiRoe2023}. This was based on dataset collated from
+three previously published regional archaeobotanical databases: ADEMNES
+\citep{ADEMNES}, ORIGINS \citep{ORIGINS}, and COMPAG
 \citetext{\citealp{LucasFuller2018}; \citealp{FullerEtAl2018}; \citealp[based
 on][]{ColledgeEtAl2004}; \citealp{ShennanConolly2007}}. We did not
 attempt to distinguish between the source of the remains
@@ -811,10 +938,10 @@ Our reconstructed palaeodistributions (shown in full in the appendix)
 indicate that the majority of species have experienced a significant
 reduction and/or shift in their ranges since the Early Holocene. 75 of
 82 species have reduced ranges; 66 of more than 10\% or more. Though the
-magnitude of the reduction from prehistory to the present likely
-reflects a degree of overfitting in the model (discussed further in
-Section~\ref{sec-discuss-hindcasting}), fluctuations in modelled range
-size between the Bølling-Allerød (14.7--12.9 ka), Younger Dryas
+magnitude of the change in range size from prehistory to the present
+likely reflects a degree of overfitting in the model (discussed further
+in Section~\ref{sec-discuss-hindcasting}), fluctuations in modelled
+range size between the Bølling-Allerød (14.7--12.9 ka), Younger Dryas
 (12.9--11.7 ka), and Early Holocene (11.7--8.3 ka) are more directly
 comparable (Figure~\ref{fig-pred-range-density}). The average range of
 modelled species was 16\% in the Early Holocene compared to the
@@ -849,7 +976,7 @@ legumes); \emph{Triticum aestivum compactum} (in the N. Levant),
 urartu} (but not the other wheat progenitor, \emph{T. turgidum dicoccum}
 -- see Section~\ref{sec-discuss-crops}); \emph{Aegilops speltoides}, but
 not \emph{Aegilops tauschii} (goatgrasses); and \emph{Vicia} spp.
-(vetches), including \emph{Vicia faba} (broad beans). most of Anatolia,
+(vetches), including \emph{Vicia faba} (broad beans). Most of Anatolia,
 Northern Mesopotamia, and the Zagros Mountains in particular disappear
 from the predicted ranges of these species, leaving the Levant and to a
 lesser extent the Aegean and Cyprus as refugia.
@@ -866,37 +993,27 @@ Loss of the Northern Mesopotamia--Anatolia region from the predicted
 ranges of crop progenitors is interesting in light of the `golden
 triangle' hypothesis
 \citep{Lev-YadunEtAl2000, KozlowskiAurenche2005, AbboEtAl2010}, which
-puts this region at the centre of the development of agriculture.
-Multiple lines of archaeological evidence have emerged that point away
-from this hypothesis and towards a more geographically diverse origin
-\citep{Asouti2006, FullerEtAl2011, ArranzOtaeguiEtAl2016}, but it
-remains the area with some of the earliest clear evidence of
-domestication \citep{ZoharyEtAl2012, KabukcuEtAl2021, UlasEtAl2024}.
-Comparative genetics also points to the Northern Mesopotamia region as
-the centre of diversity of many crops \citep[e.g.][]{HaasEtAl2019}. But
-since these studies are based on modern genomes, if the wild range of
-these plants has, as our modelling suggests, shifted since the Early
-Holocene, the apparent centre of diversity may have shifted with them.
-Our reconstructions are consistent with the late arrival of intensive
+puts this region at the centre of the development of agriculture and
+plant domestication. Multiple lines of archaeological evidence have
+emerged that point away from this hypothesis and towards a more
+geographically diverse origin
+\citep{Asouti2006, FullerEtAl2011, ArranzOtaeguiEtAl2016}, and our
+reconstructions are also consistent with the late arrival of intensive
 plant-based foraging economies in this region (cf.~the Natufian of the
-Levant), and more broadly there need not be a link between the core
-\emph{wild} range of a plant and the core area of its domestication. A
-scenario in which cultivation emerged at the edges of the ranges of
-valuable plant resources---as a means of extend their natural niche---is
-also plausible.
+Levant).
 
 The near-absence of the Zagros in any predicted ranges is also
-surprising, given mounting evidence that domestication took place just
-as early in the eastern \emph{Mashriq} as it did in the west
+surprising, given mounting evidence that animal domestication took place
+just as early in the eastern \emph{Mashriq} as it did in the west
 \citep{Zeder2024}. We consider that the most likely explanation for this
 is that our flora does not include the species that were most important
 to plant subsistence in the east. Archaeobotanical data on Neolithic
 sites in the Zagros is limited (compared to the Levant in particular)
 due to a hiatus in field research there from the 1980s to early 2010s
 \citep{Zeder2024}. Recent research
-\citep{WhitlamEtAl2018, GonzalezCarreteroEtAl2023} indicates that plant
-subsistence in this region was based on a distinct set of species,
-compared to the Levant and Anatolia.
+\citep{RiehlEtAl2013, WeideEtAl2017, WeideEtAl2018, WhitlamEtAl2018, GonzalezCarreteroEtAl2023}
+indicates that plant subsistence in this region was based on a distinct
+set of species, compared to the Levant and Anatolia.
 
 Cyprus and the Aegean are not conventionally considered part of the
 primary zone of domestication but rather amongst the first regions that
@@ -915,11 +1032,11 @@ reticulatum} (wild chickpea), which has a relatively stable range
 centered on Northern Mesopotamia; and \emph{Triticum turgidum dicoccum}
 (wild emmer wheat), which is predicted to have two limited ranges
 centered around the Black Sea Coast of Anatolia and the Palmyra basin.
-In the latter case, neither of these areas are part of the predicted
-modern distribution of wild emmer (centered around the Caucasus and
-Northern Mesopotamia), but it would be consistent with archaeological
-evidence for early cultivation at sites in the Upper Euphrates
-\citep{Willcox2024}.
+In the latter case, neither of these areas are part of the predicted (by
+our model) modern distribution of wild emmer, which is centered around
+the Caucasus and Northern Mesopotamia. But it would be consistent with
+archaeological evidence for early cultivation at sites in the Upper
+Euphrates \citep{Willcox2024}.
 
 \subsection{Biogeography of crop progenitors}\label{sec-discuss-crops}
 
@@ -950,8 +1067,10 @@ southern Levant, Figure~\ref{fig-palaeodist-chickpea-rye}). Another is
 rye (\emph{Secale cereale}), which is inferred to be primarily Western
 Anatolian (Figure~\ref{fig-palaeodist-chickpea-rye}). This is perhaps
 relevant to rye's unusual domestication history, as a crop of West Asian
-origin that was apparently not first cultivated until much later than
-the `founder crops', in Europe \citep{SchreiberEtAl2021}.
+origin that was intensively exploited
+\citep{HillmanEtAl2001, DoucheWillcox2018} but apparently not first
+cultivated until much later than the `founder crops', in Europe
+\citep{SchreiberEtAl2021}.
 
 \begin{figure}
 
@@ -975,7 +1094,9 @@ that its domestication was similarly geographically constrained. It is
 the only unambiguous crop progenitor with such a restricted range,
 though pistachio (\emph{Pistacia atlantica}) and clubrush
 (\emph{Bolboschoenus maritimus}) are similarly constrained to the
-Mediterranean coast (and North Africa, in the case of pistachio).
+Mediterranean coast (and North Africa, in the case of pistachio). This
+is despite the fact that they are well-attested in the archaeotanical
+record from across West Asia.
 
 \begin{figure}
 
@@ -998,19 +1119,20 @@ decline in the archaeobotanical record from the Early PPNA/Early PPNB
 (where it was amongst the most common taxa) to the Late PPNB and Late
 Neolithic \citep{ArranzOtaeguiRoe2023}. Pistachio (\emph{Pistacia
 atlantica}) shows similar trends, but it is less certain that this
-species was cultivated in the Neolithic. Conversely, the various wild
-wheat species native to West Asia show almost no response to
+species was managed in the Neolithic. Conversely, the various wild wheat
+species native to West Asia show almost no response to
 Pleistocene/Holocene climate change, even within the Levant, and in the
 archaeobotanical record wheat displays the opposite trend to barley and
 pistachio -- becoming gradually more abundant through the course of the
-Neolithic and dominant by its end. We hypothesise that climate-linked
-range shifts were a factor driving these changes in the apparent
-economic important of different crops: the decreasing availability of
-barley and pistachio in the terminal Pleistocene may have prompted
-cultivation as a strategy to retain access to them, though in the long
-run it made them less attractive as staple crops compared to the more
-resilient wheat. However, these dynamics are not seen in the majority of
-crop progenitors.
+Neolithic and dominant by its end \citep{ArranzOtaeguiRoe2023}. We
+hypothesise that climate-linked range shifts were a factor driving these
+changes in the apparent economic important of different crops: the
+decreasing availability of barley and pistachio in the terminal
+Pleistocene may have prompted cultivation as a strategy to retain access
+to them, though in the long run it made them less attractive as staple
+crops compared to the more resilient wheat. However, these dynamics are
+not seen in the majority of crop progenitors and may also have involved
+other factors, such as changes in cultural food preferences.
 
 \begin{figure}
 
@@ -1027,31 +1149,31 @@ palaeodistributions of bread wheat progenitors}
 
 Bread wheat (\emph{Triticum aestivum}), the most common wheat cultivar
 today, has a complex ancestry that involves two recent hybridisation
-events \citep{LevyFeldman2022}: most recently between emmer
+events \citep{LevyFeldman2022}: most recently between domestic emmer
 (\emph{Triticum turgidum dicoccum}) and a goatgrass (\emph{Aegilops
 tauschii}) c.~9 ka, and before that, in emmer, between wild red einkorn
 (\emph{T. urartu}) and another goatgrass (\emph{Aegilops speltoides}).
 Although there is fairly wide overlap between these species today,
 according to our modelling the only place all four (or even just three)
-are predicted to have coincided or been found in close proximity to
-eachother in the time frame of domestication is a narrow area around the
+are predicted to have coincided or been found in close proximity to each
+other in the time frame of domestication is a narrow area around the
 Orontes river in the northern Levant
 (Figure~\ref{fig-palaeodist-bread}). This area is c.~200 km from the
 only two sites in our archaeobotanical database where either both
-species of wheat or both species of wheat and the goatgrasses are found
-together: Tell Abu Hureyra and El Kowm II
-\citep{ArranzOtaeguiRoe2023}.\footnote{We are grateful to Benjamin Nowak
-  for pointing this out to us.} Taken together this suggests an origin
-of domesticated bread wheat, otherwise only loosely geographically
-constrained to the Levant--Upper Euphrates corridor
-\citep{LevyFeldman2022}, is likely to occur in this vicinity.
+species of wheat (\emph{T. urartu} and \emph{T. turgidum dicoccum}) or
+both species of wheat and the goatgrasses are found together: Tell Abu
+Hureyra and El Kowm II \citep{ArranzOtaeguiRoe2023}.\footnote{We are
+  grateful to Benjamin Nowak for pointing this out to us.} Taken
+together this suggests an origin of domesticated bread wheat, otherwise
+only loosely geographically constrained to the Levant--Upper Euphrates
+corridor \citep{LevyFeldman2022}, is likely to occur in this vicinity.
 
 \subsection{Hindcast models do not predict archaeobotanical
 composition}\label{sec-discuss-hindcasting}
 
 The failure of our hindcast models to predict the occurrence of species
 in archaeobotanical assemblages has several possible explanations. Since
-they do accurately predict the test dataset , a likely culprit is
+they do accurately predict the test dataset, a likely culprit is
 overfitting of the models to the present environment. This implies that
 the modelled palaeodistributions should be seen as conservative
 estimates or a minimal range. Another obvious flaw in our methodology is
@@ -1075,10 +1197,6 @@ resolved palaeoclimate sequences \citep[e.g.][]{KargerEtAl2023},
 hyperparameter tuning to avoid overfitting, and improved archaeological
 datasets, would help disentangle these potential explanations.
 
-It is consistent with more ``macro'' trends such as the reduced range of
-Hordeum and Pistacia correlating with its reduced abundance in the
-archaeobotanical record.
-
 \section{Conclusion}\label{conclusion}
 
 We present the first continuous, spatially explicit models of the
@@ -1096,17 +1214,15 @@ anthropic, and recovery-related processes that affect these records.
 ``All models are wrong'' \citep{Box1976}, but the performance of our
 models on independent test datasets give confidence in its predictions,
 which are plausible and consistent with broad-scale patterns in the
-archaeological record.
-
-\begin{itemize}
-\tightlist
-\item
-  Results w.r.t. to specific archaeologically-attested species not to
-  promising, but this doesn't mean the models are useless!
-\item
-  Discrepancies suggests several areas for further research and
-  methodological development
-\end{itemize}
+archaeological record. Results with regard to specific
+archaeologically-attested species are not as promising, but this also
+reflects the incomplete and coarsely temporally-resolved nature of the
+archaeobotanical verification dataset. Discrepencies between the
+modelled distribution, whether on the broad scale (e.g.~the restricted
+geographic range of most species compared to their attestation in the
+archaeological record), or relating to specific species (i.e.~false
+positives and false negatives), suggest several avenues for future
+investigation.
 
 Modelling a large number of species using machine learning, the
 substantial occurrence datasets available for the present day, and a
@@ -1127,6 +1243,12 @@ archaeoecological modelling to the same level.
 
 The data and R code used to produced is archived with Zenodo at
 \url{https://doi.org/10.5281/zenodo.14629984}
+
+\section{Acknowledgements}\label{acknowledgements}
+
+This work was partially funded by the European Research Council
+(ERC-2021-STG project 101039060, \emph{PalaeOrigins: Tracing the
+Epipalaeolithic origins of plant management in southwest Asia}).
 
 
 \renewcommand\refname{References}
