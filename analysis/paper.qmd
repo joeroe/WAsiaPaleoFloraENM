@@ -372,6 +372,7 @@ if (!file_exists(derived_data("flora.Rdata"))) {
       # Spot corrections
       taxon = case_match(
         taxon,
+        c("Bolboschoenus glaucus", "Bolboschoenus maritimus") ~ "Bolboschoenus",
         "Vicia narbonense" ~ "Vicia narbonensis", # N=3
         "Triticum aestivocompactum" ~ "Triticum aestivum compactum", # N=3
         "Heliotropium persicum" ~ "Moltkia angustifolia", # N=2
@@ -454,11 +455,13 @@ We did not attempt to distinguish between the source of the remains [cf. @Wallac
 archaeobotanical assemblages are subject to a variety of preservational and recovery biases, so by no means were all the species on our list consumed or even deliberately collected by people.
 However, we assume that there presence at a site of human settlement at least implies that they were part of the wider ecosystem that supported habitation there.
 
-Taxonomic names were resolved to the canonical form specified in the GBIF Backbone Taxonomy [@GBIFSecretariat2023].
-So for example occurrences for *Bolboschoenus maritimus* also include those recorded under the older nomenclature *Scirpus maritimus* (see @tbl-results-summary).
+The taxonomic identifications of archaeobotanical material given in our source databases were controlled to ensure consistency between sources and to group taxa that cannot always be reliably distinguished [for details see @ArranzOtaeguiRoe2023].
+Taxonomic names were then matched to the canonical form specified in the GBIF Backbone Taxonomy [@GBIFSecretariat2023] so they could be related to modern occurrences.
+The aim in both cases was to resolve taxonomic ambiguity by using a more inclusive taxonomic unit.
+For example, the model discussed here as *Bolboschoenus* includes both archaeological occurrences of *B. maritimus* and *B. glaucus*, since these were not distinguished by archaeobotanists until recently [@WollstonecroftEtAl2011], as well as modern occurrences under the older nomenclature *Scirpus maritimus* (see @tbl-results-summary).
 Domestic species meeting our inclusion criteria were substituted with their wild progenitor(s), where different.
 
-## Occurrence data
+## Occurrence data {#sec-occ-data}
 
 <!-- TODO generate GBIF occurrence citation:
 https://docs.ropensci.org/rgbif/articles/getting_occurrence_data.html -->
@@ -535,6 +538,9 @@ flora |>
  layer_spatial(w_asia, fill = NA) +
  coord_sf(crs = w_asia_albers, default_crs = latlong)
 ```
+
+GBIF is currently the best available general-purpose occurrence dataset for the West Asia region, its coverage is uneven both geographically and from species to species.
+@fig-occ-map shows clearly that the Southern Levant, and Israel specifically, is significantly more densely sampled than other regions.
 
 ```{r data-background}
 # TODO: slow - cache
@@ -701,6 +707,8 @@ niche_recipe <- recipe(training(flora$occ_split[[1]])) |>
   # Impute missing values based on spatial autocorrelation
   step_impute_linear(all_numeric_predictors(), 
                      impute_with = imp_vars(latitude, longitude)) |>
+  # Drop correlated predictors
+  step_corr(all_predictors(), threshold = 0.7) |>
   # Drop redundant predictors
   step_nzv(all_predictors())
 ```
@@ -724,7 +732,8 @@ niche_model <- rand_forest(mode = "classification", trees = 1000) |>
 niche_workflow <- workflow(niche_recipe, niche_model)
 ```
 
-For each taxon we trained a classification model to predict occurrence (presence or absence/background) based on our 24 predictor variables (@sec-predictors).
+For each taxon we trained a classification model to predict occurrence (presence or absence/background) based on up to 24 predictor variables (@sec-predictors).
+Highly correlated (Pearson's *r*>0.7) predictors were removed on a taxon-by-taxon basis, to mitigate issues of overfitting due to colinearity [@DormannEtAl2013], as were redundant predictors with zero variance.
 We used the Random Forest algorithm implemented in the R package 'ranger' [@WrightZiegler2017] and the 'tidymodels' [@tidymodels] framework for data preprocessing and model selection.
 To avoid overfitting, we follow @ValaviEtAl2021 in their recommended hyperparameters and use of down-sampling to balance presence and background samples.
 Models for each taxon were fit independently, with redundant zero-variance predictors excluded, and assessed based on balanced training (¾) and test (¼) partitions.
@@ -1148,15 +1157,11 @@ concurrent with it being brought into cultivation (@fig-palaeodist-barely-levant
 It also sees a marked decline in the archaeobotanical record from the Early PPNA/Early PPNB (where it was amongst the most common taxa) to the Late PPNB and Late Neolithic [@ArranzOtaeguiRoe2023].
 Pistachio (*Pistacia atlantica*) shows similar trends, but it is less certain that this species was managed in the Neolithic.
 Conversely, the various wild wheat species native to West Asia show almost no response to Pleistocene/Holocene climate change, even within the Levant, and in the archaeobotanical record wheat displays the opposite trend to barley and pistachio – becoming gradually more abundant through the course of the Neolithic and dominant by its end [@ArranzOtaeguiRoe2023].
-We hypothesise that climate-linked range shifts were a factor driving these changes in the apparent economic important of different crops:
-the decreasing availability of barley and pistachio in the terminal Pleistocene may have prompted cultivation as a strategy to retain access to them,
-though in the long run it made them less attractive as staple crops compared to the more resilient wheat.
-However, these dynamics are not seen in the majority of crop progenitors and may also have involved other factors, such as changes in cultural food preferences.
 
 ```{r fig-palaeodist-bread}
 #| fig-cap: Combined predicted palaeodistributions of bread wheat progenitors
-bread <- c("Aegilops tauschii", "Aegilops speltoides", 
-           "Triticum turgidum dicoccum", "Triticum urartu")
+bread <- c("Aegilops tauschii", "Triticum aestivum", 
+           "Triticum turgidum dicoccum")
 palaeodist_bread <- do.call(c, c(
   filter(flora, taxon %in% bread)$palaeodist,
   list(along = list(taxon = filter(flora, taxon %in% bread)$taxon))
@@ -1183,8 +1188,8 @@ ggplot() +
 Bread wheat (*Triticum aestivum*), the most common wheat cultivar today, has a complex ancestry that involves two recent hybridisation events [@LevyFeldman2022]:
 most recently between domestic emmer (*Triticum turgidum dicoccum*) and a goatgrass (*Aegilops tauschii*) c. 9 ka, and before that, in emmer, between wild red einkorn (*T. urartu*) and another goatgrass (*Aegilops speltoides*).
 Although there is fairly wide overlap between these species today, according to our modelling the only place all four (or even just three) are predicted to have coincided or been found in close proximity to each other in the time frame of domestication is a narrow area around the Orontes river in the northern Levant (@fig-palaeodist-bread).
-This area is c. 200 km from the only two sites in our archaeobotanical database where either both species of wheat (*T. urartu* and *T. turgidum dicoccum*) or both species of wheat and the goatgrasses are found together: Tell Abu Hureyra and El Kowm II [@ArranzOtaeguiRoe2023].^[We are grateful to Benjamin Nowak for pointing this out to us.]
-Taken together this suggests an origin of domesticated bread wheat, otherwise only loosely geographically constrained to the Levant–Upper Euphrates corridor [@LevyFeldman2022], is likely to occur in this vicinity.
+This area is c. 200 km from the only two sites in our archaeobotanical database where bread wheat (*T. aestivum*) co-occurs with both of its recent progenitors (*A. tauschii* and *T. turgidum dicoccum*) or both species of wheat and the goatgrasses are found together: Tell Abu Hureyra and El Kowm II [@ArranzOtaeguiRoe2023].^[We are grateful to Benjamin Nowak for pointing this out to us.]
+Taken together this suggests an origin of domesticated bread wheat, otherwise only loosely geographically constrained to the Levant–Upper Euphrates corridor [@LevyFeldman2022], is possibly occurred in this vicinity.
 
 ## Hindcast models do not predict archaeobotanical composition {#sec-discuss-hindcasting}
 
@@ -1193,6 +1198,11 @@ Since they do accurately predict the test dataset<!-- TODO: and past negatives? 
 This implies that the modelled palaeodistributions should be seen as conservative estimates or a minimal range.
 Another obvious flaw in our methodology is that the time slices used for palaeoclimatic reconstruction are very broad—each covering around two millennia—and therefore potentially unrepresentative of the environment around sites at the specific time at which they were occupied.
 The variable quality of the archaeological test dataset, especially in terms of chronology, is also a plausible factor.
+
+For a variety of reasons, our models almost certainly underestimate the *fundamental* niche or potential distribution of the target taxon.
+These include:
+
+* The uneven coverage of the GBIF occurrence dataset (see @sec-occ-data)
 
 At the same time, we cannot rule out more substantive reasons for the discrepency between predicted and observed archaeological occurrences.
 The niches of the modelled species could have changed since the Early Holocene, which would not be captured in a model trained purely on modern specimens.

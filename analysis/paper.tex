@@ -584,15 +584,24 @@ people. However, we assume that there presence at a site of human
 settlement at least implies that they were part of the wider ecosystem
 that supported habitation there.
 
-Taxonomic names were resolved to the canonical form specified in the
-GBIF Backbone Taxonomy \citep{GBIFSecretariat2023}. So for example
-occurrences for \emph{Bolboschoenus maritimus} also include those
-recorded under the older nomenclature \emph{Scirpus maritimus} (see
+The taxonomic identifications of archaeobotanical material given in our
+source databases were controlled to ensure consistency between sources
+and to group taxa that cannot always be reliably distinguished
+\citep[for details see][]{ArranzOtaeguiRoe2023}. Taxonomic names were
+then matched to the canonical form specified in the GBIF Backbone
+Taxonomy \citep{GBIFSecretariat2023} so they could be related to modern
+occurrences. The aim in both cases was to resolve taxonomic ambiguity by
+using a more inclusive taxonomic unit. For example, the model discussed
+here as \emph{Bolboschoenus} includes both archaeological occurrences of
+\emph{B. maritimus} and \emph{B. glaucus}, since these were not
+distinguished by archaeobotanists until recently
+\citep{WollstonecroftEtAl2011}, as well as modern occurrences under the
+older nomenclature \emph{Scirpus maritimus} (see
 Table~\ref{tbl-results-summary}). Domestic species meeting our inclusion
 criteria were substituted with their wild progenitor(s), where
 different.
 
-\subsection{Occurrence data}\label{occurrence-data}
+\subsection{Occurrence data}\label{sec-occ-data}
 
 Georeferenced occurrence data for West Asia was obtained from the Global
 Biodiversity Information Facility (GBIF) using via its application
@@ -623,6 +632,12 @@ records.
 Asia used to train models (N=81641}
 
 \end{figure}%
+
+GBIF is currently the best available general-purpose occurrence dataset
+for the West Asia region, its coverage is uneven both geographically and
+from species to species. Figure~\ref{fig-occ-map} shows clearly that the
+Southern Levant, and Israel specifically, is significantly more densely
+sampled than other regions.
 
 Random Forest is a presence--absence approach to niche modelling and
 therefore requires not just data on where a species is present, but
@@ -718,15 +733,19 @@ to achieve good predictive results, which makes it easier to model a
 larger numbers of taxa.
 
 For each taxon we trained a classification model to predict occurrence
-(presence or absence/background) based on our 24 predictor variables
-(Section~\ref{sec-predictors}). We used the Random Forest algorithm
-implemented in the R package `ranger' \citep{WrightZiegler2017} and the
-`tidymodels' \citep{tidymodels} framework for data preprocessing and
-model selection. To avoid overfitting, we follow \citet{ValaviEtAl2021}
-in their recommended hyperparameters and use of down-sampling to balance
-presence and background samples. Models for each taxon were fit
-independently, with redundant zero-variance predictors excluded, and
-assessed based on balanced training (¾) and test (¼) partitions.
+(presence or absence/background) based on up to 24 predictor variables
+(Section~\ref{sec-predictors}). Highly correlated (Pearson's
+\emph{r}\textgreater0.7) predictors were removed on a taxon-by-taxon
+basis, to mitigate issues of overfitting due to colinearity
+\citep{DormannEtAl2013}, as were redundant predictors with zero
+variance. We used the Random Forest algorithm implemented in the R
+package `ranger' \citep{WrightZiegler2017} and the `tidymodels'
+\citep{tidymodels} framework for data preprocessing and model selection.
+To avoid overfitting, we follow \citet{ValaviEtAl2021} in their
+recommended hyperparameters and use of down-sampling to balance presence
+and background samples. Models for each taxon were fit independently,
+with redundant zero-variance predictors excluded, and assessed based on
+balanced training (¾) and test (¼) partitions.
 
 \section{Model assessment}\label{model-assessment}
 
@@ -1124,15 +1143,7 @@ species native to West Asia show almost no response to
 Pleistocene/Holocene climate change, even within the Levant, and in the
 archaeobotanical record wheat displays the opposite trend to barley and
 pistachio -- becoming gradually more abundant through the course of the
-Neolithic and dominant by its end \citep{ArranzOtaeguiRoe2023}. We
-hypothesise that climate-linked range shifts were a factor driving these
-changes in the apparent economic important of different crops: the
-decreasing availability of barley and pistachio in the terminal
-Pleistocene may have prompted cultivation as a strategy to retain access
-to them, though in the long run it made them less attractive as staple
-crops compared to the more resilient wheat. However, these dynamics are
-not seen in the majority of crop progenitors and may also have involved
-other factors, such as changes in cultural food preferences.
+Neolithic and dominant by its end \citep{ArranzOtaeguiRoe2023}.
 
 \begin{figure}
 
@@ -1159,14 +1170,15 @@ are predicted to have coincided or been found in close proximity to each
 other in the time frame of domestication is a narrow area around the
 Orontes river in the northern Levant
 (Figure~\ref{fig-palaeodist-bread}). This area is c.~200 km from the
-only two sites in our archaeobotanical database where either both
-species of wheat (\emph{T. urartu} and \emph{T. turgidum dicoccum}) or
-both species of wheat and the goatgrasses are found together: Tell Abu
-Hureyra and El Kowm II \citep{ArranzOtaeguiRoe2023}.\footnote{We are
-  grateful to Benjamin Nowak for pointing this out to us.} Taken
-together this suggests an origin of domesticated bread wheat, otherwise
-only loosely geographically constrained to the Levant--Upper Euphrates
-corridor \citep{LevyFeldman2022}, is likely to occur in this vicinity.
+only two sites in our archaeobotanical database where bread wheat
+(\emph{T. aestivum}) co-occurs with both of its recent progenitors
+(\emph{A. tauschii} and \emph{T. turgidum dicoccum}) or both species of
+wheat and the goatgrasses are found together: Tell Abu Hureyra and El
+Kowm II \citep{ArranzOtaeguiRoe2023}.\footnote{We are grateful to
+  Benjamin Nowak for pointing this out to us.} Taken together this
+suggests an origin of domesticated bread wheat, otherwise only loosely
+geographically constrained to the Levant--Upper Euphrates corridor
+\citep{LevyFeldman2022}, is possibly occurred in this vicinity.
 
 \subsection{Hindcast models do not predict archaeobotanical
 composition}\label{sec-discuss-hindcasting}
@@ -1183,6 +1195,17 @@ unrepresentative of the environment around sites at the specific time at
 which they were occupied. The variable quality of the archaeological
 test dataset, especially in terms of chronology, is also a plausible
 factor.
+
+For a variety of reasons, our models almost certainly underestimate the
+\emph{fundamental} niche or potential distribution of the target taxon.
+These include:
+
+\begin{itemize}
+\tightlist
+\item
+  The uneven coverage of the GBIF occurrence dataset (see
+  Section~\ref{sec-occ-data})
+\end{itemize}
 
 At the same time, we cannot rule out more substantive reasons for the
 discrepency between predicted and observed archaeological occurrences.
