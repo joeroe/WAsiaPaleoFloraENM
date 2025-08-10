@@ -4,21 +4,22 @@
 #   environment and system installation of WhiteBox Tools
 #   <https://www.whiteboxgeo.com/>
 #
-# NOTE: relies on an external API (last run 2024-11-28)
+# NOTE: relies on an external API (last run 2025-08-09)
 library("elevatr")
+library("terra")
 library("whitebox")
 
-srtm_15plus <- get_elev_raster(st_sf(st_as_sfc(w_asia)), prj = 4326, src = "srtm15plus")
-writeRaster(srtm_15plus, derived_data("dem", "srtm_15plus_w_asia.tif"))
+srtm_15plus <- get_elev_raster(st_sf(st_as_sfc(w_eurasia)), prj = 4326, src = "srtm15plus")
+writeRaster(srtm_15plus, derived_data("dem", "srtm_15plus_w_eurasia.tif"))
 
-dem <- wbt_file_path(derived_data("dem", "srtm_15plus_w_asia.tif"))
+dem <- wbt_file_path(derived_data("dem", "srtm_15plus_w_eurasia.tif"))
 
 # Slope
-slope <- wbt_file_path(derived_data("dem", "srtm_15plus_w_asia_slope.tif"))
+slope <- wbt_file_path(derived_data("dem", "srtm_15plus_w_eurasia_slope.tif"))
 wbt_slope(dem, slope, compress_rasters = TRUE)
 
 # Aspect
-aspect <- wbt_file_path(derived_data("dem", "srtm_15plus_w_asia_aspect.tif"))
+aspect <- wbt_file_path(derived_data("dem", "srtm_15plus_w_eurasia_aspect.tif"))
 wbt_aspect(dem, aspect, compress_rasters = TRUE)
 
 # Topographic wetness
@@ -32,5 +33,5 @@ wbt_flow_accumulation_full_workflow(
   compress_rasters = TRUE
 )
 
-wetness <- wbt_file_path(derived_data("dem", "srtm_15plus_w_asia_wetness.tif"))
+wetness <- wbt_file_path(derived_data("dem", "srtm_15plus_w_eurasia_wetness.tif"))
 wbt_wetness_index(sca, slope, wetness, compress_rasters = TRUE)

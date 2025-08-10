@@ -65,6 +65,7 @@ TODO before publication:
 - [ ] Outstanding TODOs
 - [ ] Add missing references
 - [x] Appendix with all hindcast predictions (HTML?)
+-   [] TIFs?
 - [ ] Clean up package code
 - [ ] Zenodo release
 - [ ] Final proofread
@@ -112,6 +113,8 @@ plan("multisession")
 latlong <- 4326
 w_asia_albers <- "+proj=aea +lat_1=22.5 +lat_2=42.5 +lon_0=40"
 
+w_eurasia <- st_bbox(c(xmin = -30, xmax = 90, ymin = 0, ymax = 60), crs = 4326)
+
 w_asia <- st_bbox(c(xmin = 25, xmax = 55, ymin = 22.5, ymax = 42.5), crs = 4326)
 
 levant <- st_bbox(c(xmin = 33, xmax = 39, ymin = 30, ymax = 38))
@@ -146,10 +149,10 @@ climate_periods <- tibble(
 
 ```{r define-parameters}
 # Minimum number archaeological occurrences for modelling
-min_n_archaeo <- 1
+min_n_archaeo <- 3
 
 # Minimum number of present occurrences for modelling
-min_n_occ <- 50
+min_n_occ <- 40
 
 # Number of background samples per taxon
 n_background <- 10000
@@ -224,7 +227,7 @@ As a result of modern interdisciplinary studies, the number of recognised centre
 
 Biogeographic research into the centres of origin and/or domestication of crops has also long informed broader understanding of the process of agricultural origins.
 In *Man Makes Himself*, @Childe1936 correctly located the centre of origin of European agriculture in the 'Fertile Crescent' of West Asia (unlike for example @Pumpelly1908 before him).
-This was not based on the region's prehistoric archaeological record, which at that point was barely known.
+This was not based on the region's prehistoric archaeological record, which at the time had only been cursorily explored.
 Instead he was guided to the region by biogeographic work by Vavilov and @PeakeFleure1927;
 only later was this prediction validated by archaeological work on the Epipalaeolithic and Neolithic of Palestine [@Boyd2018].
 In subsequent decades, the search for more precise origin zones of specific domestic plants relied on the assumption that "the locus of domestication of a wild plant would presumably be within its area of original distribution in the wild state" [@Butzer1971; paraphrasing @Helbaek1959] – and that this "natural habitat" has not changed significantly over the last 12,000 years [@Butzer1971].
@@ -257,7 +260,7 @@ Ecological niche modelling has long been of interest to archaeologists as both a
 In the first sense, it has been used most extensively to model the range of humans and other hominin species [e.g. @BenitoEtAl2017; @YousefiEtAl2020; @BanksEtAl2021; @YaworskyEtAl2024a; @YaworskyEtAl2024b; @GuranEtAl2024], especially in the Palaeolithic.
 This overlaps with what archaeologists usually call generically 'predictive modelling' [@VerhagenWhitley2020]—or more precisely 'site distribution modelling'—which is essentially the same approach as (and often borrows methodologies from) ecological niche modelling but applied to the occurrence of archaeological sites.
 Here what is modelled is not strictly a biological niche alone, but also aspects of human geography, taphonomy, and archaeological visibility.
-These applications can be distinguihed from 'palaeoecological niche modelling', where the object of model remains, as in ecology, a non-human biological niche.
+These applications can be distinguished from 'palaeoecological niche modelling', where the object of model remains, as in ecology, a non-human biological niche.
 
 @FranklinEtAl2015 review palaeoecological niche modelling and advocate for its greater adoption in environmental archaeology.
 In an early application to West Asia, @ConollyEtAl2012 used the occurrence of wild and domestic *Bos* remains at prehistoric archaeological sites to map the evolving niche of cattle over the Pleistocene–Holocene transition.
@@ -291,23 +294,24 @@ ne_rivers <- read_sf(raw_data("ne"), "ne_10m_rivers_lake_centerlines_scale_rank"
 
 ne_lakes <- read_sf(raw_data("ne"), "ne_10m_lakes") |> 
   st_geometry() |>
-  st_crop(buffer_bbox(w_asia, 10)) |>
+  st_crop(buffer_bbox(w_eurasia, 10)) |>
   st_union()
 
 ne_ocean <- read_sf(raw_data("ne"), "ne_10m_ocean") |>
   st_geometry() |>
-  st_crop(buffer_bbox(w_asia, 10)) |>
+  st_crop(buffer_bbox(w_eurasia, 10)) |>
   st_union()
 
 ne_land <- read_sf(raw_data("ne"), "ne_10m_land") |> 
   st_geometry() |>
-  st_crop(buffer_bbox(w_asia, 10)) |>
+  st_crop(buffer_bbox(w_eurasia, 10)) |>
   st_difference(ne_ocean) |>
   # st_difference(ne_lakes) |>
   st_union()
 
 s_levant_land <- st_intersection(st_as_sfc(s_levant), ne_land)
 w_asia_land <- st_intersection(st_as_sfc(w_asia), ne_land)
+w_eurasia_land <- st_intersection(st_as_sfc(w_eurasia), ne_land)
 
 # Restore previous setting of s2
 sf_use_s2(use_s2)
@@ -367,12 +371,18 @@ if (!file_exists(derived_data("flora.Rdata"))) {
     # Group by taxon
     drop_na(taxon) |>
     nest(.by = c(taxon), .key = "archaeo") |>
-    # Normalise species names and match to the GBIF Backbone Taxonomy
+    # Add wild progenitors of wheats
+    bind_rows(
+      tibble(
+        taxon = c("Triticum urartu", "Aegilops speltoides", "Aegilops tauschii")      )
+    ) |>
+    # Normalise taxon names and match to the GBIF Backbone Taxonomy
     mutate(
+      taxon_original = taxon,
       # Spot corrections
       taxon = case_match(
         taxon,
-        c("Bolboschoenus glaucus", "Bolboschoenus maritimus") ~ "Bolboschoenus",
+        # c("Bolboschoenus glaucus", "Bolboschoenus maritimus", "Scirpus maritimus") ~ "Bolboschoenus",
         "Vicia narbonense" ~ "Vicia narbonensis", # N=3
         "Triticum aestivocompactum" ~ "Triticum aestivum compactum", # N=3
         "Heliotropium persicum" ~ "Moltkia angustifolia", # N=2
@@ -381,44 +391,49 @@ if (!file_exists(derived_data("flora.Rdata"))) {
         "Stipa capensis" ~ "Stipa dregeana", # N=2
         .default = taxon
       ),
-      taxon_original = taxon,
-      taxon = map_chr(taxon, gbif_accepted_name),
-      .before = archaeo
-    ) |>
-    # Drop unmatched (mostly not identified to species)
-    drop_na(taxon) |>
-    # Recode domesticates as their wild progenitors.
-    mutate(
+      # Recode domesticates as their wild progenitors
       taxon = case_match(
         taxon,
         "Cicer arietinum" ~ "Cicer reticulatum",
         "Hordeum vulgare" ~ "Hordeum spontaneum",
         "Vicia lens" ~ "Vicia orientalis",
+        "Lens culinaris" ~ "Vicia orientalis",
         "Linum usitatissimum" ~ "Linum bienne",
         "Triticum aestivum" ~ "Triticum turgidum dicoccum",
         "Triticum dicoccoides" ~ "Triticum turgidum dicoccum",
         "Triticum turgidum durum" ~ "Triticum turgidum dicoccum",
         "Triticum monococcum" ~ "Triticum monococcum aegilopoides",
         .default = taxon
-      )
+      ),
+      taxon_gbif = name_backbone_checklist(taxon, kingdom = "Plantae"),
+      .before = archaeo
     ) |>
+    mutate(
+      # taxon = coalesce(taxon_gbif$species, taxon_gbif$genus),
+      taxon = taxon_gbif$species, # not interested in genus-only matches
+      gbif_key = coalesce(taxon_gbif$acceptedUsageKey, taxon_gbif$usageKey),
+      .before = archaeo
+    ) |>
+    # Drop taxons not matched
+    drop_na(taxon) |>
     # Regroup by canonical taxon
+    select(-taxon_gbif) |>
     summarise(
+      gbif_key = first(gbif_key),
       taxon_aliases = list(taxon_original[taxon_original != taxon]),
+      # TODO: this creates duplicate rows
       archaeo = list(bind_rows(archaeo)),
       .by = taxon
     ) |>
     mutate(
+      # Discard duplicates arising from merging of taxonomic synonyms
+      archaeo = map(archaeo, function(x) {
+        if (ncol(x) > 0) distinct(x, phase_code, .keep_all = TRUE)
+        else data.frame()
+      }),
       n_archaeo = map_int(archaeo, nrow)
     ) |>
-    filter(n_archaeo > min_n_archaeo) |>
-    # Add wild progenitors of wheats
-    bind_rows(
-      tibble(
-        taxon = c("Triticum urartu", "Aegilops speltoides", "Aegilops tauschii"),
-        taxon_original = c("Triticum urartu", "Aegilops speltoides", "Aegilops tauschii")
-      )
-    )
+    filter(n_archaeo >= min_n_archaeo)
   
   saveRDS(flora, derived_data("flora.Rdata"))
 }
@@ -438,6 +453,7 @@ archaeo_sites <- flora |>
 
 ```{r fig-region}
 #| fig-cap: Late Epipalaeolithic & Pre-Pottery Neolithic archaeological sites used to generate modelled flora
+# TODO: Update to show Eurasia (with zoom-in for sites?)
 ggplot() + 
   annotation_spatial(ne_land, fill = "#ffffff") +
   annotation_spatial(ne_rivers, aes(linewidth = strokeweig), colour = "lightblue") +
@@ -449,85 +465,83 @@ ggplot() +
 
 The aim of our study was to model the biogeography of species relevant to human subsistence economies in West Asia (excluding the Southern Arabian peninsula, see @fig-region) during the archaeological Late Epipalaeolithic (15–11.7 ka) and Pre-Pottery Neolithic (11.7–8.3 ka) periods.
 Based on current understandings, we assume that plant-based subsistence during this period was broad, geographically- and temporally-varied, and reflects a gradual, geographically decentred, and nonlinear tranistion to greater reliance on cultivars (i.e. agriculture, see @sec-bg).
-Our starting point was a list of `r nrow(flora)` taxa (@tbl-results-summary) comprising the identifiable species observed at at least two Late Epipalaeolithic/Pre-Pottery Neolithic sites, according to our previous study of the regional archaeobotanical data [@ArranzOtaeguiRoe2023].
+Our starting point was a list of `r nrow(flora)` taxa (@tbl-results-summary) comprising the identified species observed at at least `r english(min_n_archaeo)` Late Epipalaeolithic/Pre-Pottery Neolithic sites, according to our previous study of the regional archaeobotanical data [@ArranzOtaeguiRoe2023].
 This was based on dataset collated from three previously published regional archaeobotanical databases: ADEMNES [@ADEMNES], ORIGINS [@ORIGINS], and COMPAG [@LucasFuller2018; @FullerEtAl2018; based on @ColledgeEtAl2004; @ShennanConolly2007].
 We did not attempt to distinguish between the source of the remains [cf. @WallaceEtAl2018];
 archaeobotanical assemblages are subject to a variety of preservational and recovery biases, so by no means were all the species on our list consumed or even deliberately collected by people.
 However, we assume that there presence at a site of human settlement at least implies that they were part of the wider ecosystem that supported habitation there.
 
-The taxonomic identifications of archaeobotanical material given in our source databases were controlled to ensure consistency between sources and to group taxa that cannot always be reliably distinguished [for details see @ArranzOtaeguiRoe2023].
+The taxonomic identifications of archaeobotanical material given in our source databases were previously controlled to ensure consistency between sources and to remove taxa that cannot be reliably distinguished [for details see @ArranzOtaeguiRoe2023].
 Taxonomic names were then matched to the canonical form specified in the GBIF Backbone Taxonomy [@GBIFSecretariat2023] so they could be related to modern occurrences.
-The aim in both cases was to resolve taxonomic ambiguity by using a more inclusive taxonomic unit.
-For example, the model discussed here as *Bolboschoenus* includes both archaeological occurrences of *B. maritimus* and *B. glaucus*, since these were not distinguished by archaeobotanists until recently [@WollstonecroftEtAl2011], as well as modern occurrences under the older nomenclature *Scirpus maritimus* (see @tbl-results-summary).
-Domestic species meeting our inclusion criteria were substituted with their wild progenitor(s), where different.
+Archaeologically-attested domestic species meeting our inclusion criteria were substituted for their wild progenitors (where different) when gathering occurrence data, since the domestic forms are now widespread and presumably uninformative of the species original niche.
 
 ## Occurrence data {#sec-occ-data}
 
 <!-- TODO generate GBIF occurrence citation:
 https://docs.ropensci.org/rgbif/articles/getting_occurrence_data.html -->
 
-```{r data-n-occ} 
-if (!file_exists(derived_data("flora_n_occ.Rdata"))) {
-  message("Reacquiring GBIF occurrence counts...")
-  flora <- flora |>
-    mutate(
-      n_occ = map_dbl(taxon, \(x) occ_count(scientificName = x, 
-                                            hasCoordinate = TRUE, 
-                                            hasGeospatialIssue = FALSE,
-                                            geometry = bbox_wkt(w_asia)))
-    )
-  saveRDS(flora, derived_data("flora_n_occ.Rdata"))
+```{r data-occ}
+# Download occurrence data from GBIF, generating a citable derived dataset
+if (length(dir_ls(derived_data("gbif"))) == 0) {
+  # Requires GBIF credentials as environment variables, see:
+  # https://docs.ropensci.org/rgbif/articles/gbif_credentials.html
+  message("Reacquiring GBIF occurrences...")
+  gbif_download <- occ_download(
+    pred_in("taxonKey", flora$gbif_key),
+    pred_within(wk::as_wkt(w_eurasia)),
+    pred_default(), # Filter common data quality issues, see ?rgbif::pred_default() for details
+    # pred_lt("coordinateUncertaintyInMeters", 1000), # to strict for W. Asia!
+    format = "SIMPLE_CSV"
+  ) |>
+    occ_download_wait() # wait for dataset to be prepared
+    
+  # Cache data
+  occ_download_get(gbif_download$key, path = derived_data("gbif"))
+  
+  # Cache metadata
+  gbif_download |>
+    unclass() |>
+    list_flatten() |>
+    discard_at(\(x) str_starts(x, "request")) |>
+    as_tibble() |>
+    write_csv(derived_data(
+      "gbif",
+      paste0(gbif_download$key, "_metadata.csv")
+    ))
 }
-flora <- readRDS(derived_data("flora_n_occ.Rdata"))
- 
+
+flora_occ <- dir_ls(derived_data("gbif"), glob = "*.zip")[1] |> # assume only one dataset present
+  as.download() |>
+  occ_download_import() |>
+  gbif_standardise_names() |>
+  select(taxon_key, gbif_id, latitude, longitude) |>
+  group_by(taxon_key) |>
+  distinct(latitude, longitude, .keep_all = TRUE)
+
+flora_occ_meta <- read_csv(dir_ls(derived_data("gbif"), glob = "*.csv")[1])
+
+# Join to archaeo data
+flora <- flora_occ |>
+  nest(.key = "occ") |>
+  ungroup() |>
+  right_join(flora, by = c("taxon_key" = "gbif_key")) |>
+  mutate(n_occ = map_int(occ, vctrs::vec_size))
+
 # Filter small samples
-# ...and one very large one (why are there 50k occurrences of Avena sterilis?)
 flora_all <- flora
 flora <- flora |>
-  filter(n_occ > min_n_occ) |>
-  filter(taxon != "Avena sterilis")
+  filter(n_occ >= min_n_occ)
 ```
 
-```{r data-occ}
-# Cleaning pipeline based on:
-# - https://data-blog.gbif.org/post/gbif-filtering-guide/
-if (!file_exists(derived_data("flora_occ.Rdata"))) {
-  message("Reacquiring GBIF occurrences...")
-  flora <- mutate(
-    flora,
-    occ = map(
-      taxon, gbif_data, 
-      hasCoordinate = TRUE, hasGeospatialIssue = FALSE, geometry = w_asia, 
-      limit = 100000, .progress = TRUE
-    ),
-    occ = map(occ, filter, occurrenceStatus  == "PRESENT"),
-    occ = map(occ, gbif_drop_imprecise_coords, threshold = 1000),
-    occ = map(occ, gbif_drop_fossils),
-    occ = map(occ, gbif_drop_duplicate_coords),
-    occ = map(occ, gbif_standardise_names),
-    occ = map(occ, \(x) {
-      select(x, gbif_key = key, scientific_name, genus, species, longitude, 
-             latitude)
-    }),
-    # Update occ count after cleaning
-    n_occ = map_int(occ, nrow)
-  )
-  
-  # Refilter based on cleaned records
-  flora <- filter(flora, n_occ > min_n_occ)
-  
-  saveRDS(flora, derived_data("flora_occ.Rdata"))
-}
-
-flora <- readRDS(derived_data("flora_occ.Rdata"))
-```
-
-Georeferenced occurrence data for West Asia was obtained from the Global Biodiversity Information Facility (GBIF) using via its application programming interface and the R package 'rgbif' [@ChamberlainBoettiger2017; @rgbif].
-GBIF was cleaned to removed fossil occurrences, recorded absences, and records with missing, imprecise (>1 km uncertainty), or invalid coordinates.
-Although niche models have reasonable predictive power even with small training samples [@StockwellPeterson2002; @HernandezEtAl2006; @WiszEtAl2008], we excluded `r english(nrow(filter(flora_all, n_occ < min_n_occ)))` taxa with less than `r min_n_occ` usable occurrences, following recommendations for niche models generally and Random Forest-based models specifically [@StockwellPeterson2002; @LuanEtAl2020].
-We also excluded one taxon (*Avena sterilis*) with over 50,000 occurrences, as this would have been computationally prohibitive and we were uncertain what accounted for such a disproportionately high number of records.
+<!-- TODO: cite dataset -->
+Georeferenced occurrence data for West Eurasia between 0 and 60° of latitude was obtained from the Global Biodiversity Information Facility (GBIF) using via and the R package 'rgbif' [@ChamberlainBoettiger2017; @rgbif].
+The GBIF dataset [@GBIFDerivedData] excluded fossil occurrences, recorded absences, and records with missing or dubious coordinates.
+Although niche models have reasonable predictive power even with small training samples [@StockwellPeterson2002; @HernandezEtAl2006; @WiszEtAl2008], we did not attempt to model `r english(nrow(filter(flora_all, n_occ < min_n_occ)))` taxa with less than `r min_n_occ` usable occurrences, following recommendations for niche models generally and Random Forest-based models specifically [@StockwellPeterson2002; @LuanEtAl2020].
+Multiple records of the same taxon at the same coordinate were discarded because they do not impart information to the model.
+The resulting cleaned dataset used to train our niche models comprises `r flora_occ_meta$totalRecords` from `r flora_occ_meta$numberDatasets` constituent datasets.
 
 ```{r fig-occ-map, fig.cap=paste0("Georeferenced occurrence records from West Asia used to train models (N=", nrow(unnest(flora, occ)))}
+# TODO: Update, Eurasia
 flora |>
  unnest(occ) |>
  distinct(latitude, longitude) |>
@@ -540,7 +554,7 @@ flora |>
 ```
 
 GBIF is currently the best available general-purpose occurrence dataset for the West Asia region, its coverage is uneven both geographically and from species to species.
-@fig-occ-map shows clearly that the Southern Levant, and Israel specifically, is significantly more densely sampled than other regions.
+@fig-occ-map shows clearly that the Southern Levant, and Israel specifically, is significantly more densely sampled than other parts of West Asia.
 
 ```{r data-background}
 # TODO: slow - cache
@@ -555,8 +569,7 @@ flora <- flora |>
         present = FALSE,
         weight = (1 / n) * nrow(x) # weight presences and background equally
       )
-    }, region = w_asia_land, n = n_background),
-    # occ_bg = map2(occ, bg, bind_rows)
+    }, region = w_eurasia_land, n = n_background),
     occ = map2(occ, bg, bind_rows)
   ) |>
   select(-bg)
@@ -564,9 +577,9 @@ flora <- flora |>
 
 Random Forest is a presence–absence approach to niche modelling and therefore requires not just data on where a species is present, but where it is definitely not present.
 However 'absence' data is rarely available because it requires exhaustive survey.
-In practice, most applications of niche modelling are 'presence-only' and, where absence data is required (as for Random Forest), it is supplied as a random background sample of 'pseudo-absence' points.
+In practice, most applications of niche modelling are 'presence-only' and, where absence data is required (as for Random Forest), it is supplied as a random background sample of points.^[We use a background sample that is representative of the entire study area, as opposed to attempting to construct a 'pseudo-absence' sample. See @SilleroEtAl2021 for the distinction.]
 The purpose of this sample is to inform the model about the nature of the underlying environment. 
-The stochastic generation process means that some 'pseudo-absence' points will overlap or fall close to presences, so ensuring the model is not overly influenced by background samples is critical to its predictive importance [@ValaviEtAl2022].
+The stochastic generation process means that some of these points will overlap or fall close to presences, so ensuring the model is not overly influenced by background samples is critical to its predictive importance [@ValaviEtAl2022].
 Here we follow the advice of @BarbetMassinEtAl2012 for regression-based species distribution models and use a large (≈10000) uniform sample of points from across the land area of the study region.
 These points are then weighted equally against the presences in the regression to produce a 'balanced Random Forest' [@ValaviEtAl2022].
 
@@ -576,49 +589,59 @@ We modelled the occurrence of species as a function of 24 geospatial predictor v
 These included:
 
 ```{r data-climate}
-# Reacquire derived_data/paleoclim if needed:
-if (length(dir_ls(derived_data("paleoclim"), glob = "*.tif")) < 1) {
-  message("Redownloading Paleoclim data...")
-  source(here("data", "data-paleoclim.R"))
+# Reacquire paleoclim data if needed:
+if (!file_exists(derived_data("climate.nc"))) {
+  if (length(dir_ls(derived_data("paleoclim"), glob = "*.tif")) < 1) {
+    message("Redownloading Paleoclim data...")
+    source(here("analysis", "data", "data-paleoclim.R"))
+  }
+  
+  # Store as multidim file so we can read back in as a virtual raster
+  message("Rebuilding palaeoclimate array...")
+  climate <- read_stars(
+    derived_data(
+      "paleoclim", 
+      paste0("paleoclim_", climate_periods$code, "_2_5m_w_eurasia.tif")
+    ),
+    along = NA
+  )
+  
+  names(climate) <- climate_periods$code
+  
+  climate <- st_redimension(climate, name = "period") |>
+    split("band")
+  
+  write_mdim(climate, derived_data("climate.nc"))
 }
 
-climate <- read_stars(
-  derived_data(
-    "paleoclim", 
-    paste0("paleoclim_", climate_periods$code, "_2_5m_w_asia.tif")
-  ),
-  along = NA
-)
-
-names(climate) <- climate_periods$code
-
-climate <- st_redimension(climate, name = "period") |>
-  split("band")
+climate <- read_stars(derived_data("climate.nc"), proxy = TRUE)
+# Recover dimension values lost in NC conversion
+climate <- st_set_dimensions(climate, "period", values = climate_periods$code)
 ```
 
 * Sixteen 'bioclimatic' variables derived from monthly temperature and precipitation values, following standard practice for species distribution models [@HijmansEtAl2005]. Contemporary bioclimatic predictor data for West Asia was extracted from the global CHELSA dataset [@KargerEtAl2017], which predicts temperature and precipitation from downscaled general circulation model output at 1 km resolution.
 
 ```{r data-terrain}
 # Reacquire derived_data/srtm_15plus_w_asia.tif if needed:
-if (!file_exists(derived_data("dem", "srtm_15plus_w_asia.tif"))) {
+if (!file_exists(derived_data("dem", "srtm_15plus_w_eurasia.tif"))) {
   message("Redownloading DEM data...")
-  source(here("data", "data-dem.R"))
+  source(here("analysis", "data", "data-dem.R"))
 }
 
-terrain <- read_stars(derived_data("dem", c("srtm_15plus_w_asia.tif", 
-                                            "srtm_15plus_w_asia_slope.tif",
-                                            "srtm_15plus_w_asia_aspect.tif",
-                                            "srtm_15plus_w_asia_wetness.tif")))
+terrain <- read_stars(derived_data("dem", c("srtm_15plus_w_eurasia.tif", 
+                                            "srtm_15plus_w_eurasia_slope.tif",
+                                            "srtm_15plus_w_eurasia_aspect.tif",
+                                            "srtm_15plus_w_eurasia_wetness.tif")))
 names(terrain) <- c("elevation", "slope", "aspect", "wetness")
 ```
 
-* Terrain aspect and slope, which at high resolution perform well as proxies for solar radiation when modelling plant occurrence [@AustinVanNiel2011; @LeempoelEtAl2015]; and the topographic wetness index (TWI), which serves as a proxy for soil moisture and is particularly important in modelling arid environments [@KopeckyCizkova2010; @CamposEtAl2016; @DiVirgilioEtAl2018]. All three were derived from the SRTM15+ digital elevation model using algorithms from WhiteboxTools [@Lindsay2016].
+* Terrain aspect and slope, which at high resolution perform well as proxies for solar radiation when modelling plant occurrence [@AustinVanNiel2011; @LeempoelEtAl2015]; and the topographic wetness index (TWI), which serves as a proxy for soil moisture and is particularly important in modelling arid environments [@KopeckyCizkova2010; @CamposEtAl2016; @DiVirgilioEtAl2018]. All three were derived from the SRTM30+ digital elevation model using algorithms from WhiteboxTools [@Lindsay2016].
 
 ```{r data-soil}
 # Reacquire derived_data/soilgrids if needed:
 if (length(dir_ls(derived_data("soilgrids"), glob = "*.tif")) < 1) {
   message("Redownloading SoilGrids data...")
-  source(here("data", "data-soilgrids.R"))
+  source(here("analysis", "data", "data-soilgrids.R"))
 }
 
 soil <- map(dir_ls(derived_data("soilgrids")), read_stars)
@@ -630,30 +653,38 @@ soil <- do.call(c, soil)
 
 ```{r data-environment}
 # Prepare environmental data cube for prediction (not training)
-# Duplicate time-invariant predictors to create dummy period dimension
-terrain_cube <- list(terrain) |>
-  rep(nrow(climate_periods)) |>
-  set_names(climate_periods$code) |>
-  c(list(along = "period")) |>
-  do.call(what = c)
+if (!file_exists(derived_data("env_w_asia.nc"))) {
+  climate_w_asia <- st_crop(climate, w_asia)
+  terrain_w_asia <- st_crop(terrain, w_asia)
+  soil_w_asia <- st_crop(soil, st_transform(w_asia, soil))
+  
+  # Duplicate time-invariant predictors to create dummy period dimension
+  terrain_cube <- list(terrain_w_asia) |>
+    rep(nrow(climate_periods)) |>
+    set_names(climate_periods$code) |>
+    c(list(along = "period")) |>
+    do.call(what = c)
+  
+  soil_cube <- list(soil_w_asia) |>
+    rep(nrow(climate_periods)) |>
+    set_names(climate_periods$code) |>
+    c(list(along = "period")) |>
+    do.call(what = c)
+  
+  # Resample to common projection and resolution
+  climate_cube <- st_warp(st_as_stars(climate_w_asia), crs = w_asia_albers, 
+                          cellsize = c(pred_res, pred_res), segments = 1000)
+  terrain_cube <- st_warp(st_as_stars(terrain_cube), climate_cube, 
+                          segments = 1000)
+  soil_cube <- st_warp(st_as_stars(soil_cube), climate_cube, 
+                       segments = 1000)
+  
+  # Combine into prediction cube
+  env_w_asia <- c(climate_cube, terrain_cube, soil_cube)
+  write_mdim(env_w_asia, derived_data("env_w_asia.nc"))
+}
 
-soil_cube <- list(soil) |>
-  rep(nrow(climate_periods)) |>
-  set_names(climate_periods$code) |>
-  c(list(along = "period")) |>
-  do.call(what = c)
-
-# Resample predictor data to common projection and resolution
-climate_cube <- st_warp(climate, crs = w_asia_albers, 
-                        cellsize = c(pred_res, pred_res), segments = 1000)
-terrain_cube <- st_warp(terrain_cube, climate_cube, segments = 1000)
-soil_cube <- st_warp(soil_cube, climate_cube, segments = 1000)
-
-# Combine into prediction cube
-environment <- c(climate_cube, terrain_cube, soil_cube)
-
-# Save some memory
-rm(climate_cube, terrain_cube, soil_cube)
+env_w_asia <- read_mdim(derived_data("env_w_asia.nc"))
 ```
 
 For hindcasting, we used reconstructed bioclimatic data for three key climatologies generated from downscaled paleoclimate simulations from the HadCM3 general circulation model [@FordhamEtAl2017; @BrownEtAl2018]:
@@ -671,21 +702,24 @@ bind_extract <- function(x, y) {
   cbind(x, select(tibble(extract), -geometry))
 }
 
-flora <- flora |> 
-  mutate(
-    occ = map(occ, st_as_sf, coords = c("longitude", "latitude"), crs = latlong, remove = FALSE),
-    occ = map(occ, bind_extract, slice(climate, "period", "cur")),
-    occ = map(occ, bind_extract, terrain),
-    occ = map(occ, bind_extract, soil)
-  )
+if (!file_exists(derived_data("flora_background.Rdata"))) {
+  flora <- flora |> 
+    mutate(
+      occ = map(occ, st_as_sf, coords = c("longitude", "latitude"), crs = latlong, remove = FALSE),
+      occ = map(occ, bind_extract, st_as_stars(hack(climate, "period", "cur"))),
+      occ = map(occ, bind_extract, st_as_stars(terrain)),
+      occ = map(occ, bind_extract, st_as_stars(soil))
+    )
+  saveRDS(flora, derived_data("flora_background.Rdata"))
+}
+flora <- readRDS(derived_data("flora_background.Rdata"))
 ```
 
 ## Random Forest
 
 ```{r niche-data}
-# Split training, test (for model assessment) and cross-validation sets (for
-# tuning)
-flora <- flora |>
+# Split training and test sets for model assessment 
+flora <-  flora |>
   mutate(
     # De-sf
     occ = map(occ, \(x) select(tibble(x), -geometry)),
@@ -699,13 +733,16 @@ flora <- flora |>
 # Following recommended preprocessing steps for RF classification from:
 #   https://www.tmwr.org/pre-proc-table.html
 niche_recipe <- recipe(training(flora$occ_split[[1]])) |>
-  update_role(gbif_key:latitude, new_role = "ID") |>
+  update_role(c(gbif_id, longitude, latitude), new_role = "ID") |>
   update_role(present, new_role = "outcome") |>
   update_role(starts_with("bio"), new_role = "predictor") |>
   update_role(c(elevation, slope, aspect, wetness, clay, phh2o, sand, silt),
               new_role = "predictor") |>
-  # Impute missing values based on spatial autocorrelation
-  step_impute_linear(all_numeric_predictors(), 
+  # Impute missing values assuming spatial autocorrelation:
+  #   can use regression or nearest neighbours
+  # step_impute_linear(all_numeric_predictors(),
+  #                    impute_with = imp_vars(latitude, longitude)) |>
+  step_impute_knn(all_numeric_predictors(),
                      impute_with = imp_vars(latitude, longitude)) |>
   # Drop correlated predictors
   step_corr(all_predictors(), threshold = 0.7) |>
@@ -725,7 +762,8 @@ For our application, it also has the advantage of requiring little to no manual 
 niche_model <- rand_forest(mode = "classification", trees = 1000) |>
   set_engine(
     "ranger", 
-    sample.fraction = c(sum(as.logical(.y())) / n_background, 1),
+    # handled by hardhat::importance_weights
+    # sample.fraction = c(sum(as.logical(.y())) / n_background, 1),
     importance = "impurity"
   )
 
@@ -741,10 +779,10 @@ Models for each taxon were fit independently, with redundant zero-variance predi
 ```{r niche-fit}
 # Fit best model to training data
 if (!file_exists(derived_data("flora_niche_fit.Rdata"))) {
-  flora <- mutate(
-    flora,
-    niche = map(occ_split, \(x) last_fit(niche_workflow, x), .progress = TRUE)
-  )
+  flora <- flora |>
+    mutate(
+      niche = map(occ_split, \(x) last_fit(niche_workflow, x), .progress = TRUE)
+    )
   saveRDS(flora, derived_data("flora_niche_fit.Rdata"))
 }
 flora <- readRDS(derived_data("flora_niche_fit.Rdata"))
@@ -755,12 +793,16 @@ flora <- readRDS(derived_data("flora_niche_fit.Rdata"))
 ```{r niche-predict}
 # NOTE: high memory usage
 if (!file_exists(derived_data("flora_niche_predictions.Rdata"))) {
-  flora <- flora |>
+  # flora <-
+  flora |>
     mutate(
-      pred = map(niche, collect_predictions),
+      pred = map(niche, collect_predictions)
+    )
+  
       palaeodist = map(niche, \(mod, obj) predict(obj, extract_fit_engine(mod)),
-                       obj = environment, .progress = TRUE),
+                       obj = env_w_asia, .progress = TRUE),
       # Binarize
+      # TODO: use max SSS
       palaeodist = map(palaeodist, mutate, present = prediction.TRUE. > 0.5),
       palaeodist = map(palaeodist, mutate, absent = prediction.FALSE. > 0.5)
     )
@@ -909,7 +951,7 @@ results_summary <- flora_all |>
   select(-.estimator, -.config) |>
   pivot_wider(names_from = .metric, values_from = .estimate) |>
   # Excluded samples
-  mutate(exclude = (n_occ < min_n_occ) | (taxon == "Avena sterilis")) |>
+  mutate(exclude = (n_occ < min_n_occ)) |>
   # Prepare table
   select(taxon, taxon_aliases, n_archaeo, n_occ, exclude, accuracy, roc_auc, 
          sens, p_predicted) |>
@@ -998,8 +1040,8 @@ flora |>
   )
 ```
 
-Our reconstructed palaeodistributions (shown in full in the appendix) indicate that the majority of species have experienced a significant reduction and/or shift in their ranges since the Early Holocene. 
-`r n_reduced_range` of `r nrow(flora)` species have reduced ranges; `r n_reduced_range_10` of more than 10% or more.
+Our reconstructed palaeodistributions (shown in full in the appendix) indicate that the majority of species had significantly different geographic ranges in the Late Pleistocene/Early Holocene compared today. 
+`r n_reduced_range` of `r nrow(flora)` species are predicted reduced ranges in the past; `r n_reduced_range_10` of more than 10% or more.
 Though the magnitude of the change in range size from prehistory to the present likely reflects a degree of overfitting in the model (discussed further in @sec-discuss-hindcasting), fluctuations in modelled range size between the Bølling-Allerød (14.7–12.9 ka), Younger Dryas (12.9–11.7 ka), and Early Holocene (11.7–8.3 ka) are more directly comparable (@fig-pred-range-density).
 The average range of modelled species was `r percent(1 - (filter(flora_pred_area_present_summary, period == "eh")$med_area_present / filter(flora_pred_area_present_summary, period == "ba")$med_area_present))` in the Early Holocene compared to the Bølling–Allerød, and `r percent(1 - (filter(flora_pred_area_present_summary, period == "yds")$med_area_present / filter(flora_pred_area_present_summary, period == "ba")$med_area_present))` during the Younger Dryas (i.e. ranges recovered slightly between the Younger Dryas and Early Holocene).
 This perhaps indicates that although this period is considered one of climatatic amelioration globally [@JonesEtAl2019], the colder conditions of the Pleistocene may have supported more extensive plant-based economies in West Asia specifically.
@@ -1209,6 +1251,8 @@ The niches of the modelled species could have changed since the Early Holocene, 
 Human economic choices—mobility, foraging strategies, cultivation, etc.—could also produce archaeobotanical assemblages whose composition depart significantly from that of the surrounding local flora.
 Further refinement of the methodology for hindcast palaeoecological niche models, for example using more finely resolved palaeoclimate sequences [e.g. @KargerEtAl2023], hyperparameter tuning to avoid overfitting, and improved archaeological datasets, would help disentangle these potential explanations.
 
+<!-- TODO not Bolboschoenus issue - another cause of potential discrepencies? -->
+
 <!--
 It is consistent with more "macro" trends such as the reduced range of Hordeum and Pistacia correlating with its reduced abundance in the archaeobotanical record.
 TODO: do model predictions match more aggregated stats e.g. biodiversity? -->
@@ -1234,6 +1278,8 @@ further development of open, comprehensive and up-to-date 'backbone' datasets on
 The data and R code used to produced is archived with Zenodo at <https://doi.org/10.5281/zenodo.14629984>
 
 # Acknowledgements
+
+We are grateful to Alex Weide and the second, anonymous reviewer of our manuscript, whose suggestions have greatly improved this study.
 
 This work was partially funded by the European Research Council (ERC-2021-STG project 101039060, *PalaeOrigins: Tracing the Epipalaeolithic origins of plant management in southwest Asia*).
 

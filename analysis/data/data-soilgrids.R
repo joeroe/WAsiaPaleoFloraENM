@@ -1,7 +1,7 @@
 # data-soilgrids.R
 # Retrieve SoilGrids <https://www.isric.org/explore/soilgrids> data for W. Asia
 # Based on https://git.wur.nl/isric/soilgrids/soilgrids.notebooks/-/blob/master/markdown/webdav_from_R_terra.md
-# NOTE: relies on an external API (last run 2024-01-05)
+# NOTE: relies on an external API (last run 2025-08-08)
 library("fs")
 library("purrr")
 library("sf")
@@ -9,7 +9,6 @@ library("terra")
 library("whitebox")
 library("BadiaPaleoFloraENM")
 
-w_asia <- st_bbox(c(xmin = 25, xmax = 55, ymin = 22.5, ymax = 42.5), crs = 4326)
 soilgrids_vars <- c("clay", "sand", "silt", "phh2o")
 
 soilgrids <- map(soilgrids_vars, function(var, region) {
@@ -21,7 +20,7 @@ soilgrids <- map(soilgrids_vars, function(var, region) {
   window(soilgrid) <- bbox
 
   return(soilgrid)
-}, region = w_asia)
+}, region = w_eurasia)
 
 names(soilgrids) <- soilgrids_vars
 
@@ -29,7 +28,7 @@ names(soilgrids) <- soilgrids_vars
 temp_path <- dir_create(path_temp("soilgrids"))
 walk2(
   soilgrids,
-  path(temp_path, paste0("soilgrids_", names(soilgrids), "_0-5cm_mean_w_asia.tif")),
+  path(temp_path, paste0("soilgrids_", names(soilgrids), "_0-5cm_mean_w_eurasia.tif")),
   writeRaster,
   datatype = "FLT4S",
   overwrite = TRUE
