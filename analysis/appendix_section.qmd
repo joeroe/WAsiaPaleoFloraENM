@@ -15,10 +15,12 @@ fig_occ <- occ |>
   geom_sf(size = 0.5) +
   layer_spatial(w_asia, fill = NA) +
   scale_linewidth_identity() +
-  coord_sf(crs = w_asia_albers) +
+  coord_sf(xlim = w_asia[c(1,3)], ylim = w_asia[c(2,4)],
+           crs = w_asia_albers, default_crs = latlong) +
   labs(
     title = "GBIF occurrences",
-    subtitle = paste0("N=", nrow(occ))
+    subtitle = paste0("N=", nrow(occ)),
+    caption = "NB. occurrences outside of prediction region not shown"
   )
 
 fig_roc_curve <- niche |>
@@ -87,7 +89,7 @@ ggplot() +
   scale_shape_manual(
     name = "Archaeological\noccurrences", 
     values = c(1, 16),
-    labels = c("Not predicted", "Predicted")
+    labels = c("Not predicted at\nP(present)>0.5", "Predicted at\nP(present)>0.5")
   ) +
   coord_sf(crs = w_asia_albers) +
   labs(fill = "P(present)", x = NULL, y = NULL) +

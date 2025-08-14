@@ -196,6 +196,7 @@ present-day distribution in relation to climate and environmental
 variables. Predictions of the potential ranges of these species at key
 stages of the Pleistocene--Holocene transition could then be derived
 from these models using downsampled data from palaeoclimate simulations.
+
 The models predict significant reductions and/or shifts in species
 ranges in the terminal Pleistocene and Early Holocene compared to
 present conditions. Many species that are found throughout the region's
@@ -389,14 +390,15 @@ agricultural origins. In \emph{Man Makes Himself}, \citet{Childe1936}
 correctly located the centre of origin of European agriculture in the
 `Fertile Crescent' of West Asia (unlike for example \citet{Pumpelly1908}
 before him). This was not based on the region's prehistoric
-archaeological record, which at that point was barely known. Instead he
-was guided to the region by biogeographic work by Vavilov and
-\citet{PeakeFleure1927}; only later was this prediction validated by
-archaeological work on the Epipalaeolithic and Neolithic of Palestine
-\citep{Boyd2018}. In subsequent decades, the search for more precise
-origin zones of specific domestic plants relied on the assumption that
-``the locus of domestication of a wild plant would presumably be within
-its area of original distribution in the wild state''
+archaeological record, which at the time had only been cursorily
+explored. Instead he was guided to the region by biogeographic work by
+Vavilov and \citet{PeakeFleure1927}; only later was this prediction
+validated by archaeological work on the Epipalaeolithic and Neolithic of
+Palestine \citep{Boyd2018}. In subsequent decades, the search for more
+precise origin zones of specific domestic plants relied on the
+assumption that ``the locus of domestication of a wild plant would
+presumably be within its area of original distribution in the wild
+state''
 \citetext{\citealp{Butzer1971}; \citealp[paraphrasing][]{Helbaek1959}}
 -- and that this ``natural habitat'' has not changed significantly over
 the last 12,000 years \citep{Butzer1971}.
@@ -487,7 +489,7 @@ borrows methodologies from) ecological niche modelling but applied to
 the occurrence of archaeological sites. Here what is modelled is not
 strictly a biological niche alone, but also aspects of human geography,
 taphonomy, and archaeological visibility. These applications can be
-distinguihed from `palaeoecological niche modelling', where the object
+distinguished from `palaeoecological niche modelling', where the object
 of model remains, as in ecology, a non-human biological niche.
 
 \citet{FranklinEtAl2015} review palaeoecological niche modelling and
@@ -567,8 +569,8 @@ assume that plant-based subsistence during this period was broad,
 geographically- and temporally-varied, and reflects a gradual,
 geographically decentred, and nonlinear tranistion to greater reliance
 on cultivars (i.e.~agriculture, see Section~\ref{sec-bg}). Our starting
-point was a list of 97 taxa (Table~\ref{tbl-results-summary}) comprising
-the identifiable species observed at at least two Late
+point was a list of 66 taxa (Table~\ref{tbl-results-summary}) comprising
+the identified species observed at at least 3 Late
 Epipalaeolithic/Pre-Pottery Neolithic sites, according to our previous
 study of the regional archaeobotanical data
 \citep{ArranzOtaeguiRoe2023}. This was based on dataset collated from
@@ -585,40 +587,47 @@ settlement at least implies that they were part of the wider ecosystem
 that supported habitation there.
 
 The taxonomic identifications of archaeobotanical material given in our
-source databases were controlled to ensure consistency between sources
-and to group taxa that cannot always be reliably distinguished
+source databases were previously controlled to ensure consistency
+between sources and to remove taxa that cannot be reliably distinguished
 \citep[for details see][]{ArranzOtaeguiRoe2023}. Taxonomic names were
 then matched to the canonical form specified in the GBIF Backbone
 Taxonomy \citep{GBIFSecretariat2023} so they could be related to modern
-occurrences. The aim in both cases was to resolve taxonomic ambiguity by
-using a more inclusive taxonomic unit. For example, the model discussed
-here as \emph{Bolboschoenus} includes both archaeological occurrences of
-\emph{B. maritimus} and \emph{B. glaucus}, since these were not
-distinguished by archaeobotanists until recently
-\citep{WollstonecroftEtAl2011}, as well as modern occurrences under the
-older nomenclature \emph{Scirpus maritimus} (see
-Table~\ref{tbl-results-summary}). Domestic species meeting our inclusion
-criteria were substituted with their wild progenitor(s), where
-different.
+occurrences. Archaeologically-attested domestic species meeting our
+inclusion criteria were substituted for their wild progenitors (where
+different) when gathering occurrence data, since the domestic forms are
+now widespread and presumably uninformative of the species original
+niche.
 
 \subsection{Occurrence data}\label{sec-occ-data}
 
-Georeferenced occurrence data for West Asia was obtained from the Global
-Biodiversity Information Facility (GBIF) using via its application
-programming interface and the R package `rgbif'
-\citep{ChamberlainBoettiger2017, rgbif}. GBIF was cleaned to removed
-fossil occurrences, recorded absences, and records with missing,
-imprecise (\textgreater1 km uncertainty), or invalid coordinates.
-Although niche models have reasonable predictive power even with small
-training samples
-\citep{StockwellPeterson2002, HernandezEtAl2006, WiszEtAl2008}, we
-excluded 14 taxa with less than 50 usable occurrences, following
-recommendations for niche models generally and Random Forest-based
-models specifically \citep{StockwellPeterson2002, LuanEtAl2020}. We also
-excluded one taxon (\emph{Avena sterilis}) with over 50,000 occurrences,
-as this would have been computationally prohibitive and we were
-uncertain what accounted for such a disproportionately high number of
-records.
+\begin{verbatim}
+Rows: 1 Columns: 11
+-- Column specification --------------------------------------------------------
+Delimiter: ","
+chr  (5): key, doi, license, status, downloadLink
+dbl  (3): size, totalRecords, numberDatasets
+dttm (3): created, modified, eraseAfter
+
+i Use `spec()` to retrieve the full column specification for this data.
+i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+\end{verbatim}
+
+Georeferenced occurrence data for West Eurasia between 0 and 60° of
+latitude was obtained from the Global Biodiversity Information Facility
+(GBIF) using via and the R package `rgbif'
+\citep{ChamberlainBoettiger2017, rgbif}. The GBIF dataset
+\citep{GBIFDerivedData} excluded fossil occurrences, recorded absences,
+and records with missing or dubious coordinates. Although niche models
+have reasonable predictive power even with small training samples
+\citep{StockwellPeterson2002, HernandezEtAl2006, WiszEtAl2008}, we did
+not attempt to model 3 taxa with less than 40 usable occurrences,
+following recommendations for niche models generally and Random
+Forest-based models specifically
+\citep{StockwellPeterson2002, LuanEtAl2020}. Multiple records of the
+same taxon at the same coordinate were discarded because they do not
+impart information to the model. The resulting cleaned dataset used to
+train our niche models comprises \ensuremath{3.387196\times 10^{6}} from
+4764 constituent datasets.
 
 \begin{figure}
 
@@ -629,7 +638,7 @@ records.
 }
 
 \caption{\label{fig-occ-map}Georeferenced occurrence records from West
-Asia used to train models (N=81641}
+Asia used to train models (N=1409939}
 
 \end{figure}%
 
@@ -637,7 +646,7 @@ GBIF is currently the best available general-purpose occurrence dataset
 for the West Asia region, its coverage is uneven both geographically and
 from species to species. Figure~\ref{fig-occ-map} shows clearly that the
 Southern Levant, and Israel specifically, is significantly more densely
-sampled than other regions.
+sampled than other parts of West Asia.
 
 Random Forest is a presence--absence approach to niche modelling and
 therefore requires not just data on where a species is present, but
@@ -645,22 +654,256 @@ where it is definitely not present. However `absence' data is rarely
 available because it requires exhaustive survey. In practice, most
 applications of niche modelling are `presence-only' and, where absence
 data is required (as for Random Forest), it is supplied as a random
-background sample of `pseudo-absence' points. The purpose of this sample
-is to inform the model about the nature of the underlying environment.
-The stochastic generation process means that some `pseudo-absence'
-points will overlap or fall close to presences, so ensuring the model is
-not overly influenced by background samples is critical to its
-predictive importance \citep{ValaviEtAl2022}. Here we follow the advice
-of \citet{BarbetMassinEtAl2012} for regression-based species
-distribution models and use a large (≈10000) uniform sample of points
-from across the land area of the study region. These points are then
-weighted equally against the presences in the regression to produce a
-`balanced Random Forest' \citep{ValaviEtAl2022}.
+background sample of points.\footnote{We use a background sample that is
+  representative of the entire study area, as opposed to attempting to
+  construct a `pseudo-absence' sample. See \citet{SilleroEtAl2021} for
+  the distinction.} The purpose of this sample is to inform the model
+about the nature of the underlying environment. The stochastic
+generation process means that some of these points will overlap or fall
+close to presences, so ensuring the model is not overly influenced by
+background samples is critical to its predictive importance
+\citep{ValaviEtAl2022}. Here we follow the advice of
+\citet{BarbetMassinEtAl2012} for regression-based species distribution
+models and use a large (≈10000) uniform sample of points from across the
+land area of the study region. These points are then weighted equally
+against the presences in the regression to produce a `balanced Random
+Forest' \citep{ValaviEtAl2022}.
 
 \subsection{Predictor data}\label{sec-predictors}
 
 We modelled the occurrence of species as a function of 24 geospatial
 predictor variables. These included:
+
+\begin{verbatim}
+bio_1, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+\end{verbatim}
+
+\begin{verbatim}
+Warning in parse_netcdf_meta(meta_data, get_names(x)): NAs introduced by
+coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_10, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_11, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_12, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_13, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_14, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_15, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_16, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_17, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_18, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_19, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_2, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_3, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_4, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_5, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_6, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_7, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_8, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
+
+\begin{verbatim}
+bio_9, 
+\end{verbatim}
+
+\begin{verbatim}
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
+Vertical dimension.
+Warning in CPL_read_gdal(as.character(x), as.character(options),
+as.character(driver), : NAs introduced by coercion
+\end{verbatim}
 
 \begin{itemize}
 \tightlist
@@ -683,7 +926,7 @@ predictor variables. These included:
   wetness index (TWI), which serves as a proxy for soil moisture and is
   particularly important in modelling arid environments
   \citep{KopeckyCizkova2010, CamposEtAl2016, DiVirgilioEtAl2018}. All
-  three were derived from the SRTM15+ digital elevation model using
+  three were derived from the SRTM30+ digital elevation model using
   algorithms from WhiteboxTools \citep{Lindsay2016}.
 \end{itemize}
 
@@ -717,6 +960,16 @@ data was left in its native projection and resolution. For hindcast
 palaeodistributions, it was transformed to common equal-area projection
 and resolution of 5 km.
 
+\begin{verbatim}
+Warning: There were 57 warnings in `mutate()`.
+The first warning was:
+i In argument: `occ = map(occ, bind_extract, st_as_stars(hack(climate,
+  "period", "cur")))`.
+Caused by warning in `CPL_get_metadata()`:
+! GDAL Message 1: dimension #0 (period) is not a Time or Vertical dimension.
+i Run `dplyr::last_dplyr_warnings()` to see the 56 remaining warnings.
+\end{verbatim}
+
 \subsection{Random Forest}\label{random-forest}
 
 Ecological niche modelling is a classification problem that can be
@@ -749,13 +1002,13 @@ balanced training (¾) and test (¼) partitions.
 
 \section{Model assessment}\label{model-assessment}
 
-We trained Random Forest models for 82 taxa using contemporary
+We trained Random Forest models for 63 taxa using contemporary
 occurrence data from GBIF, a random sample of background points, and the
 predictor variables described in Section~\ref{sec-predictors}.
 Substituting the ``current'' climate predictors for those derived from
 palaeoclimatic simulations \citep{BrownEtAl2018}, we could then generate
 hindcast predictions for reconstructed past environments in 4 key
-climate periods -- a total of 328 modelled palaeodistributions.
+climate periods -- a total of 252 modelled palaeodistributions.
 Predicted distributions for individual taxa are presented in the
 appendix and accompanying material.
 
@@ -775,24 +1028,31 @@ number of training occurrences}
 We assessed the predictive performance of the fitted niche models in the
 contemporary environment based on the reserved test partition
 Table~\ref{tbl-results-summary}. Model accuracy (proportion of correctly
-classified presence and background samples) ranged between 73\% and
-99\%, with an average of 93\%. Sensitivity (proportion of correctly
-classified presence samples) ranged between 79\% and 100\%, with an
-average of 94\%. The area under the models' receiver operating
-characteristic curves (ROC-AUC) was on average 0.978±0.061 Model
+classified presence and background samples) ranged between 92\% and
+100\%, with an average of 97\%. Sensitivity (proportion of correctly
+classified presence samples) ranged between 12\% and 100\%, with an
+average of 82\%. The area under the models' receiver operating
+characteristic curves (ROC-AUC) was on average 0.987±0.018 Model
 sensitivity is loosely correlated with the number of occurrences
 available for training (Figure~\ref{fig-model-sensitivity-vs-n_occ}),
 with the worst-performing models all having less than 300 recorded
-occurrences: \emph{Asphodelus aestivus}, \emph{Triticum turgidum
-dicoccum}, \emph{Zygophyllum fabago}, and \emph{Stipa dregeana}. Test
-metrics and ROC curves for the individual models are included in the
-appendix.
+occurrences: \emph{Lathyrus sativus}, \emph{Lepidium perfoliatum},
+\emph{Triticum aestivum}, \emph{Bolboschoenus glaucus}, \emph{Gypsophila
+vaccaria}, \emph{Euclidium syriacum}, \emph{Gypsophila elegans},
+\emph{Citrullus colocynthis}, \emph{Triticum monococcum}, \emph{Triticum
+turgidum}, \emph{Aegilops crassa}, \emph{Secale strictum}, \emph{Cicer
+reticulatum}, \emph{Medicago astroites}, \emph{Triticum durum},
+\emph{Gypsophila pilosa}, \emph{Arnebia decumbens}, \emph{Salvia
+absconditiflora}, \emph{Suaeda fruticosa}, \emph{Buglossoides
+tenuiflora}, \emph{Lathyrus oleraceus}, \emph{Vitis sylvestris}, and
+\emph{Vicia orientalis}. Test metrics and ROC curves for the individual
+models are included in the appendix.
 
 The ability of the hindcast models to predict the occurrence of specific
 species at archaeological sites is worse, with 10\% of presences in
 archaeobotanical assemblages successfully predicted. Model sensitivity
 (proportion of corrected predicted presenses) in relation to the
-archaeological data is on average 0.06±0.13
+archaeological data is on average 0.07±0.15
 Table~\ref{tbl-results-summary}. A full assessment of the hindcasting
 performance of the individual models can be found in the appendix.
 
@@ -812,126 +1072,94 @@ performance of the individual models can be found in the appendix.
 \cmidrule(lr){2-3} \cmidrule(lr){4-7}
 Taxon & Arch. & Cur. & Acc. & ROC-AUC & Sens. & Sens. (arch.) \\ 
 \midrule\addlinespace[2.5pt]
-{\itshape Adonis dentata} & 2 & 715 & 0.99 & 1.00 & 0.98 & 0.00 \\ 
-{\itshape Aegilops crassa} & 4 & 143 & 0.82 & 0.94 & 0.86 & 0.00 \\ 
-{\itshape Aegilops speltoides} & — & 701 & 0.92 & 0.98 & 0.95 & — \\ 
-{\itshape Aegilops tauschii} & — & 725 & 0.89 & 0.98 & 0.94 & — \\ 
-{\itshape Aizoanthemopsis hispanica}\textsuperscript{\textit{1}} & 4 & 515 & 0.98 & 1.00 & 0.96 & 0.00 \\ 
-{\itshape Ammi majus} & 4 & 900 & 0.98 & 0.99 & 0.97 & 0.00 \\ 
-{\itshape Androsace maxima} & 17 & 231 & 0.88 & 0.95 & 0.88 & 0.12 \\ 
-{\itshape Arenaria serpyllifolia} & 3 & 139 & 0.84 & 0.95 & 0.91 & 0.00 \\ 
-{\itshape Arnebia decumbens} & 21 & 324 & 0.95 & 0.95 & 0.89 & 0.00 \\ 
-{\itshape Arnebia linearifolia} & 13 & 225 & 0.98 & 0.99 & 0.94 & 0.00 \\ 
-{\itshape Asphodelus aestivus} & 2 & 76 & 0.97 & 0.97 & 0.83 & 0.00 \\ 
-{\itshape Atriplex prostrata} & 4 & 266 & 0.98 & 1.00 & 0.94 & 0.00 \\ 
-{\itshape Avena fatua} & 2 & 579 & 0.86 & 0.93 & 0.86 & 0.00 \\ 
-{\itshape Avena sterilis} & 5 & 53244\textsuperscript{\textit{2}} & — & — & — & — \\ 
-{\itshape Bassia arabica} & 4 & 264 & 0.98 & 1.00 & 1.00 & 0.00 \\ 
-{\itshape Bassia prostrata} & 2 & 46\textsuperscript{\textit{2}} & — & — & — & — \\ 
-{\itshape Bolboschoenus glaucus} & 5 & 27\textsuperscript{\textit{2}} & — & — & — & — \\ 
-{\itshape Bolboschoenus maritimus}\textsuperscript{\textit{3}} & 31 & 1040 & 0.98 & 0.99 & 0.97 & 0.03 \\ 
-{\itshape Brachypodium distachyon} & 5 & 2270 & 0.98 & 0.99 & 0.98 & 0.00 \\ 
-{\itshape Bromus sterilis} & 3 & 759 & 0.97 & 0.99 & 0.95 & 0.00 \\ 
-{\itshape Buglossoides arvensis} & 23 & 260 & 0.87 & 0.97 & 0.95 & 0.09 \\ 
-{\itshape Buglossoides tenuiflora} & 26 & 252 & 0.96 & 0.99 & 0.95 & 0.08 \\ 
-{\itshape Camphorosma monspeliaca} & 2 & 38\textsuperscript{\textit{2}} & — & — & — & — \\ 
-{\itshape Capparis spinosa} & 4 & 4938 & 0.97 & 0.99 & 0.97 & 0.00 \\ 
-{\itshape Capsella bursa-pastoris} & 2 & 1329 & 0.94 & 0.99 & 0.94 & 0.00 \\ 
-{\itshape Carex divisa} & 9 & 336 & 0.95 & 0.98 & 0.94 & 0.00 \\ 
-{\itshape Celtis tournefortii} & 2 & 14\textsuperscript{\textit{2}} & — & — & — & — \\ 
-{\itshape Ceratonia siliqua} & 2 & 5072 & 0.98 & 1.00 & 0.99 & 0.50 \\ 
-{\itshape Chenopodium album} & 5 & 480 & 0.93 & 0.98 & 0.94 & 0.00 \\ 
-{\itshape Cicer reticulatum}\textsuperscript{\textit{4}} & 3 & 52 & 0.97 & 1.00 & 1.00 & 0.00 \\ 
-{\itshape Citrullus colocynthis} & 4 & 475 & 0.89 & 0.96 & 0.90 & 0.00 \\ 
-{\itshape Crithopsis delileana} & 3 & 406 & 0.98 & 1.00 & 0.97 & 0.00 \\ 
-{\itshape Erodium ciconium} & 2 & 359 & 0.92 & 0.99 & 0.94 & 0.00 \\ 
-{\itshape Euclidium syriacum} & 3 & 32\textsuperscript{\textit{2}} & — & — & — & — \\ 
-{\itshape Ficus carica} & 8 & 3495 & 0.94 & 0.99 & 0.95 & 0.25 \\ 
-{\itshape Fumaria densiflora} & 4 & 413 & 0.97 & 0.99 & 0.95 & 0.00 \\ 
-{\itshape Gypsophila elegans} & 3 & 76 & 0.92 & 0.99 & 1.00 & 0.00 \\ 
-{\itshape Gypsophila pilosa} & 5 & 173 & 0.93 & 0.97 & 0.90 & 0.00 \\ 
-{\itshape Gypsophila vaccaria}\textsuperscript{\textit{5}} & 8 & 511 & 0.96 & 0.99 & 0.93 & 0.00 \\ 
-{\itshape Halothamnus hierochunticus} & 2 & 57 & 0.98 & 1.00 & 1.00 & 0.00 \\ 
-{\itshape Helianthemum ledifolium} & 2 & 697 & 0.97 & 0.99 & 0.97 & 0.00 \\ 
-{\itshape Helianthemum salicifolium} & 2 & 1400 & 0.97 & 0.99 & 0.95 & 0.00 \\ 
-{\itshape Henrardia pubescens} & 3 & 1\textsuperscript{\textit{2}} & — & — & — & — \\ 
-{\itshape Hordeum bulbosum} & 4 & 2850 & 0.97 & 0.99 & 0.96 & 0.00 \\ 
-{\itshape Hordeum murinum} & 5 & 1949 & 0.94 & 0.98 & 0.93 & 0.00 \\ 
-{\itshape Hordeum spontaneum}\textsuperscript{\textit{6}} & 110 & 4656 & 0.96 & 0.99 & 0.97 & 0.20 \\ 
-{\itshape Juglans regia} & 2 & 821 & 0.85 & 0.96 & 0.95 & 0.00 \\ 
-{\itshape Krascheninnikovia ceratoides} & 2 & 42\textsuperscript{\textit{2}} & — & — & — & — \\ 
-{\itshape Lathyrus aphaca} & 4 & 2079 & 0.94 & 0.99 & 0.97 & 0.00 \\ 
-{\itshape Lathyrus cicera} & 2 & 591 & 0.89 & 0.98 & 0.94 & 0.50 \\ 
-{\itshape Lathyrus oleraceus}\textsuperscript{\textit{7}} & 8 & 1580 & 0.89 & 0.97 & 0.93 & 0.12 \\ 
-{\itshape Lathyrus sativus} & 4 & 196 & 0.79 & 0.95 & 0.92 & 0.00 \\ 
-{\itshape Lepidium perfoliatum} & 3 & 83 & 0.77 & 0.94 & 0.91 & 0.00 \\ 
-{\itshape Lepidium ruderale} & 2 & 37\textsuperscript{\textit{2}} & — & — & — & — \\ 
-{\itshape Linum bienne}\textsuperscript{\textit{8}} & 14 & 376 & 0.96 & 1.00 & 0.99 & 0.00 \\ 
-{\itshape Lolium rigidum} & 5 & 2529 & 0.98 & 1.00 & 0.98 & 0.00 \\ 
-{\itshape Lolium temulentum} & 3 & 159 & 0.94 & 0.96 & 0.90 & 0.00 \\ 
-{\itshape Medicago astroites}\textsuperscript{\textit{9}} & 15 & 143 & 0.89 & 0.96 & 0.88 & 0.33 \\ 
-{\itshape Medicago minima} & 2 & 1379 & 0.92 & 0.99 & 0.97 & 0.50 \\ 
-{\itshape Medicago radiata} & 20 & 799 & 0.93 & 0.99 & 0.98 & 0.20 \\ 
-{\itshape Minuartia rubella} & 2 & 0\textsuperscript{\textit{2}} & — & — & — & — \\ 
-{\itshape Moltkia angustifolia} & 2 & 11\textsuperscript{\textit{2}} & — & — & — & — \\ 
-{\itshape Moltkia coerulea} & 2 & 71 & 0.86 & 0.97 & 0.88 & 0.00 \\ 
-{\itshape Neotorularia torulosa}\textsuperscript{\textit{10}} & 2 & 539 & 0.98 & 0.98 & 0.93 & 0.00 \\ 
-{\itshape Peganum harmala} & 2 & 917 & 0.92 & 0.97 & 0.93 & 0.00 \\ 
-{\itshape Phalaris paradoxa} & 3 & 1191 & 0.99 & 1.00 & 0.98 & 0.00 \\ 
-{\itshape Phragmites australis} & 4 & 3412 & 0.97 & 0.99 & 0.95 & 0.00 \\ 
-{\itshape Pistacia atlantica} & 6 & 1874 & 0.98 & 1.00 & 0.97 & 0.17 \\ 
-{\itshape Pistacia terebinthus}\textsuperscript{\textit{11}} & 2 & 3419 & 0.98 & 1.00 & 0.98 & 0.50 \\ 
-{\itshape Plantago lagopus} & 2 & 1730 & 0.98 & 1.00 & 0.99 & 0.00 \\ 
-{\itshape Poa bulbosa} & 5 & 1880 & 0.95 & 0.98 & 0.92 & 0.00 \\ 
-{\itshape Polygonum arenarium arenarium}\textsuperscript{\textit{12}} & 7 & 5\textsuperscript{\textit{2}} & — & — & — & — \\ 
-{\itshape Polygonum corrigioloides} & 6 & 4\textsuperscript{\textit{2}} & — & — & — & — \\ 
-{\itshape Prosopis farcta} & 5 & 2263 & 0.98 & 0.99 & 0.96 & 0.00 \\ 
-{\itshape Quercus ithaburensis} & 2 & 2216 & 0.99 & 1.00 & 0.97 & 0.00 \\ 
-{\itshape Rumex pulcher} & 6 & 1394 & 0.98 & 1.00 & 0.98 & 0.00 \\ 
-{\itshape Salsola kali} & 6 & 537 & 0.98 & 1.00 & 1.00 & 0.00 \\ 
-{\itshape Salvia absconditiflora}\textsuperscript{\textit{13}} & 3 & 105 & 0.94 & 0.98 & 0.92 & 0.00 \\ 
-{\itshape Secale cereale} & 7 & 268 & 0.81 & 0.94 & 0.90 & 0.00 \\ 
-{\itshape Secale strictum}\textsuperscript{\textit{14}} & 3 & 124 & 0.76 & 0.94 & 0.97 & 0.00 \\ 
-{\itshape Stipa dregeana} & 2 & 79 & 0.95 & 0.96 & 0.85 & 0.00 \\ 
-{\itshape Suaeda fruticosa} & 3 & 238 & 0.99 & 1.00 & 0.98 & 0.00 \\ 
-{\itshape Taeniatherum caput-medusae} & 5 & 262 & 0.81 & 0.96 & 0.95 & 0.00 \\ 
-{\itshape Tribulus terrestris} & 2 & 1091 & 0.90 & 0.96 & 0.89 & 0.00 \\ 
-{\itshape Triticum aestivum compactum} & 2 & 147 & 0.82 & 0.96 & 0.92 & 0.00 \\ 
-{\itshape Triticum aestivum spelta}\textsuperscript{\textit{15}} & 2 & 16\textsuperscript{\textit{2}} & — & — & — & — \\ 
-{\itshape Triticum durum} & 3 & 95 & 0.91 & 0.99 & 1.00 & 0.00 \\ 
-{\itshape Triticum monococcum aegilopoides}\textsuperscript{\textit{16}} & 62 & 1176 & 0.88 & 0.99 & 0.99 & 0.08 \\ 
-{\itshape Triticum turgidum dicoccum}\textsuperscript{\textit{17}} & 60 & 60 & 0.73 & 0.86 & 0.79 & 0.18 \\ 
-{\itshape Triticum urartu} & — & 424 & 0.93 & 0.99 & 0.95 & — \\ 
-{\itshape Verbena officinalis} & 3 & 934 & 0.96 & 0.99 & 0.97 & 0.00 \\ 
-{\itshape Vicia ervilia} & 26 & 688 & 0.87 & 0.96 & 0.94 & 0.12 \\ 
-{\itshape Vicia faba} & 7 & 1597 & 0.90 & 0.98 & 0.94 & 0.43 \\ 
-{\itshape Vicia narbonensis} & 3 & 1451 & 0.93 & 0.99 & 0.98 & 0.33 \\ 
-{\itshape Vicia orientalis}\textsuperscript{\textit{18}} & 16 & 353 & 0.84 & 0.95 & 0.92 & 0.19 \\ 
-{\itshape Vitis sylvestris} & 3 & 12\textsuperscript{\textit{2}} & — & — & — & — \\ 
-{\itshape Zygophyllum fabago} & 3 & 263 & 0.89 & 0.93 & 0.81 & 0.00 \\ 
+{\itshape Aegilops crassa} & 4 & 223 & 0.98 & 0.98 & 0.43 & 0.00 \\ 
+{\itshape Aizoanthemopsis hispanica}\textsuperscript{\textit{1}} & 4 & 762 & 0.99 & 1.00 & 0.88 & 0.50 \\ 
+{\itshape Ammi majus} & 4 & 10311 & 0.97 & 0.99 & 0.98 & 0.00 \\ 
+{\itshape Androsace maxima} & 17 & 4946 & 0.94 & 0.98 & 0.91 & 0.06 \\ 
+{\itshape Arenaria serpyllifolia} & 3 & 101612 & 0.98 & 0.98 & 1.00 & 0.00 \\ 
+{\itshape Arnebia decumbens} & 21 & 616 & 0.97 & 0.97 & 0.59 & 0.05 \\ 
+{\itshape Arnebia linearifolia} & 13 & 239 & 1.00 & 0.99 & 0.89 & 0.00 \\ 
+{\itshape Atriplex prostrata} & 4 & 80181 & 0.98 & 0.99 & 1.00 & 0.00 \\ 
+{\itshape Avena sterilis} & 5 & 15906 & 0.96 & 0.99 & 0.99 & 0.40 \\ 
+{\itshape Bassia arabica} & 4 & 262 & 1.00 & 1.00 & 0.95 & 0.00 \\ 
+{\itshape Bolboschoenus glaucus} & 5 & 418 & 0.98 & 0.97 & 0.53 & 0.00 \\ 
+{\itshape Bolboschoenus maritimus}\textsuperscript{\textit{2}} & 31 & 53809 & 0.98 & 1.00 & 0.99 & 0.00 \\ 
+{\itshape Brachypodium distachyon} & 5 & 13800 & 0.98 & 1.00 & 0.99 & 0.20 \\ 
+{\itshape Bromus sterilis} & 3 & 89764 & 0.99 & 0.99 & 1.00 & 0.00 \\ 
+{\itshape Buglossoides arvensis} & 23 & 23004 & 0.95 & 0.98 & 0.98 & 0.09 \\ 
+{\itshape Buglossoides tenuiflora} & 26 & 399 & 0.99 & 0.99 & 0.71 & 0.04 \\ 
+{\itshape Capparis spinosa} & 4 & 8617 & 0.97 & 0.99 & 0.96 & 0.00 \\ 
+{\itshape Carex divisa} & 9 & 7400 & 0.97 & 0.99 & 0.98 & 0.00 \\ 
+{\itshape Chenopodium album} & 5 & 184403 & 0.99 & 0.98 & 1.00 & 0.00 \\ 
+{\itshape Cicer reticulatum}\textsuperscript{\textit{3}} & 3 & 52 & 1.00 & 1.00 & 0.69 & 0.00 \\ 
+{\itshape Citrullus colocynthis} & 4 & 1823 & 0.94 & 0.95 & 0.69 & 0.00 \\ 
+{\itshape Crithopsis delileana} & 3 & 430 & 1.00 & 1.00 & 0.93 & 0.00 \\ 
+{\itshape Euclidium syriacum} & 3 & 338 & 0.98 & 0.97 & 0.27 & 0.00 \\ 
+{\itshape Ficus carica} & 8 & 64424 & 0.98 & 0.99 & 0.99 & 0.38 \\ 
+{\itshape Fumaria densiflora} & 4 & 3704 & 0.96 & 0.99 & 0.94 & 0.00 \\ 
+{\itshape Gypsophila elegans} & 3 & 1603 & 0.95 & 0.98 & 0.81 & 0.00 \\ 
+{\itshape Gypsophila pilosa} & 5 & 348 & 0.99 & 0.99 & 0.67 & 0.00 \\ 
+{\itshape Gypsophila vaccaria}\textsuperscript{\textit{4}} & 8 & 1177 & 0.95 & 0.98 & 0.65 & 0.00 \\ 
+{\itshape Henrardia pubescens} & 3 & 1\textsuperscript{\textit{5}} & — & — & — & — \\ 
+{\itshape Hordeum bulbosum} & 4 & 4134 & 0.97 & 1.00 & 0.95 & 0.00 \\ 
+{\itshape Hordeum murinum} & 5 & 74770 & 0.98 & 0.99 & 1.00 & 0.00 \\ 
+{\itshape Hordeum spontaneum}\textsuperscript{\textit{6}} & 76 & 3098 & 0.99 & 1.00 & 0.97 & 0.20 \\ 
+{\itshape Lathyrus aphaca} & 4 & 18652 & 0.96 & 0.99 & 0.98 & 0.00 \\ 
+{\itshape Lathyrus oleraceus}\textsuperscript{\textit{7}} & 8 & 819 & 0.98 & 0.99 & 0.80 & 0.00 \\ 
+{\itshape Lathyrus sativus} & 4 & 2120 & 0.92 & 0.96 & 0.75 & 0.00 \\ 
+{\itshape Lepidium perfoliatum} & 3 & 2764 & 0.94 & 0.98 & 0.84 & 0.00 \\ 
+{\itshape Linum bienne}\textsuperscript{\textit{8}} & 14 & 12824 & 0.98 & 0.99 & 0.99 & 0.07 \\ 
+{\itshape Lolium rigidum} & 5 & 10620 & 0.97 & 0.99 & 0.98 & 0.00 \\ 
+{\itshape Lolium temulentum} & 3 & 4463 & 0.94 & 0.98 & 0.93 & 0.00 \\ 
+{\itshape Medicago astroites}\textsuperscript{\textit{9}} & 15 & 104 & 1.00 & 0.99 & 0.64 & 0.00 \\ 
+{\itshape Medicago radiata} & 20 & 834 & 0.99 & 0.99 & 0.91 & 0.30 \\ 
+{\itshape Phalaris paradoxa} & 3 & 3287 & 0.97 & 0.99 & 0.94 & 0.00 \\ 
+{\itshape Phragmites australis} & 4 & 373041 & 0.99 & 0.99 & 1.00 & 0.00 \\ 
+{\itshape Pistacia atlantica} & 6 & 2419 & 0.99 & 1.00 & 0.94 & 0.33 \\ 
+{\itshape Poa bulbosa} & 5 & 30769 & 0.96 & 0.98 & 0.99 & 0.20 \\ 
+{\itshape Polygonum arenarium}\textsuperscript{\textit{10}} & 7 & 25\textsuperscript{\textit{5}} & — & — & — & — \\ 
+{\itshape Polygonum corrigioloides} & 6 & 12\textsuperscript{\textit{5}} & — & — & — & — \\ 
+{\itshape Prosopis farcta} & 5 & 2512 & 0.99 & 1.00 & 0.96 & 0.60 \\ 
+{\itshape Rumex pulcher} & 6 & 17606 & 0.97 & 0.99 & 0.99 & 0.00 \\ 
+{\itshape Salsola kali} & 6 & 14699 & 0.98 & 1.00 & 0.99 & 0.00 \\ 
+{\itshape Salvia absconditiflora}\textsuperscript{\textit{11}} & 3 & 128 & 0.99 & 1.00 & 0.65 & 0.00 \\ 
+{\itshape Secale cereale} & 4 & 14803 & 0.95 & 0.98 & 0.97 & 0.00 \\ 
+{\itshape Secale strictum}\textsuperscript{\textit{12}} & 3 & 162 & 0.99 & 0.99 & 0.50 & 0.00 \\ 
+{\itshape Suaeda fruticosa} & 3 & 577 & 0.99 & 1.00 & 0.79 & 0.00 \\ 
+{\itshape Taeniatherum caput-medusae} & 4 & 1969 & 0.96 & 0.99 & 0.89 & 0.00 \\ 
+{\itshape Triticum aestivum}\textsuperscript{\textit{13}} & 4 & 217 & 0.99 & 0.98 & 0.59 & 0.00 \\ 
+{\itshape Triticum durum} & 3 & 64 & 1.00 & 0.99 & 0.50 & 0.00 \\ 
+{\itshape Triticum monococcum}\textsuperscript{\textit{14}} & 47 & 870 & 0.98 & 0.99 & 0.80 & 0.15 \\ 
+{\itshape Triticum turgidum}\textsuperscript{\textit{15}} & 53 & 345 & 0.97 & 0.93 & 0.22 & 0.00 \\ 
+{\itshape Verbena officinalis} & 3 & 89654 & 0.99 & 0.99 & 1.00 & 0.00 \\ 
+{\itshape Vicia ervilia} & 26 & 1924 & 0.95 & 0.98 & 0.86 & 0.35 \\ 
+{\itshape Vicia faba} & 7 & 42636 & 0.97 & 0.99 & 0.99 & 0.43 \\ 
+{\itshape Vicia narbonensis}\textsuperscript{\textit{16}} & 3 & 2826 & 0.95 & 0.99 & 0.89 & 0.33 \\ 
+{\itshape Vicia orientalis}\textsuperscript{\textit{17}} & 16 & 41 & 1.00 & 0.95 & 0.12 & 0.00 \\ 
+{\itshape Vitis sylvestris} & 3 & 63 & 1.00 & 0.99 & 0.36 & 0.00 \\ 
+{\itshape Zygophyllum fabago} & 3 & 3554 & 0.97 & 0.99 & 0.91 & 0.00 \\ 
 \bottomrule
 
 \end{longtable}
 
 \begin{minipage}{\linewidth}
 \textsuperscript{\textit{1}}Including \emph{Aizoon hispanicum}\\
-\textsuperscript{\textit{2}}Excluded from modelling due to sample size\\
-\textsuperscript{\textit{3}}Including \emph{Scirpus maritimus}\\
-\textsuperscript{\textit{4}}Including \emph{Cicer arietinum}\\
-\textsuperscript{\textit{5}}Including \emph{Vaccaria pyramidata}\\
+\textsuperscript{\textit{2}}Including \emph{Scirpus maritimus}\\
+\textsuperscript{\textit{3}}Including \emph{Cicer arietinum}\\
+\textsuperscript{\textit{4}}Including \emph{Vaccaria pyramidata}\\
+\textsuperscript{\textit{5}}Excluded from modelling due to sample size\\
 \textsuperscript{\textit{6}}Including \emph{Hordeum vulgare}\\
 \textsuperscript{\textit{7}}Including \emph{Pisum sativum} and \emph{Pisum elatius}\\
 \textsuperscript{\textit{8}}Including \emph{Linum usitatissimum}\\
 \textsuperscript{\textit{9}}Including \emph{Trigonella astroites}\\
-\textsuperscript{\textit{10}}Including \emph{Torularia torulosa}\\
-\textsuperscript{\textit{11}}Including \emph{Pistacia palaestina}\\
-\textsuperscript{\textit{12}}Including \emph{Polygonum venantianum}\\
-\textsuperscript{\textit{13}}Including \emph{Salvia cryptantha}\\
-\textsuperscript{\textit{14}}Including \emph{Secale montanum}\\
-\textsuperscript{\textit{15}}Including \emph{Triticum spelta}\\
-\textsuperscript{\textit{16}}Including \emph{Triticum monococcum} and \emph{Triticum boeoticum}\\
-\textsuperscript{\textit{17}}Including \emph{Triticum aestivum}, \emph{Triticum dicoccum}, and \emph{Triticum dicoccoides}\\
-\textsuperscript{\textit{18}}Including \emph{Lens culinaris}\\
+\textsuperscript{\textit{10}}Including \emph{Polygonum venantianum}\\
+\textsuperscript{\textit{11}}Including \emph{Salvia cryptantha}\\
+\textsuperscript{\textit{12}}Including \emph{Secale montanum}\\
+\textsuperscript{\textit{13}}Including \emph{Triticum spelta} and \emph{Triticum aestivocompactum}\\
+\textsuperscript{\textit{14}}Including \emph{Triticum boeoticum}\\
+\textsuperscript{\textit{15}}Including \emph{Triticum aestivum}, \emph{Triticum dicoccum}, and \emph{Triticum dicoccoides}\\
+\textsuperscript{\textit{16}}Including \emph{Vicia narbonense}\\
+\textsuperscript{\textit{17}}Including \emph{Lens culinaris} and \emph{Lens orientalis}\\
 \end{minipage}
 \endgroup
 
@@ -954,22 +1182,23 @@ ranges by period. Dashed lines indicate the median range.}
 \end{figure}%
 
 Our reconstructed palaeodistributions (shown in full in the appendix)
-indicate that the majority of species have experienced a significant
-reduction and/or shift in their ranges since the Early Holocene. 75 of
-82 species have reduced ranges; 66 of more than 10\% or more. Though the
-magnitude of the change in range size from prehistory to the present
-likely reflects a degree of overfitting in the model (discussed further
-in Section~\ref{sec-discuss-hindcasting}), fluctuations in modelled
-range size between the Bølling-Allerød (14.7--12.9 ka), Younger Dryas
-(12.9--11.7 ka), and Early Holocene (11.7--8.3 ka) are more directly
-comparable (Figure~\ref{fig-pred-range-density}). The average range of
-modelled species was 16\% in the Early Holocene compared to the
-Bølling--Allerød, and 25\% during the Younger Dryas (i.e.~ranges
-recovered slightly between the Younger Dryas and Early Holocene). This
-perhaps indicates that although this period is considered one of
-climatatic amelioration globally \citep{JonesEtAl2019}, the colder
-conditions of the Pleistocene may have supported more extensive
-plant-based economies in West Asia specifically.
+indicate that the majority of species had significantly different
+geographic ranges in the Late Pleistocene/Early Holocene compared today.
+55 of 63 species are predicted reduced ranges in the past; 54 of more
+than 10\% or more. Though the magnitude of the change in range size from
+prehistory to the present likely reflects a degree of overfitting in the
+model (discussed further in Section~\ref{sec-discuss-hindcasting}),
+fluctuations in modelled range size between the Bølling-Allerød
+(14.7--12.9 ka), Younger Dryas (12.9--11.7 ka), and Early Holocene
+(11.7--8.3 ka) are more directly comparable
+(Figure~\ref{fig-pred-range-density}). The average range of modelled
+species was 31\% in the Early Holocene compared to the Bølling--Allerød,
+and 28\% during the Younger Dryas (i.e.~ranges recovered slightly
+between the Younger Dryas and Early Holocene). This perhaps indicates
+that although this period is considered one of climatatic amelioration
+globally \citep{JonesEtAl2019}, the colder conditions of the Pleistocene
+may have supported more extensive plant-based economies in West Asia
+specifically.
 
 \begin{figure}
 
@@ -1006,7 +1235,7 @@ of this region as developing early intensive foraging economies
 of agriculture \citep{Zeder2011a}. Within the Levant, many species show
 moderate reductions in ranges over the Pleistocene/Holocence boundary,
 retreating from the Badia/transjordan region (e.g.~barley, fig.
-Figure~\ref{fig-palaeodist-barely-levant}).
+\textbf{?@fig-palaeodist-barely-levant}).
 
 Loss of the Northern Mesopotamia--Anatolia region from the predicted
 ranges of crop progenitors is interesting in light of the `golden
@@ -1083,13 +1312,12 @@ exception is the wild ancestor of chickpea (\emph{Cicer reticulatum}),
 which is predicted to have a distribution centered on Northern
 Mesopotamia but encompassing much of the the `hilly flanks' (except the
 southern Levant, Figure~\ref{fig-palaeodist-chickpea-rye}). Another is
-rye (\emph{Secale cereale}), which is inferred to be primarily Western
-Anatolian (Figure~\ref{fig-palaeodist-chickpea-rye}). This is perhaps
-relevant to rye's unusual domestication history, as a crop of West Asian
-origin that was intensively exploited
-\citep{HillmanEtAl2001, DoucheWillcox2018} but apparently not first
-cultivated until much later than the `founder crops', in Europe
-\citep{SchreiberEtAl2021}.
+rye (\emph{Secale cereale}), which is inferred to be primarily Anatolian
+(Figure~\ref{fig-palaeodist-chickpea-rye}). This is perhaps relevant to
+rye's unusual domestication history, as a crop of West Asian origin that
+was intensively exploited \citep{HillmanEtAl2001, DoucheWillcox2018} but
+apparently not first cultivated until much later than the `founder
+crops', in Europe \citep{SchreiberEtAl2021}.
 
 \begin{figure}
 
@@ -1117,33 +1345,20 @@ Mediterranean coast (and North Africa, in the case of pistachio). This
 is despite the fact that they are well-attested in the archaeotanical
 record from across West Asia.
 
-\begin{figure}
-
-\centering{
-
-\pandocbounded{\includegraphics[keepaspectratio]{paper_files/figure-pdf/fig-palaeodist-barely-levant-1.pdf}}
-
-}
-
-\caption{\label{fig-palaeodist-barely-levant}Predicted
-palaeodistribution of wild barleys in the Levant}
-
-\end{figure}%
-
 Wild barley (\emph{Hordeum spontaneum}) its relatives show a contraction
 of their predicted ranges from the Pleistocene to the Holocene,
 concurrent with it being brought into cultivation
-(Figure~\ref{fig-palaeodist-barely-levant}). It also sees a marked
-decline in the archaeobotanical record from the Early PPNA/Early PPNB
-(where it was amongst the most common taxa) to the Late PPNB and Late
-Neolithic \citep{ArranzOtaeguiRoe2023}. Pistachio (\emph{Pistacia
-atlantica}) shows similar trends, but it is less certain that this
-species was managed in the Neolithic. Conversely, the various wild wheat
-species native to West Asia show almost no response to
-Pleistocene/Holocene climate change, even within the Levant, and in the
-archaeobotanical record wheat displays the opposite trend to barley and
-pistachio -- becoming gradually more abundant through the course of the
-Neolithic and dominant by its end \citep{ArranzOtaeguiRoe2023}.
+(\textbf{?@fig-palaeodist-barely-levant}). It also sees a marked decline
+in the archaeobotanical record from the Early PPNA/Early PPNB (where it
+was amongst the most common taxa) to the Late PPNB and Late Neolithic
+\citep{ArranzOtaeguiRoe2023}. Pistachio (\emph{Pistacia atlantica})
+shows similar trends, but it is less certain that this species was
+managed in the Neolithic. Conversely, the various wild wheat species
+native to West Asia show almost no response to Pleistocene/Holocene
+climate change, even within the Levant, and in the archaeobotanical
+record wheat displays the opposite trend to barley and pistachio --
+becoming gradually more abundant through the course of the Neolithic and
+dominant by its end \citep{ArranzOtaeguiRoe2023}.
 
 \begin{figure}
 
@@ -1223,7 +1438,7 @@ datasets, would help disentangle these potential explanations.
 \section{Conclusion}\label{conclusion}
 
 We present the first continuous, spatially explicit models of the
-palaeodistributions of 82 plant species found regularly in association
+palaeodistributions of 63 plant species found regularly in association
 with Late Epipalaeolithic and Early Neolithic sites in West Asia. This
 deductive approach---modelling the niche of a species based on its
 occurrence in relation to environmental factors today, and using this
@@ -1240,7 +1455,7 @@ which are plausible and consistent with broad-scale patterns in the
 archaeological record. Results with regard to specific
 archaeologically-attested species are not as promising, but this also
 reflects the incomplete and coarsely temporally-resolved nature of the
-archaeobotanical verification dataset. Discrepencies between the
+archaeobotanical verification dataset. Discrepancies between the
 modelled distribution, whether on the broad scale (e.g.~the restricted
 geographic range of most species compared to their attestation in the
 archaeological record), or relating to specific species (i.e.~false
@@ -1268,6 +1483,9 @@ The data and R code used to produced is archived with Zenodo at
 \url{https://doi.org/10.5281/zenodo.14629984}
 
 \section{Acknowledgements}\label{acknowledgements}
+
+We are grateful to Alex Weide and the second, anonymous reviewer of our
+manuscript, whose suggestions have greatly improved this study.
 
 This work was partially funded by the European Research Council
 (ERC-2021-STG project 101039060, \emph{PalaeOrigins: Tracing the
