@@ -5,7 +5,7 @@ author:
 - name: Joe Roe
   id: jr
   orcid: 0000-0002-1011-1244
-  email: joeroe@hey.com
+  email: jar@hum.ku.dk
   affiliations:
     - name: University of Bern
       country: Switzerland
@@ -58,7 +58,7 @@ library("tune")
 library("yardstick")
 library("vip")
 
-library("BadiaPaleoFloraENM") # this package, install with devtools::install()
+library("WAsiaPaleoFloraENM") # this package, install with devtools::install()
 
 options(knitr.duplicate.label = "allow")
 ```

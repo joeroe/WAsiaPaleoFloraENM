@@ -98,7 +98,7 @@ library("tibble")
 library("tidymodels")
 library("tidyr")
 
-library("BadiaPaleoFloraENM") # this package, install with devtools::install()
+library("WAsiaPaleoFloraENM") # this package, install with devtools::install()
 ```
 
 ```{r setup-parallel}

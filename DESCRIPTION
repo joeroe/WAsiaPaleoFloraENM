@@ -1,12 +1,14 @@
-Package: BadiaPaleoFloraENM
-Title: Ecological Niche Modelling of Paleofauna in the *Badia*
-Version: 0.0.0.9000
+Package: WAsiaPaleoFloraENM
+Title: Ecological Niche Modelling of Palaeoflora in West Asia, 14.7–8.3 ka
+Version: 1.0.0
 Authors@R:
     person(given = "Joe",
            family = "Roe",
            role = c("aut", "cre"),
            email = "joeroe@hey.com")
-Description: Compendium of data and code for our paper ....
+Description: Compendium of data and code for our paper, 'Biogeography of crop 
+    progenitors and wild plant resources in the terminal Pleistocene and Early 
+    Holocene of West Asia, 14.7–8.3 ka'.
 License: MIT + file LICENSE
 ByteCompile: true
 Encoding: UTF-8
