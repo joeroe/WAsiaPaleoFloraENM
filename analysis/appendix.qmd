@@ -19,7 +19,7 @@ author:
     - name: University of the Basque Country
       country: Spain
 abstract: |
-  This appendix describes ecological niche models of 69<!-- TODO keep updated -->
+  This appendix describes ecological niche models of 65<!-- TODO keep updated -->
   plant species relevant to the subsistence of Late Epipalaeolithic (15–11.7 ka) 
   and Neolithic (11.7–8.2 ka) societies in West Asia. It includes summaries of 
   the training data and performance metrics of the fitted models together with 
@@ -34,7 +34,7 @@ abstract: |
 format:
   html:
     toc: true
-    # embed-resources: true
+    embed-resources: true
 execute:
   echo: false
 ---

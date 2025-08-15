@@ -1,0 +1,41 @@
+<PAMDataset>
+  <Subdataset name="Band1">
+    <PAMDataset>
+      <Metadata>
+        <MDI key="albers_conical_equal_area#crs_wkt">PROJCS["unknown",GEOGCS["unknown",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433]],PROJECTION["Albers_Conic_Equal_Area"],PARAMETER["latitude_of_center",0],PARAMETER["longitude_of_center",40],PARAMETER["standard_parallel_1",22.5],PARAMETER["standard_parallel_2",42.5],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]</MDI>
+        <MDI key="albers_conical_equal_area#false_easting">0</MDI>
+        <MDI key="albers_conical_equal_area#false_northing">0</MDI>
+        <MDI key="albers_conical_equal_area#GeoTransform">nan nan 0 nan 0 nan </MDI>
+        <MDI key="albers_conical_equal_area#grid_mapping_name">albers_conical_equal_area</MDI>
+        <MDI key="albers_conical_equal_area#inverse_flattening">298.257223563</MDI>
+        <MDI key="albers_conical_equal_area#latitude_of_projection_origin">0</MDI>
+        <MDI key="albers_conical_equal_area#longitude_of_central_meridian">40</MDI>
+        <MDI key="albers_conical_equal_area#longitude_of_prime_meridian">0</MDI>
+        <MDI key="albers_conical_equal_area#long_name">CRS definition</MDI>
+        <MDI key="albers_conical_equal_area#semi_major_axis">6378137</MDI>
+        <MDI key="albers_conical_equal_area#spatial_ref">PROJCS["unknown",GEOGCS["unknown",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433]],PROJECTION["Albers_Conic_Equal_Area"],PARAMETER["latitude_of_center",0],PARAMETER["longitude_of_center",40],PARAMETER["standard_parallel_1",22.5],PARAMETER["standard_parallel_2",42.5],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]</MDI>
+        <MDI key="albers_conical_equal_area#standard_parallel">{22.5,42.5}</MDI>
+        <MDI key="Band1#grid_mapping">albers_conical_equal_area</MDI>
+        <MDI key="Band1#long_name">GDAL Band Number 1</MDI>
+        <MDI key="Band1#_FillValue">9.96921e+36</MDI>
+        <MDI key="NC_GLOBAL#Conventions">CF-1.5</MDI>
+        <MDI key="NC_GLOBAL#GDAL">GDAL 3.11.3 "Eganville", released 2025/07/12</MDI>
+        <MDI key="NC_GLOBAL#history">Thu Aug 14 20:56:48 2025: GDAL Create( /home/joeroe/g/WAsiaPaleoFloraENM/analysis/palaeodist/Bassia_arabica.nc, ... )</MDI>
+        <MDI key="x#long_name">x coordinate of projection</MDI>
+        <MDI key="x#standard_name">projection_x_coordinate</MDI>
+        <MDI key="x#units">m</MDI>
+        <MDI key="y#long_name">y coordinate of projection</MDI>
+        <MDI key="y#standard_name">projection_y_coordinate</MDI>
+        <MDI key="y#units">m</MDI>
+      </Metadata>
+      <PAMRasterBand band="1">
+        <Metadata>
+          <MDI key="STATISTICS_MINIMUM">0</MDI>
+          <MDI key="STATISTICS_MAXIMUM">0.9146563410759</MDI>
+          <MDI key="STATISTICS_MEAN">0.019385976107271</MDI>
+          <MDI key="STATISTICS_STDDEV">0.051304689095291</MDI>
+        </Metadata>
+      </PAMRasterBand>
+    </PAMDataset>
+  </Subdataset>
+</PAMDataset>

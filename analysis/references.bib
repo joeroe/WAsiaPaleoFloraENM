@@ -202,20 +202,6 @@
   langid = {english}
 }
 
-@article{LiuEtAl2013,
-  title = {Selecting Thresholds for the Prediction of Species Occurrence with Presence-Only Data},
-  author = {Liu, Canran and White, Matt and Newell, Graeme},
-  year = {2013},
-  journal = {Journal of Biogeography},
-  volume = {40},
-  number = {4},
-  pages = {778--789},
-  issn = {1365-2699},
-  doi = {10.1111/jbi.12058},
-  abstract = {Aim Species distribution models have been widely used to tackle ecological, evolutionary and conservation problems. Most species distribution modelling techniques produce continuous suitability predictions, but many real applications (e.g. reserve design, species invasion and climate change impact assessment) and model evaluations require binary outputs, and thresholds are needed for these transformations. Although there are many threshold selection methods for presence/absence data, it is unclear whether these are suitable for presence-only data. In this paper, we investigate mathematically and empirically which of the existing threshold selection methods can be used confidently with presence-only data. Location We used real spatially explicit environmental data derived from the western part of the state of Victoria, south-eastern Australia, and simulated species distributions within this area. Methods Thirteen existing threshold selection methods were investigated mathematically to see whether the same threshold can be produced using either presence/absence data or presence-only data. We further adopted a simulation approach, created many virtual species with differing prevalences in a real landscape in south-eastern Australia, generated data sets with different proportions of pseudo-absences, built eight types of models with four modelling techniques, and investigated the behaviours of four threshold selection methods in these situations. Results Three threshold selection methods were not affected by pseudo-absences, including max SSS (which is based on maximizing the sum of sensitivity and specificity), the prevalence of model training data and the mean predicted value of a set of random points. Max SSS produced higher sensitivity in most cases and higher true skill statistic and kappa in many cases than the other methods. The other methods produced different thresholds from presence-only data to those determined from presence/absence data. Main conclusions Max SSS is a promising method for threshold selection when only presence data are available.},
-  langid = {english}
-}
-
 @article{WrightZiegler2017,
   title = {Ranger: {{A Fast Implementation}} of {{Random Forests}} for {{High Dimensional Data}} in {{C}}++ and {{R}}},
   shorttitle = {Ranger},
@@ -2076,5 +2062,140 @@ We need far more specific information on the climate during incipient domesticat
   publisher = {Elsevier},
   doi = {10.1016/B978-0-444-42703-8.50008-7},
   abstract = {Plant remains in archaeological excavati{\'o}ns are generally found as charred materials; in wet surroundings they may be water-logged; in arid regions even parched. As to pulses ma-inly seeds are preserved, rarely pods or stems. In most cases only morphological features can be recognized. If the seed coat is still present the special structure of its layers will facilitate the identification. Cultivated types differ from the wild by non-dehiscent pods, more seeds per pod, thinner seed coat, bigger seed size. But in archaeological material only the latter may show; with pea also a smooth surface. From the oldest prehistoric sites in the Near East Lens and Pisum are documented together with the first cereals. Cicer and Vicia narbonensis/faba appear about the same time. Vicia ervilia was found somewhat more northernly (Turkey/Balkan). Lathyrus was apparently of minor or local importance. Except for a recent find in a Natufian layer of Mt. Carmel/Israel and some seeds from Bronze Age Cyprus. Lupinus is not reported from prehistoric times. The wild ancestors of these pulses -- except of Vicia faba -- are well known. Most of them were found in the ``Fertile Crescent''; and their cytogenetic relation to the cultivated modern forms was proved by genetical analysis. The primitive cultivars spread from this area to Africa (Egypt), all over Europe, and further into Asia. Local, cultural or temporary peculiarities may be observed. Pulses have been -- right from the beginning of agriculture -- the ideal supplement in human diet, adding the necessary albumen to the carbon-hydrate of the cereals.}
+}
+
+@article{Michczynski2007,
+	title = {Is it {Possible} to {Find} a {Good} {Point} {Estimate} of a {Calibrated} {Radiocarbon} {Date}?},
+	volume = {49},
+	issn = {0033-8222},
+	doi = {10.1017/S0033822200042326},
+	abstract = {The result from probabilistic calibration of a radiocarbon date is given
+in the form of a probability density function. Consequently, reporting a
+68\% or 95\% confidence interval has became a commonly accepted practice.
+However, many users of 14C dates still try to present the results of
+calibration as a single point. This manner of presentation is often
+applied during the construction of age-depth models due to its convenience
+and simplicity. In this paper, the author tests whether it is possible to
+find a good point estimate of a calibrated 14C date. The idea of the tests
+is to compare, using computer simulation, the true value of the calendar
+age with the age calculated based on the probabilistic calibration of the
+14C date and the method of finding the point estimate. The test is carried
+out for the following point estimates: mode, median, average, the central
+point of the confidence intervals, and the local mode inside the
+confidence intervals. The results show that none of these may be
+considered as a good estimate.},
+	number = {2},
+	urldate = {2021-01-30},
+	journal = {Radiocarbon},
+	author = {Michczyński, Adam},
+	year = {2007},
+	note = {Publisher: Cambridge University Press},
+	pages = {393--401},
+}
+
+
+@article{DormannEtAl2013,
+	title = {Collinearity: a review of methods to deal with it and a simulation study evaluating their performance},
+	volume = {36},
+	issn = {1600-0587},
+	shorttitle = {Collinearity},
+	url = {https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1600-0587.2012.07348.x},
+	doi = {10.1111/j.1600-0587.2012.07348.x},
+	abstract = {Collinearity refers to the non independence of predictor variables, usually in a regression-type analysis. It is a common feature of any descriptive ecological data set and can be a problem for parameter estimation because it inflates the variance of regression parameters and hence potentially leads to the wrong identification of relevant predictors in a statistical model. Collinearity is a severe problem when a model is trained on data from one region or time, and predicted to another with a different or unknown structure of collinearity. To demonstrate the reach of the problem of collinearity in ecology, we show how relationships among predictors differ between biomes, change over spatial scales and through time. Across disciplines, different approaches to addressing collinearity problems have been developed, ranging from clustering of predictors, threshold-based pre-selection, through latent variable methods, to shrinkage and regularisation. Using simulated data with five predictor-response relationships of increasing complexity and eight levels of collinearity we compared ways to address collinearity with standard multiple regression and machine-learning approaches. We assessed the performance of each approach by testing its impact on prediction to new data. In the extreme, we tested whether the methods were able to identify the true underlying relationship in a training dataset with strong collinearity by evaluating its performance on a test dataset without any collinearity. We found that methods specifically designed for collinearity, such as latent variable methods and tree based models, did not outperform the traditional GLM and threshold-based pre-selection. Our results highlight the value of GLM in combination with penalised methods (particularly ridge) and threshold-based pre-selection when omitted variables are considered in the final interpretation. However, all approaches tested yielded degraded predictions under change in collinearity structure and the ‘folk lore’-thresholds of correlation coefficients between predictor variables of {\textbar}r{\textbar} {\textgreater}0.7 was an appropriate indicator for when collinearity begins to severely distort model estimation and subsequent prediction. The use of ecological understanding of the system in pre-analysis variable selection and the choice of the least sensitive statistical approaches reduce the problems of collinearity, but cannot ultimately solve them.},
+	language = {en},
+	number = {1},
+	urldate = {2025-07-02},
+	journal = {Ecography},
+	author = {Dormann, Carsten F. and Elith, Jane and Bacher, Sven and Buchmann, Carsten and Carl, Gudrun and Carré, Gabriel and Marquéz, Jaime R. García and Gruber, Bernd and Lafourcade, Bruno and Leitão, Pedro J. and Münkemüller, Tamara and McClean, Colin and Osborne, Patrick E. and Reineking, Björn and Schröder, Boris and Skidmore, Andrew K. and Zurell, Damaris and Lautenbach, Sven},
+	year = {2013},
+	note = {\_eprint: https://nsojournals.onlinelibrary.wiley.com/doi/pdf/10.1111/j.1600-0587.2012.07348.x},
+	pages = {27--46},
+}
+
+
+@article{LiuEtAl2013,
+	title = {Selecting thresholds for the prediction of species occurrence with presence-only data},
+	volume = {40},
+	issn = {1365-2699},
+	url = {https://onlinelibrary.wiley.com/doi/abs/10.1111/jbi.12058},
+	doi = {10.1111/jbi.12058},
+	abstract = {Aim Species distribution models have been widely used to tackle ecological, evolutionary and conservation problems. Most species distribution modelling techniques produce continuous suitability predictions, but many real applications (e.g. reserve design, species invasion and climate change impact assessment) and model evaluations require binary outputs, and thresholds are needed for these transformations. Although there are many threshold selection methods for presence/absence data, it is unclear whether these are suitable for presence-only data. In this paper, we investigate mathematically and empirically which of the existing threshold selection methods can be used confidently with presence-only data. Location We used real spatially explicit environmental data derived from the western part of the state of Victoria, south-eastern Australia, and simulated species distributions within this area. Methods Thirteen existing threshold selection methods were investigated mathematically to see whether the same threshold can be produced using either presence/absence data or presence-only data. We further adopted a simulation approach, created many virtual species with differing prevalences in a real landscape in south-eastern Australia, generated data sets with different proportions of pseudo-absences, built eight types of models with four modelling techniques, and investigated the behaviours of four threshold selection methods in these situations. Results Three threshold selection methods were not affected by pseudo-absences, including max SSS (which is based on maximizing the sum of sensitivity and specificity), the prevalence of model training data and the mean predicted value of a set of random points. Max SSS produced higher sensitivity in most cases and higher true skill statistic and kappa in many cases than the other methods. The other methods produced different thresholds from presence-only data to those determined from presence/absence data. Main conclusions Max SSS is a promising method for threshold selection when only presence data are available.},
+	language = {en},
+	number = {4},
+	urldate = {2023-08-16},
+	journal = {Journal of Biogeography},
+	author = {Liu, Canran and White, Matt and Newell, Graeme},
+	year = {2013},
+	note = {\_eprint: https://onlinelibrary.wiley.com/doi/pdf/10.1111/jbi.12058},
+	keywords = {Evaluation, lift curve, presence-only, ROC curve, sensitivity, species distribution model, specificity, threshold},
+	pages = {778--789},
+}
+
+@article{LiuEtAl2005,
+	title = {Selecting thresholds of occurrence in the prediction of species distributions},
+	volume = {28},
+	issn = {1600-0587},
+	url = {https://onlinelibrary.wiley.com/doi/abs/10.1111/j.0906-7590.2005.03957.x},
+	doi = {10.1111/j.0906-7590.2005.03957.x},
+	abstract = {Transforming the results of species distribution modelling from probabilities of or suitabilities for species occurrence to presences/absences needs a specific threshold. Even though there are many approaches to determining thresholds, there is no comparative study. In this paper, twelve approaches were compared using two species in Europe and artificial neural networks, and the modelling results were assessed using four indices: sensitivity, specificity, overall prediction success and Cohen's kappa statistic. The results show that prevalence approach, average predicted probability/suitability approach, and three sensitivity-specificity-combined approaches, including sensitivity-specificity sum maximization approach, sensitivity-specificity equality approach and the approach based on the shortest distance to the top-left corner (0,1) in ROC plot, are the good ones. The commonly used kappa maximization approach is not as good as the afore-mentioned ones, and the fixed threshold approach is the worst one. We also recommend using datasets with prevalence of 50\% to build models if possible since most optimization criteria might be satisfied or nearly satisfied at the same time, and therefore it's easier to find optimal thresholds in this situation.},
+	language = {en},
+	number = {3},
+	urldate = {2025-08-14},
+	journal = {Ecography},
+	author = {Liu, Canran and Berry, Pam M. and Dawson, Terence P. and Pearson, Richard G.},
+	year = {2005},
+	note = {\_eprint: https://nsojournals.onlinelibrary.wiley.com/doi/pdf/10.1111/j.0906-7590.2005.03957.x},
+	pages = {385--393},
+}
+
+@article{LiuEtAl2015,
+	title = {On the selection of thresholds for predicting species occurrence with presence-only data},
+	volume = {6},
+	issn = {2045-7758},
+	url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/ece3.1878},
+	doi = {10.1002/ece3.1878},
+	abstract = {Presence-only data present challenges for selecting thresholds to transform species distribution modeling results into binary outputs. In this article, we compare two recently published threshold selection methods (maxSSS and maxFpb) and examine the effectiveness of the threshold-based prevalence estimation approach. Six virtual species with varying prevalence were simulated within a real landscape in southeastern Australia. Presence-only models were built with DOMAIN, generalized linear model, Maxent, and Random Forest. Thresholds were selected with two methods maxSSS and maxFpb with four presence-only datasets with different ratios of the number of known presences to the number of random points (KP–RPratio). Sensitivity, specificity, true skill statistic, and F measure were used to evaluate the performance of the results. Species prevalence was estimated as the ratio of the number of predicted presences to the total number of points in the evaluation dataset. Thresholds selected with maxFpb varied as the KP–RPratio of the threshold selection datasets changed. Datasets with the KP–RPratio around 1 generally produced better results than scores distant from 1. Results produced by We conclude that maxFpb had specificity too low for very common species using Random Forest and Maxent models. In contrast, maxSSS produced consistent results whichever dataset was used. The estimation of prevalence was almost always biased, and the bias was very large for DOMAIN and Random Forest predictions. We conclude that maxFpb is affected by the KP–RPratio of the threshold selection datasets, but maxSSS is almost unaffected by this ratio. Unbiased estimations of prevalence are difficult to be determined using the threshold-based approach.},
+	language = {en},
+	number = {1},
+	urldate = {2025-08-14},
+	journal = {Ecology and Evolution},
+	author = {Liu, Canran and Newell, Graeme and White, Matt},
+	year = {2016},
+	note = {\_eprint: https://onlinelibrary.wiley.com/doi/pdf/10.1002/ece3.1878},
+	pages = {337--348},
+}
+
+
+@article{SilleroEtAl2021,
+	title = {Want to model a species niche? {A} step-by-step guideline on correlative ecological niche modelling},
+	volume = {456},
+	issn = {0304-3800},
+	shorttitle = {Want to model a species niche?},
+	url = {https://www.sciencedirect.com/science/article/pii/S0304380021002301},
+	doi = {10.1016/j.ecolmodel.2021.109671},
+	abstract = {The use of correlative ecological niche models has highly increased in the last decade. Despite all literature and textbooks in this field, few practical guidelines exist on the correct application of these techniques. We present here a step-by-step guideline explaining best practices for calculating correlative ecological niche models considering their conceptual and statistical assumptions and limitations. We divided the modelling process into four stages: 1) data collection and preparation; 2) model calculation; 3) model evaluation and validation; 4) and model application. Based on ecological niche theory, we review the concepts of ecological niche and how they can be modelled; classes of correlative models; modelling software; selection of study area; data sources for species records and environmental variables; types of species records and their influence on correlative models; errors in species records; minimum number of species records and environmental variables; effects of prevalence, sampling design, biases, and collinearity between variables; model calculation; model projection to different scenarios in time and space; ensemble modelling; model validation; classification, discrimination and calibration metrics; calculation of null models; analysis of model results; and model thresholding. This guideline is expected to help potential users to obtain better results when using correlative ecological niche models.},
+	urldate = {2025-08-15},
+	journal = {Ecological Modelling},
+	author = {Sillero, Neftalí and Arenas-Castro, Salvador and Enriquez‐Urzelai, Urtzi and Vale, Cândida Gomes and Sousa-Guedes, Diana and Martínez-Freiría, Fernando and Real, Raimundo and Barbosa, A. Márcia},
+	month = sep,
+	year = {2021},
+	pages = {109671},
+}
+
+
+@article{RobertsEtAl2018,
+	series = {Late {Glacial} to {Early} {Holocene} socio-ecological responses to climatic instability within the {Mediterranean} basin},
+	title = {Human responses and non-responses to climatic variations during the last {Glacial}-{Interglacial} transition in the eastern {Mediterranean}},
+	volume = {184},
+	issn = {0277-3791},
+	url = {https://www.sciencedirect.com/science/article/pii/S0277379117302809},
+	doi = {10.1016/j.quascirev.2017.09.011},
+	abstract = {We review and evaluate human adaptations during the last glacial-interglacial climatic transition in southwest Asia. Stable isotope data imply that climatic change was synchronous across the region within the limits of dating uncertainty. Changes in vegetation, as indicated from pollen and charcoal, mirror step-wise shifts between cold-dry and warm-wet climatic conditions, but with lag effects for woody vegetation in some upland and interior areas. Palaeoenvironmental data can be set against regional archaeological evidence for human occupancy and economy from the later Epipalaeolithic to the aceramic Neolithic. Demographic change is evaluated from summed radiocarbon date probability distributions, which indicating contrasting – and in some cases opposite - population trajectories in different regions. Abrupt warming transitions at ∼14.5 and 11.7 ka BP may have acted as pacemakers for rapid cultural change in some areas, notably at the start of the Natufian and Pre-Pottery Neolithic cultures. However temporal synchroneity does not mean that climatic changes had the same environmental or societal consequences in different regions. During cold-dry time intervals, regions such as the Levant acted as refugia for plant and animal resources and human population. In areas where socio-ecological continuity was maintained through periods of adverse climate (e.g. Younger Dryas) human communities were able to respond rapidly to subsequent climatic improvement. By contrast, in areas where there was a break in settlement at these times (e.g. central Anatolia), populations were slower to react to the new opportunities provided by the interglacial world.},
+	urldate = {2025-08-15},
+	journal = {Quaternary Science Reviews},
+	author = {Roberts, Neil and Woodbridge, Jessie and Bevan, Andrew and Palmisano, Alessio and Shennan, Stephen and Asouti, Eleni},
+	month = mar,
+	year = {2018},
+	pages = {47--67},
 }
 

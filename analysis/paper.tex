@@ -1,4 +1,5 @@
 % Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
 \PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
@@ -6,21 +7,22 @@
 \documentclass[
   authoryear,
   preprint]{elsarticle}
-
+\usepackage{xcolor}
 \usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{5}
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
 \else % if luatex or xetex
-  \usepackage{unicode-math}
+  \usepackage{unicode-math} % this also loads fontspec
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
 \usepackage{lmodern}
-\ifPDFTeX\else  
-    % xetex/luatex font selection
+\ifPDFTeX\else
+  % xetex/luatex font selection
 \fi
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -38,9 +40,6 @@
 }{% if KOMA class
   \KOMAoptions{parskip=half}}
 \makeatother
-\usepackage{xcolor}
-\setlength{\emergencystretch}{3em} % prevent overfull lines
-\setcounter{secnumdepth}{5}
 % Make \paragraph and \subparagraph free-standing
 \makeatletter
 \ifx\paragraph\undefined\else
@@ -66,8 +65,7 @@
 \makeatother
 
 
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{longtable,booktabs,array}
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -92,6 +90,22 @@
 % Set default figure placement to htbp
 \def\fps@figure{htbp}
 \makeatother
+
+
+
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+\usepackage[]{natbib}
+\bibliographystyle{elsarticle-harv}
+
 
 \usepackage{booktabs}
 \usepackage{caption}
@@ -142,13 +156,9 @@
 \@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
 \makeatother
 \journal{Open Quaternary}
-
-\usepackage[]{natbib}
-\bibliographystyle{elsarticle-harv}
 \usepackage{bookmark}
-
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\urlstyle{same} % disable monospaced font for URLs
+\urlstyle{same}
 \hypersetup{
   pdftitle={Biogeography of crop progenitors and wild plant resources in the terminal Pleistocene and Early Holocene of West Asia, 14.7--8.3 ka},
   pdfauthor={Joe Roe; Amaia Arranz-Otaegui},
@@ -169,7 +179,7 @@ terminal Pleistocene and Early Holocene of West Asia, 14.7--8.3 ka}
 \author[1,2]{Joe Roe%
 \corref{cor1}%
 }
- \ead{joeroe@hey.com} 
+ \ead{jar@hum.ku.dk} 
 \author[3]{Amaia Arranz-Otaegui%
 %
 }
@@ -188,26 +198,28 @@ Country},country={Spain},countrysep={,},postcodesep={}}
         
 \begin{abstract}
 This paper presents the first continuous, spatially-explicit
-reconstructions of the palaeodistributions of 82 plant species found
+reconstructions of the palaeodistributions of 65 plant species found
 regularly in association with early agricultural archaeological sites in
 West Asia, including the progenitors of the first crops. We used machine
 learning to train an ecological niche model of each species based on its
 present-day distribution in relation to climate and environmental
-variables. Predictions of the potential ranges of these species at key
+variables. Predictions of the potential niches of these species at key
 stages of the Pleistocene--Holocene transition could then be derived
 from these models using downsampled data from palaeoclimate simulations.
-
-The models predict significant reductions and/or shifts in species
-ranges in the terminal Pleistocene and Early Holocene compared to
-present conditions. Many species that are found throughout the region's
-`hilly flanks' today are indicated to have much more restricted
-distributions centered on the Levant, Cyprus and Western Anatolia. In
-addition, overall ranges shrunk by an average of c.~25\% from the
-terminal Pleistocene to the Early Holocene. The models performance in
-predicting the occurrence of specific species at archaeological sites is
-highly variable, but in aggregate the predictions are coherent and align
-with broad-scale trends in the ubiquity and relative abundance of
-species in the archaeological record.
+Our models performed well against independent contemporary test data,
+but their ability to predict the occurrence of specific species at
+archaeological sites was much more variable, probably reflecting a
+tendency of the method to underestimate the species' fundamental niche.
+Nevertheless, the majority of species are predicted to have had more
+restricted geographic distributions under past climate conditions
+compared to today. Crop progenitors and several wild food species
+modelled are modelled to have been concentrated in the Levant and, to a
+lesser extent, Cyprus and Western Anatolia, suggesting these regions may
+have served as glacial \emph{refugia}. The average size of species'
+niche shrunk by an average of c.~25\% from the terminal Pleistocene to
+the Early Holocene, indicating that economically significant plants were
+adapted to cryo-arid conditions and did not, as often assumed, initially
+respond positively to the `ameliorated' climate of the Holocene.
 \end{abstract}
 
 
@@ -254,20 +266,20 @@ alteration.
 
 In this paper we present a complementary, deductive approach based on
 ecological niche modelling. Rather than inferring environmental
-conditions from preserved physical evidence, we predict the ranges of
-individual species relevant to human subsistence based on a model of
-their current environmental niche and simulations of past palaeoclimate.
-Though hypothetical, this gives us an independent line of evidence on
-past ecologies that is independent of the environmental archaeological
-and palaeoclimatic records. This means that the ancient data can be
-reserved for assessing the model's ability to `hindcast' past
-conditions. In this sense, discrepencies between the two records are
-perhaps the most interesting result, as they indicate processes
+conditions from preserved physical evidence, we predict the potential
+niche of individual species relevant to human subsistence based on a
+model of their current environmental niche and simulations of past
+palaeoclimate. Though hypothetical, this gives us an independent line of
+evidence on past ecologies that is independent of the environmental
+archaeological and palaeoclimatic records. This means that the ancient
+data can be reserved for assessing the model's ability to `hindcast'
+past conditions. In this sense, discrepencies between the two records
+are perhaps the most interesting result, as they indicate processes
 affecting one or both records that are not fully accounted for and
 therefore generate new questions. Our computational approach is also
 readily scaled up, allowing us to model spatially-explicit
 palaeodistributions for a large number of species, for the whole region,
-under multiple past climatologies.
+under multiple reconstructed climate scenarios.
 
 \section{Background}\label{sec-bg}
 
@@ -456,20 +468,21 @@ predictions of different experts.
 archaeology}\label{ecological-niche-modelling-in-archaeology}
 
 Ecological niche modelling or species distribution modelling is widely
-used by ecologists to predict the geographic range of a species based on
-a set of environmental predictors \citep{FranklinMiller2009}.
-Essentially, it involves combining records of where an organism has been
-observed with environmental data (climate, topography, etc.) for those
-locations to model the range of environmental values at which that
-species -- its environmental niche. This model can then be used to
-predict the range of the organism in question either in the same or a
+used by ecologists to mathematically predict the geographic distribution
+of a species from a sample of occurrences
+\citep{FranklinMiller2009, SilleroEtAl2021}. Essentially, it involves
+combining records of where an organism has been observed with
+environmental data (climate, topography, etc.) for those locations to
+model the range of environmental values at which that species -- its
+environmental niche. This model can then be used to predict the
+potential niche of the organism in question either in the same or a
 different environment. \citet{TownsendPetersonSoberon2012} suggests
 reserving the term `species distribution modelling' for when the method
 is used to recover the verifiable range of a species in a real and
 existing environment, and using `ecological niche modelling' as the
 broader term covering hypothetical or predictive applications -- a
 convention we follow here when referring to predictive or `hindcast'
-models of past ranges. Within this overarching framework, ecological
+models of past niches. Within this overarching framework, ecological
 niche modelling encompasses a wide range of applications and a variety
 of potential environmental predictors, modelling approaches, and
 methodologies, which we will not attempt to review here.
@@ -478,7 +491,7 @@ Ecological niche modelling has long been of interest to archaeologists
 as both a means of exploring the biological niche of humans and for
 reconstructing the past environments they inhabited
 \citep{DavidPollyEronen2011, FranklinEtAl2015}. In the first sense, it
-has been used most extensively to model the range of humans and other
+has been used most extensively to model the niche of humans and other
 hominin species
 \citep[e.g.][]{BenitoEtAl2017, YousefiEtAl2020, BanksEtAl2021, YaworskyEtAl2024a, YaworskyEtAl2024b, GuranEtAl2024},
 especially in the Palaeolithic. This overlaps with what archaeologists
@@ -555,8 +568,9 @@ experiments with general circulation models of climate
 
 }
 
-\caption{\label{fig-region}Late Epipalaeolithic \& Pre-Pottery Neolithic
-archaeological sites used to generate modelled flora}
+\caption{\label{fig-region}Map of the study region (West Asia, grey box)
+with locations of Late Epipalaeolithic and Pre-Pottery Neolithic
+archaeobotanical assemblages.}
 
 \end{figure}%
 
@@ -569,7 +583,7 @@ assume that plant-based subsistence during this period was broad,
 geographically- and temporally-varied, and reflects a gradual,
 geographically decentred, and nonlinear tranistion to greater reliance
 on cultivars (i.e.~agriculture, see Section~\ref{sec-bg}). Our starting
-point was a list of 66 taxa (Table~\ref{tbl-results-summary}) comprising
+point was a list of 68 taxa (Table~\ref{tbl-results-summary}) comprising
 the identified species observed at at least 3 Late
 Epipalaeolithic/Pre-Pottery Neolithic sites, according to our previous
 study of the regional archaeobotanical data
@@ -600,23 +614,11 @@ niche.
 
 \subsection{Occurrence data}\label{sec-occ-data}
 
-\begin{verbatim}
-Rows: 1 Columns: 11
--- Column specification --------------------------------------------------------
-Delimiter: ","
-chr  (5): key, doi, license, status, downloadLink
-dbl  (3): size, totalRecords, numberDatasets
-dttm (3): created, modified, eraseAfter
-
-i Use `spec()` to retrieve the full column specification for this data.
-i Specify the column types or set `show_col_types = FALSE` to quiet this message.
-\end{verbatim}
-
 Georeferenced occurrence data for West Eurasia between 0 and 60° of
 latitude was obtained from the Global Biodiversity Information Facility
 (GBIF) using via and the R package `rgbif'
 \citep{ChamberlainBoettiger2017, rgbif}. The GBIF dataset
-\citep{GBIFDerivedData} excluded fossil occurrences, recorded absences,
+\citep{GBIFDataDownload} excluded fossil occurrences, recorded absences,
 and records with missing or dubious coordinates. Although niche models
 have reasonable predictive power even with small training samples
 \citep{StockwellPeterson2002, HernandezEtAl2006, WiszEtAl2008}, we did
@@ -626,8 +628,8 @@ Forest-based models specifically
 \citep{StockwellPeterson2002, LuanEtAl2020}. Multiple records of the
 same taxon at the same coordinate were discarded because they do not
 impart information to the model. The resulting cleaned dataset used to
-train our niche models comprises \ensuremath{3.387196\times 10^{6}} from
-4764 constituent datasets.
+train our niche models comprises 3392920 occurrences from 4769
+constituent datasets.
 
 \begin{figure}
 
@@ -638,15 +640,16 @@ train our niche models comprises \ensuremath{3.387196\times 10^{6}} from
 }
 
 \caption{\label{fig-occ-map}Georeferenced occurrence records from West
-Asia used to train models (N=1409939}
+Eurasia used to train models (N=1412083). Inset, right: prediction
+region (West Asia).}
 
 \end{figure}%
 
 GBIF is currently the best available general-purpose occurrence dataset
 for the West Asia region, its coverage is uneven both geographically and
-from species to species. Figure~\ref{fig-occ-map} shows clearly that the
-Southern Levant, and Israel specifically, is significantly more densely
-sampled than other parts of West Asia.
+from species to species. The Southern Levant, and Israel specifically,
+is significantly more densely sampled than other parts of West Asia
+(Figure~\ref{fig-occ-map}).
 
 Random Forest is a presence--absence approach to niche modelling and
 therefore requires not just data on where a species is present, but
@@ -673,237 +676,6 @@ Forest' \citep{ValaviEtAl2022}.
 
 We modelled the occurrence of species as a function of 24 geospatial
 predictor variables. These included:
-
-\begin{verbatim}
-bio_1, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-\end{verbatim}
-
-\begin{verbatim}
-Warning in parse_netcdf_meta(meta_data, get_names(x)): NAs introduced by
-coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_10, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_11, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_12, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_13, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_14, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_15, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_16, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_17, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_18, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_19, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_2, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_3, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_4, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_5, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_6, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_7, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_8, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
-
-\begin{verbatim}
-bio_9, 
-\end{verbatim}
-
-\begin{verbatim}
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : GDAL Message 1: dimension #0 (period) is not a Time or
-Vertical dimension.
-Warning in CPL_read_gdal(as.character(x), as.character(options),
-as.character(driver), : NAs introduced by coercion
-\end{verbatim}
 
 \begin{itemize}
 \tightlist
@@ -960,16 +732,6 @@ data was left in its native projection and resolution. For hindcast
 palaeodistributions, it was transformed to common equal-area projection
 and resolution of 5 km.
 
-\begin{verbatim}
-Warning: There were 57 warnings in `mutate()`.
-The first warning was:
-i In argument: `occ = map(occ, bind_extract, st_as_stars(hack(climate,
-  "period", "cur")))`.
-Caused by warning in `CPL_get_metadata()`:
-! GDAL Message 1: dimension #0 (period) is not a Time or Vertical dimension.
-i Run `dplyr::last_dplyr_warnings()` to see the 56 remaining warnings.
-\end{verbatim}
-
 \subsection{Random Forest}\label{random-forest}
 
 Ecological niche modelling is a classification problem that can be
@@ -1002,13 +764,13 @@ balanced training (¾) and test (¼) partitions.
 
 \section{Model assessment}\label{model-assessment}
 
-We trained Random Forest models for 63 taxa using contemporary
+We trained Random Forest models for 65 taxa using contemporary
 occurrence data from GBIF, a random sample of background points, and the
 predictor variables described in Section~\ref{sec-predictors}.
 Substituting the ``current'' climate predictors for those derived from
 palaeoclimatic simulations \citep{BrownEtAl2018}, we could then generate
 hindcast predictions for reconstructed past environments in 4 key
-climate periods -- a total of 252 modelled palaeodistributions.
+climate periods -- a total of 260 modelled palaeodistributions.
 Predicted distributions for individual taxa are presented in the
 appendix and accompanying material.
 
@@ -1027,34 +789,46 @@ number of training occurrences}
 
 We assessed the predictive performance of the fitted niche models in the
 contemporary environment based on the reserved test partition
-Table~\ref{tbl-results-summary}. Model accuracy (proportion of correctly
-classified presence and background samples) ranged between 92\% and
-100\%, with an average of 97\%. Sensitivity (proportion of correctly
-classified presence samples) ranged between 12\% and 100\%, with an
-average of 82\%. The area under the models' receiver operating
-characteristic curves (ROC-AUC) was on average 0.987±0.018 Model
+(Table~\ref{tbl-results-summary}). Model accuracy (proportion of
+correctly classified presence and background samples) ranged between
+93\% and 100\%, with an average of 98\%. Sensitivity (proportion of
+correctly classified presence samples) ranged between 11\% and 100\%,
+with an average of 83\%. The area under the models' receiver operating
+characteristic curves (ROC-AUC) was on average 0.986±0.017. Model
 sensitivity is loosely correlated with the number of occurrences
 available for training (Figure~\ref{fig-model-sensitivity-vs-n_occ}),
-with the worst-performing models all having less than 300 recorded
-occurrences: \emph{Lathyrus sativus}, \emph{Lepidium perfoliatum},
-\emph{Triticum aestivum}, \emph{Bolboschoenus glaucus}, \emph{Gypsophila
-vaccaria}, \emph{Euclidium syriacum}, \emph{Gypsophila elegans},
-\emph{Citrullus colocynthis}, \emph{Triticum monococcum}, \emph{Triticum
-turgidum}, \emph{Aegilops crassa}, \emph{Secale strictum}, \emph{Cicer
-reticulatum}, \emph{Medicago astroites}, \emph{Triticum durum},
-\emph{Gypsophila pilosa}, \emph{Arnebia decumbens}, \emph{Salvia
-absconditiflora}, \emph{Suaeda fruticosa}, \emph{Buglossoides
-tenuiflora}, \emph{Lathyrus oleraceus}, \emph{Vitis sylvestris}, and
-\emph{Vicia orientalis}. Test metrics and ROC curves for the individual
-models are included in the appendix.
+with the worst-performing models all having less than 1000 recorded
+occurrences: \emph{Triticum durum}, \emph{Euclidium syriacum},
+\emph{Triticum turgidum}, \emph{Aegilops crassa}, and \emph{Vicia
+orientalis}. Test metrics and ROC curves for the individual models are
+included in the appendix.
 
 The ability of the hindcast models to predict the occurrence of specific
-species at archaeological sites is worse, with 10\% of presences in
-archaeobotanical assemblages successfully predicted. Model sensitivity
-(proportion of corrected predicted presenses) in relation to the
-archaeological data is on average 0.07±0.15
-Table~\ref{tbl-results-summary}. A full assessment of the hindcasting
+species at archaeological sites is worse, with just 8\% of presences in
+archaeobotanical assemblages successfully predicted at a threshold of
+0.5. Model sensitivity (proportion of corrected predicted presenses) in
+relation to the archaeological data is on average 0.06±0.12
+(Table~\ref{tbl-results-summary}). A full assessment of the hindcasting
 performance of the individual models can be found in the appendix.
+
+In summary, the majority of our models perform poorly as simple binary
+classifiers with a threshold of \texttt{P(present)\textgreater{}0.5}.
+However, this is an arbitrary threshold; lowering it can improve
+sensitivity (proportion of occurrences correctly predicted) at the cost
+of specificity (proportion of non-occurrences incorrectly predicted).
+There are several approaches to selecting informative thresholds for
+binary classification in the ENM literature
+\citep{LiuEtAl2005, LiuEtAl2013, LiuEtAl2015}, with most aiming for an
+optimum compromise between sensitivity and specificity. We were unable
+to find a thresholding technique that significantly improved the
+hindcast models' performance as binary classifiers. By definition,
+binarizing model output also discards information from the underlying
+probabilistic prediction, so we have opted to present results
+probabilistically as far as possible. In principle the archaeological
+occurrences themselves could be used to `calibrate' the hindcast models
+and select an optimum threshold, but there aren't enough archaeological
+attestations of most of the modelled species for this to be practicable
+at this time.
 
 \begingroup
 \setlength\LTleft{0\linewidth}
@@ -1070,74 +844,76 @@ performance of the individual models can be found in the appendix.
 \toprule
  & \multicolumn{2}{c}{Occurrences} & \multicolumn{4}{c}{Model} \\ 
 \cmidrule(lr){2-3} \cmidrule(lr){4-7}
-Taxon & Arch. & Cur. & Acc. & ROC-AUC & Sens. & Sens. (arch.) \\ 
+Taxon & Arch. & Cur. & Acc. & ROC-AUC & Sens. cur. & Sens. arch. \\ 
 \midrule\addlinespace[2.5pt]
-{\itshape Aegilops crassa} & 4 & 223 & 0.98 & 0.98 & 0.43 & 0.00 \\ 
-{\itshape Aizoanthemopsis hispanica}\textsuperscript{\textit{1}} & 4 & 762 & 0.99 & 1.00 & 0.88 & 0.50 \\ 
-{\itshape Ammi majus} & 4 & 10311 & 0.97 & 0.99 & 0.98 & 0.00 \\ 
-{\itshape Androsace maxima} & 17 & 4946 & 0.94 & 0.98 & 0.91 & 0.06 \\ 
-{\itshape Arenaria serpyllifolia} & 3 & 101612 & 0.98 & 0.98 & 1.00 & 0.00 \\ 
-{\itshape Arnebia decumbens} & 21 & 616 & 0.97 & 0.97 & 0.59 & 0.05 \\ 
-{\itshape Arnebia linearifolia} & 13 & 239 & 1.00 & 0.99 & 0.89 & 0.00 \\ 
-{\itshape Atriplex prostrata} & 4 & 80181 & 0.98 & 0.99 & 1.00 & 0.00 \\ 
-{\itshape Avena sterilis} & 5 & 15906 & 0.96 & 0.99 & 0.99 & 0.40 \\ 
-{\itshape Bassia arabica} & 4 & 262 & 1.00 & 1.00 & 0.95 & 0.00 \\ 
-{\itshape Bolboschoenus glaucus} & 5 & 418 & 0.98 & 0.97 & 0.53 & 0.00 \\ 
-{\itshape Bolboschoenus maritimus}\textsuperscript{\textit{2}} & 31 & 53809 & 0.98 & 1.00 & 0.99 & 0.00 \\ 
-{\itshape Brachypodium distachyon} & 5 & 13800 & 0.98 & 1.00 & 0.99 & 0.20 \\ 
+{\itshape Aegilops crassa} & 4 & 223 & 0.98 & 0.98 & 0.26 & 0.00 \\ 
+{\itshape Aegilops speltoides} & 0 & 448 & 0.99 & 0.99 & 0.77 & — \\ 
+{\itshape Aegilops tauschii} & 0 & 1257 & 0.97 & 0.99 & 0.84 & — \\ 
+{\itshape Aizoanthemopsis hispanica}\textsuperscript{\textit{1}} & 4 & 762 & 0.99 & 1.00 & 0.87 & 0.50 \\ 
+{\itshape Ammi majus} & 4 & 10337 & 0.97 & 0.99 & 0.98 & 0.00 \\ 
+{\itshape Androsace maxima} & 17 & 4946 & 0.94 & 0.98 & 0.90 & 0.00 \\ 
+{\itshape Arenaria serpyllifolia} & 3 & 101617 & 0.98 & 0.99 & 1.00 & 0.00 \\ 
+{\itshape Arnebia decumbens} & 21 & 617 & 0.97 & 0.97 & 0.59 & 0.05 \\ 
+{\itshape Arnebia linearifolia} & 13 & 239 & 1.00 & 1.00 & 0.83 & 0.00 \\ 
+{\itshape Atriplex prostrata} & 4 & 80186 & 0.99 & 0.99 & 0.99 & 0.00 \\ 
+{\itshape Avena sterilis} & 5 & 15906 & 0.96 & 0.99 & 0.98 & 0.40 \\ 
+{\itshape Bassia arabica} & 4 & 262 & 1.00 & 0.99 & 0.88 & 0.00 \\ 
+{\itshape Bolboschoenus glaucus} & 5 & 418 & 0.98 & 0.97 & 0.63 & 0.00 \\ 
+{\itshape Bolboschoenus maritimus}\textsuperscript{\textit{2}} & 31 & 53813 & 0.98 & 1.00 & 0.99 & 0.00 \\ 
+{\itshape Brachypodium distachyon} & 5 & 13800 & 0.98 & 0.99 & 0.99 & 0.20 \\ 
 {\itshape Bromus sterilis} & 3 & 89764 & 0.99 & 0.99 & 1.00 & 0.00 \\ 
 {\itshape Buglossoides arvensis} & 23 & 23004 & 0.95 & 0.98 & 0.98 & 0.09 \\ 
-{\itshape Buglossoides tenuiflora} & 26 & 399 & 0.99 & 0.99 & 0.71 & 0.04 \\ 
-{\itshape Capparis spinosa} & 4 & 8617 & 0.97 & 0.99 & 0.96 & 0.00 \\ 
-{\itshape Carex divisa} & 9 & 7400 & 0.97 & 0.99 & 0.98 & 0.00 \\ 
-{\itshape Chenopodium album} & 5 & 184403 & 0.99 & 0.98 & 1.00 & 0.00 \\ 
-{\itshape Cicer reticulatum}\textsuperscript{\textit{3}} & 3 & 52 & 1.00 & 1.00 & 0.69 & 0.00 \\ 
-{\itshape Citrullus colocynthis} & 4 & 1823 & 0.94 & 0.95 & 0.69 & 0.00 \\ 
+{\itshape Buglossoides tenuiflora} & 26 & 399 & 0.99 & 0.98 & 0.79 & 0.04 \\ 
+{\itshape Capparis spinosa} & 4 & 8617 & 0.96 & 0.99 & 0.95 & 0.00 \\ 
+{\itshape Carex divisa} & 9 & 7400 & 0.96 & 0.99 & 0.97 & 0.00 \\ 
+{\itshape Chenopodium album} & 5 & 184412 & 0.99 & 0.99 & 1.00 & 0.00 \\ 
+{\itshape Cicer reticulatum}\textsuperscript{\textit{3}} & 3 & 52 & 1.00 & 1.00 & 1.00 & 0.00 \\ 
+{\itshape Citrullus colocynthis} & 4 & 1823 & 0.94 & 0.96 & 0.71 & 0.00 \\ 
 {\itshape Crithopsis delileana} & 3 & 430 & 1.00 & 1.00 & 0.93 & 0.00 \\ 
-{\itshape Euclidium syriacum} & 3 & 338 & 0.98 & 0.97 & 0.27 & 0.00 \\ 
-{\itshape Ficus carica} & 8 & 64424 & 0.98 & 0.99 & 0.99 & 0.38 \\ 
-{\itshape Fumaria densiflora} & 4 & 3704 & 0.96 & 0.99 & 0.94 & 0.00 \\ 
-{\itshape Gypsophila elegans} & 3 & 1603 & 0.95 & 0.98 & 0.81 & 0.00 \\ 
-{\itshape Gypsophila pilosa} & 5 & 348 & 0.99 & 0.99 & 0.67 & 0.00 \\ 
-{\itshape Gypsophila vaccaria}\textsuperscript{\textit{4}} & 8 & 1177 & 0.95 & 0.98 & 0.65 & 0.00 \\ 
+{\itshape Euclidium syriacum} & 3 & 338 & 0.98 & 0.96 & 0.31 & 0.00 \\ 
+{\itshape Ficus carica} & 8 & 64440 & 0.98 & 0.99 & 0.99 & 0.38 \\ 
+{\itshape Fumaria densiflora} & 4 & 3704 & 0.96 & 0.99 & 0.95 & 0.00 \\ 
+{\itshape Gypsophila elegans} & 3 & 1613 & 0.96 & 0.99 & 0.83 & 0.00 \\ 
+{\itshape Gypsophila pilosa} & 5 & 348 & 0.99 & 0.99 & 0.69 & 0.00 \\ 
+{\itshape Gypsophila vaccaria}\textsuperscript{\textit{4}} & 8 & 1177 & 0.95 & 0.96 & 0.69 & 0.00 \\ 
 {\itshape Henrardia pubescens} & 3 & 1\textsuperscript{\textit{5}} & — & — & — & — \\ 
-{\itshape Hordeum bulbosum} & 4 & 4134 & 0.97 & 1.00 & 0.95 & 0.00 \\ 
+{\itshape Hordeum bulbosum} & 4 & 4134 & 0.97 & 0.99 & 0.94 & 0.00 \\ 
 {\itshape Hordeum murinum} & 5 & 74770 & 0.98 & 0.99 & 1.00 & 0.00 \\ 
-{\itshape Hordeum spontaneum}\textsuperscript{\textit{6}} & 76 & 3098 & 0.99 & 1.00 & 0.97 & 0.20 \\ 
+{\itshape Hordeum spontaneum}\textsuperscript{\textit{6}} & 76 & 3098 & 0.99 & 1.00 & 0.98 & 0.21 \\ 
 {\itshape Lathyrus aphaca} & 4 & 18652 & 0.96 & 0.99 & 0.98 & 0.00 \\ 
-{\itshape Lathyrus oleraceus}\textsuperscript{\textit{7}} & 8 & 819 & 0.98 & 0.99 & 0.80 & 0.00 \\ 
-{\itshape Lathyrus sativus} & 4 & 2120 & 0.92 & 0.96 & 0.75 & 0.00 \\ 
+{\itshape Lathyrus oleraceus}\textsuperscript{\textit{7}} & 8 & 819 & 0.98 & 0.99 & 0.78 & 0.00 \\ 
+{\itshape Lathyrus sativus} & 4 & 2120 & 0.93 & 0.97 & 0.77 & 0.00 \\ 
 {\itshape Lepidium perfoliatum} & 3 & 2764 & 0.94 & 0.98 & 0.84 & 0.00 \\ 
 {\itshape Linum bienne}\textsuperscript{\textit{8}} & 14 & 12824 & 0.98 & 0.99 & 0.99 & 0.07 \\ 
 {\itshape Lolium rigidum} & 5 & 10620 & 0.97 & 0.99 & 0.98 & 0.00 \\ 
-{\itshape Lolium temulentum} & 3 & 4463 & 0.94 & 0.98 & 0.93 & 0.00 \\ 
-{\itshape Medicago astroites}\textsuperscript{\textit{9}} & 15 & 104 & 1.00 & 0.99 & 0.64 & 0.00 \\ 
-{\itshape Medicago radiata} & 20 & 834 & 0.99 & 0.99 & 0.91 & 0.30 \\ 
-{\itshape Phalaris paradoxa} & 3 & 3287 & 0.97 & 0.99 & 0.94 & 0.00 \\ 
-{\itshape Phragmites australis} & 4 & 373041 & 0.99 & 0.99 & 1.00 & 0.00 \\ 
-{\itshape Pistacia atlantica} & 6 & 2419 & 0.99 & 1.00 & 0.94 & 0.33 \\ 
+{\itshape Lolium temulentum} & 3 & 4463 & 0.94 & 0.98 & 0.94 & 0.00 \\ 
+{\itshape Medicago radiata} & 20 & 834 & 0.98 & 1.00 & 0.90 & 0.30 \\ 
+{\itshape Phalaris paradoxa} & 3 & 3287 & 0.96 & 0.99 & 0.94 & 0.00 \\ 
+{\itshape Phragmites australis} & 4 & 373066 & 0.99 & 0.99 & 1.00 & 0.00 \\ 
+{\itshape Pistacia atlantica} & 6 & 2419 & 0.98 & 1.00 & 0.93 & 0.33 \\ 
 {\itshape Poa bulbosa} & 5 & 30769 & 0.96 & 0.98 & 0.99 & 0.20 \\ 
-{\itshape Polygonum arenarium}\textsuperscript{\textit{10}} & 7 & 25\textsuperscript{\textit{5}} & — & — & — & — \\ 
+{\itshape Polygonum arenarium}\textsuperscript{\textit{9}} & 7 & 25\textsuperscript{\textit{5}} & — & — & — & — \\ 
 {\itshape Polygonum corrigioloides} & 6 & 12\textsuperscript{\textit{5}} & — & — & — & — \\ 
-{\itshape Prosopis farcta} & 5 & 2512 & 0.99 & 1.00 & 0.96 & 0.60 \\ 
+{\itshape Prosopis farcta} & 5 & 2512 & 0.99 & 1.00 & 0.96 & 0.00 \\ 
 {\itshape Rumex pulcher} & 6 & 17606 & 0.97 & 0.99 & 0.99 & 0.00 \\ 
-{\itshape Salsola kali} & 6 & 14699 & 0.98 & 1.00 & 0.99 & 0.00 \\ 
-{\itshape Salvia absconditiflora}\textsuperscript{\textit{11}} & 3 & 128 & 0.99 & 1.00 & 0.65 & 0.00 \\ 
-{\itshape Secale cereale} & 4 & 14803 & 0.95 & 0.98 & 0.97 & 0.00 \\ 
-{\itshape Secale strictum}\textsuperscript{\textit{12}} & 3 & 162 & 0.99 & 0.99 & 0.50 & 0.00 \\ 
-{\itshape Suaeda fruticosa} & 3 & 577 & 0.99 & 1.00 & 0.79 & 0.00 \\ 
-{\itshape Taeniatherum caput-medusae} & 4 & 1969 & 0.96 & 0.99 & 0.89 & 0.00 \\ 
-{\itshape Triticum aestivum}\textsuperscript{\textit{13}} & 4 & 217 & 0.99 & 0.98 & 0.59 & 0.00 \\ 
-{\itshape Triticum durum} & 3 & 64 & 1.00 & 0.99 & 0.50 & 0.00 \\ 
-{\itshape Triticum monococcum}\textsuperscript{\textit{14}} & 47 & 870 & 0.98 & 0.99 & 0.80 & 0.15 \\ 
-{\itshape Triticum turgidum}\textsuperscript{\textit{15}} & 53 & 345 & 0.97 & 0.93 & 0.22 & 0.00 \\ 
-{\itshape Verbena officinalis} & 3 & 89654 & 0.99 & 0.99 & 1.00 & 0.00 \\ 
-{\itshape Vicia ervilia} & 26 & 1924 & 0.95 & 0.98 & 0.86 & 0.35 \\ 
-{\itshape Vicia faba} & 7 & 42636 & 0.97 & 0.99 & 0.99 & 0.43 \\ 
-{\itshape Vicia narbonensis}\textsuperscript{\textit{16}} & 3 & 2826 & 0.95 & 0.99 & 0.89 & 0.33 \\ 
-{\itshape Vicia orientalis}\textsuperscript{\textit{17}} & 16 & 41 & 1.00 & 0.95 & 0.12 & 0.00 \\ 
-{\itshape Vitis sylvestris} & 3 & 63 & 1.00 & 0.99 & 0.36 & 0.00 \\ 
-{\itshape Zygophyllum fabago} & 3 & 3554 & 0.97 & 0.99 & 0.91 & 0.00 \\ 
+{\itshape Salsola kali} & 6 & 14701 & 0.98 & 1.00 & 0.99 & 0.00 \\ 
+{\itshape Salvia absconditiflora}\textsuperscript{\textit{10}} & 3 & 128 & 1.00 & 1.00 & 0.81 & 0.00 \\ 
+{\itshape Secale cereale} & 4 & 14813 & 0.95 & 0.98 & 0.98 & 0.00 \\ 
+{\itshape Secale strictum}\textsuperscript{\textit{11}} & 3 & 162 & 0.99 & 0.98 & 0.62 & 0.00 \\ 
+{\itshape Suaeda fruticosa} & 3 & 577 & 0.99 & 0.99 & 0.76 & 0.00 \\ 
+{\itshape Taeniatherum caput-medusae} & 4 & 1969 & 0.97 & 0.99 & 0.90 & 0.00 \\ 
+{\itshape Triticum aestivum}\textsuperscript{\textit{12}} & 4 & 217 & 0.99 & 0.96 & 0.50 & 0.00 \\ 
+{\itshape Triticum durum} & 3 & 65 & 0.99 & 0.95 & 0.11 & 0.00 \\ 
+{\itshape Triticum monococcum}\textsuperscript{\textit{13}} & 47 & 870 & 0.97 & 0.99 & 0.80 & 0.04 \\ 
+{\itshape Triticum turgidum}\textsuperscript{\textit{14}} & 53 & 345 & 0.98 & 0.91 & 0.25 & 0.00 \\ 
+{\itshape Triticum urartu} & 0 & 420 & 1.00 & 1.00 & 0.95 & — \\ 
+{\itshape Verbena officinalis} & 3 & 89655 & 0.99 & 0.99 & 1.00 & 0.00 \\ 
+{\itshape Vicia ervilia} & 26 & 1924 & 0.95 & 0.98 & 0.84 & 0.27 \\ 
+{\itshape Vicia faba} & 7 & 42644 & 0.97 & 0.99 & 0.99 & 0.29 \\ 
+{\itshape Vicia narbonensis}\textsuperscript{\textit{15}} & 3 & 2826 & 0.95 & 0.99 & 0.90 & 0.33 \\ 
+{\itshape Vicia orientalis}\textsuperscript{\textit{16}} & 16 & 41 & 1.00 & 0.97 & 0.14 & 0.00 \\ 
+{\itshape Vitis sylvestris} & 3 & 63 & 1.00 & 1.00 & 0.50 & 0.00 \\ 
+{\itshape Zygophyllum fabago} & 3 & 3554 & 0.97 & 0.99 & 0.94 & 0.00 \\ 
 \bottomrule
 
 \end{longtable}
@@ -1151,22 +927,22 @@ Taxon & Arch. & Cur. & Acc. & ROC-AUC & Sens. & Sens. (arch.) \\
 \textsuperscript{\textit{6}}Including \emph{Hordeum vulgare}\\
 \textsuperscript{\textit{7}}Including \emph{Pisum sativum} and \emph{Pisum elatius}\\
 \textsuperscript{\textit{8}}Including \emph{Linum usitatissimum}\\
-\textsuperscript{\textit{9}}Including \emph{Trigonella astroites}\\
-\textsuperscript{\textit{10}}Including \emph{Polygonum venantianum}\\
-\textsuperscript{\textit{11}}Including \emph{Salvia cryptantha}\\
-\textsuperscript{\textit{12}}Including \emph{Secale montanum}\\
-\textsuperscript{\textit{13}}Including \emph{Triticum spelta} and \emph{Triticum aestivocompactum}\\
-\textsuperscript{\textit{14}}Including \emph{Triticum boeoticum}\\
-\textsuperscript{\textit{15}}Including \emph{Triticum aestivum}, \emph{Triticum dicoccum}, and \emph{Triticum dicoccoides}\\
-\textsuperscript{\textit{16}}Including \emph{Vicia narbonense}\\
-\textsuperscript{\textit{17}}Including \emph{Lens culinaris} and \emph{Lens orientalis}\\
+\textsuperscript{\textit{9}}Including \emph{Polygonum venantianum}\\
+\textsuperscript{\textit{10}}Including \emph{Salvia cryptantha}\\
+\textsuperscript{\textit{11}}Including \emph{Secale montanum}\\
+\textsuperscript{\textit{12}}Including \emph{Triticum spelta} and \emph{Triticum aestivocompactum}\\
+\textsuperscript{\textit{13}}Including \emph{Triticum boeoticum}\\
+\textsuperscript{\textit{14}}Including \emph{Triticum aestivum}, \emph{Triticum dicoccum}, and \emph{Triticum dicoccoides}\\
+\textsuperscript{\textit{15}}Including \emph{Vicia narbonense}\\
+\textsuperscript{\textit{16}}Including \emph{Lens culinaris} and \emph{Lens orientalis}\\
 \end{minipage}
 \endgroup
 
 \section{Discussion}\label{discussion}
 
-\subsection{Reduction in range sizes over the Pleistocene/Holocene
-boundary}\label{reduction-in-range-sizes-over-the-pleistoceneholocene-boundary}
+\subsection{Reduction in potential niche sizes over the
+Pleistocene/Holocene
+boundary}\label{reduction-in-potential-niche-sizes-over-the-pleistoceneholocene-boundary}
 
 \begin{figure}
 
@@ -1177,28 +953,28 @@ boundary}\label{reduction-in-range-sizes-over-the-pleistoceneholocene-boundary}
 }
 
 \caption{\label{fig-pred-range-density}Distribution of predicted species
-ranges by period. Dashed lines indicate the median range.}
+niche size by period (logarithmic scale). Dashed lines indicate the
+median niche size.}
 
 \end{figure}%
 
 Our reconstructed palaeodistributions (shown in full in the appendix)
 indicate that the majority of species had significantly different
-geographic ranges in the Late Pleistocene/Early Holocene compared today.
-55 of 63 species are predicted reduced ranges in the past; 54 of more
-than 10\% or more. Though the magnitude of the change in range size from
-prehistory to the present likely reflects a degree of overfitting in the
-model (discussed further in Section~\ref{sec-discuss-hindcasting}),
-fluctuations in modelled range size between the Bølling-Allerød
-(14.7--12.9 ka), Younger Dryas (12.9--11.7 ka), and Early Holocene
-(11.7--8.3 ka) are more directly comparable
-(Figure~\ref{fig-pred-range-density}). The average range of modelled
-species was 31\% in the Early Holocene compared to the Bølling--Allerød,
-and 28\% during the Younger Dryas (i.e.~ranges recovered slightly
-between the Younger Dryas and Early Holocene). This perhaps indicates
-that although this period is considered one of climatatic amelioration
-globally \citep{JonesEtAl2019}, the colder conditions of the Pleistocene
-may have supported more extensive plant-based economies in West Asia
-specifically.
+potential geographic niches in the Late Pleistocene/Early Holocene
+compared today. 55 of 65 species are predicted reduced niches in the
+past; 52 of more than 10\% or more. Though the magnitude of the change
+in potential niche size from prehistory to the present likely reflects a
+degree of overfitting in the model (discussed further in
+Section~\ref{sec-discuss-hindcasting}), fluctuations in modelled niche
+size between the Bølling-Allerød (14.7--12.9 ka), Younger Dryas
+(12.9--11.7 ka), and Early Holocene (11.7--8.3 ka) are more directly
+comparable (Figure~\ref{fig-pred-range-density}). The average potential
+niche size of modelled species was 35\% smaller in the Early Holocene
+compared to the Bølling--Allerød, and 22\% smaller during the Younger
+Dryas. This perhaps indicates that although this period is considered
+one of climatatic amelioration globally \citep{JonesEtAl2019}, the
+colder conditions of the Pleistocene may have supported more extensive
+plant-based economies in West Asia specifically.
 
 \begin{figure}
 
@@ -1226,20 +1002,20 @@ urartu} (but not the other wheat progenitor, \emph{T. turgidum dicoccum}
 not \emph{Aegilops tauschii} (goatgrasses); and \emph{Vicia} spp.
 (vetches), including \emph{Vicia faba} (broad beans). Most of Anatolia,
 Northern Mesopotamia, and the Zagros Mountains in particular disappear
-from the predicted ranges of these species, leaving the Levant and to a
+from the predicted niches of these species, leaving the Levant and to a
 lesser extent the Aegean and Cyprus as refugia.
 
 Our results for the Levant are consistent with the current understanding
 of this region as developing early intensive foraging economies
 \citep[the Natufian culture,][]{BarYosef1998} and as a centre of origin
 of agriculture \citep{Zeder2011a}. Within the Levant, many species show
-moderate reductions in ranges over the Pleistocene/Holocence boundary,
-retreating from the Badia/transjordan region (e.g.~barley, fig.
-\textbf{?@fig-palaeodist-barely-levant}).
+moderate reductions in potential niche size over the
+Pleistocene/Holocene boundary, retreating from the Badia/transjordan
+region (e.g.~barley, fig. Figure~\ref{fig-palaeodist-barley-levant}).
 
 Loss of the Northern Mesopotamia--Anatolia region from the predicted
-ranges of crop progenitors is interesting in light of the `golden
-triangle' hypothesis
+potential niches of crop progenitors is interesting in light of the
+`golden triangle' hypothesis
 \citep{Lev-YadunEtAl2000, KozlowskiAurenche2005, AbboEtAl2010}, which
 puts this region at the centre of the development of agriculture and
 plant domestication. Multiple lines of archaeological evidence have
@@ -1250,7 +1026,7 @@ reconstructions are also consistent with the late arrival of intensive
 plant-based foraging economies in this region (cf.~the Natufian of the
 Levant).
 
-The near-absence of the Zagros in any predicted ranges is also
+The near-absence of the Zagros in any predicted niches is also
 surprising, given mounting evidence that animal domestication took place
 just as early in the eastern \emph{Mashriq} as it did in the west
 \citep{Zeder2024}. We consider that the most likely explanation for this
@@ -1261,30 +1037,30 @@ due to a hiatus in field research there from the 1980s to early 2010s
 \citep{Zeder2024}. Recent research
 \citep{RiehlEtAl2013, WeideEtAl2017, WeideEtAl2018, WhitlamEtAl2018, GonzalezCarreteroEtAl2023}
 indicates that plant subsistence in this region was based on a distinct
-set of species, compared to the Levant and Anatolia.
+set of species than that of the Levant and Anatolia.
 
 Cyprus and the Aegean are not conventionally considered part of the
 primary zone of domestication but rather amongst the first regions that
 acquired agriculture from West Asia. Our analysis complicates this
-picture, as it indicates that the wild ranges of many crop progenitors
-included these regions. Early examples of several domesticates are
-recorded at sites on Cyprus, Western Anatolia and Greece
-\citep{ArranzOtaeguiRoe2023}, and the Aegean region was probably
+picture, as it indicates that the wild distribution of many crop
+progenitors included these regions. Early examples of several
+domesticates are recorded at sites on Cyprus, Western Anatolia and
+Greece \citep{ArranzOtaeguiRoe2023}, and the Aegean region was probably
 connected to West Asia by a land bridge via Anatolia until the Early
 Holocene \citep{AksuHiscott2022}. Were these area part of the same
-broader `interaction sphere' that produce Neolithic agriculture in West
+broader `interaction sphere' that produced Neolithic agriculture in West
 Asia?
 
-Exceptions to the dominant trend of range reduction include \emph{Cicer
-reticulatum} (wild chickpea), which has a relatively stable range
-centered on Northern Mesopotamia; and \emph{Triticum turgidum dicoccum}
-(wild emmer wheat), which is predicted to have two limited ranges
-centered around the Black Sea Coast of Anatolia and the Palmyra basin.
-In the latter case, neither of these areas are part of the predicted (by
-our model) modern distribution of wild emmer, which is centered around
-the Caucasus and Northern Mesopotamia. But it would be consistent with
-archaeological evidence for early cultivation at sites in the Upper
-Euphrates \citep{Willcox2024}.
+Exceptions to the dominant trend of niche size reduction include
+\emph{Cicer reticulatum} (wild chickpea), which has a relatively stable
+potential niche centered on Northern Mesopotamia; and \emph{Triticum
+turgidum dicoccum} (wild emmer wheat), which is predicted to occur in
+two limited zones centered around the Black Sea Coast of Anatolia and
+the Palmyra basin. In the latter case, neither of these areas are part
+of the predicted (by our model) modern distribution of wild emmer, which
+is centered around the Caucasus and Northern Mesopotamia. But it would
+be consistent with archaeological evidence for early cultivation at
+sites in the Upper Euphrates \citep{Willcox2024}.
 
 \subsection{Biogeography of crop progenitors}\label{sec-discuss-crops}
 
@@ -1305,19 +1081,24 @@ Almost all the cereal and legume crop progenitors we modelled are
 predicted to have only been found in the Levant during the terminal
 Pleistocene and Early Holocene (see appendix). Part of this may be do
 with the fact that both our initial flora and training occurrence
-dataset have a strong bias towards the southern Levant, but strikingly
-the modelled \emph{current} ranges of these plants do tend to include
-Anatolia and the Zagros, so this cannot be the only factor. One notable
-exception is the wild ancestor of chickpea (\emph{Cicer reticulatum}),
-which is predicted to have a distribution centered on Northern
-Mesopotamia but encompassing much of the the `hilly flanks' (except the
-southern Levant, Figure~\ref{fig-palaeodist-chickpea-rye}). Another is
-rye (\emph{Secale cereale}), which is inferred to be primarily Anatolian
-(Figure~\ref{fig-palaeodist-chickpea-rye}). This is perhaps relevant to
-rye's unusual domestication history, as a crop of West Asian origin that
-was intensively exploited \citep{HillmanEtAl2001, DoucheWillcox2018} but
-apparently not first cultivated until much later than the `founder
-crops', in Europe \citep{SchreiberEtAl2021}.
+dataset have a strong bias towards the southern Levant, but the modelled
+\emph{current} potential niche of these plants do tend to include
+Anatolia and the Zagros, so this cannot be the only factor. It has
+previously been proposed that the Southern Levant was an ``important
+glacial refuge area for wild cereals'' \citep{RobertsEtAl2018}, which
+accords with these results.
+
+One notable exception is the wild ancestor of chickpea (\emph{Cicer
+reticulatum}), which is predicted to have a distribution centered on
+Northern Mesopotamia but encompassing much of the the `hilly flanks'
+(except the southern Levant, Figure~\ref{fig-palaeodist-chickpea-rye}).
+Another is rye (\emph{Secale cereale}), which is inferred to be
+primarily Anatolian (Figure~\ref{fig-palaeodist-chickpea-rye}). This is
+perhaps relevant to rye's unusual domestication history, as a crop of
+West Asian origin that was intensively exploited
+\citep{HillmanEtAl2001, DoucheWillcox2018} but apparently not first
+cultivated until much later than the `founder crops', in Europe
+\citep{SchreiberEtAl2021}.
 
 \begin{figure}
 
@@ -1338,27 +1119,40 @@ the southern Levant. This is consistent with its low ubiquity in
 archaeobotanical assemblages \citep{ArranzOtaeguiRoe2023}, despite
 conventionally being considered a `founder crop', and presumably implies
 that its domestication was similarly geographically constrained. It is
-the only unambiguous crop progenitor with such a restricted range,
-though pistachio (\emph{Pistacia atlantica}) and clubrush
+the only unambiguous crop progenitor with such a restricted potential
+niche, though pistachio (\emph{Pistacia atlantica}) and clubrush
 (\emph{Bolboschoenus maritimus}) are similarly constrained to the
 Mediterranean coast (and North Africa, in the case of pistachio). This
 is despite the fact that they are well-attested in the archaeotanical
 record from across West Asia.
 
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{paper_files/figure-pdf/fig-palaeodist-barley-levant-1.pdf}}
+
+}
+
+\caption{\label{fig-palaeodist-barley-levant}Predicted
+palaeodistribution of wild barleys}
+
+\end{figure}%
+
 Wild barley (\emph{Hordeum spontaneum}) its relatives show a contraction
-of their predicted ranges from the Pleistocene to the Holocene,
+of their predicted potential niche from the Pleistocene to the Holocene,
 concurrent with it being brought into cultivation
-(\textbf{?@fig-palaeodist-barely-levant}). It also sees a marked decline
-in the archaeobotanical record from the Early PPNA/Early PPNB (where it
-was amongst the most common taxa) to the Late PPNB and Late Neolithic
-\citep{ArranzOtaeguiRoe2023}. Pistachio (\emph{Pistacia atlantica})
-shows similar trends, but it is less certain that this species was
-managed in the Neolithic. Conversely, the various wild wheat species
-native to West Asia show almost no response to Pleistocene/Holocene
-climate change, even within the Levant, and in the archaeobotanical
-record wheat displays the opposite trend to barley and pistachio --
-becoming gradually more abundant through the course of the Neolithic and
-dominant by its end \citep{ArranzOtaeguiRoe2023}.
+(Figure~\ref{fig-palaeodist-barley-levant}). It also sees a marked
+decline in the archaeobotanical record from the Early PPNA/Early PPNB
+(where it was amongst the most common taxa) to the Late PPNB and Late
+Neolithic \citep{ArranzOtaeguiRoe2023}. Pistachio (\emph{Pistacia
+atlantica}) shows similar trends, but it is less certain that this
+species was managed in the Neolithic. Conversely, the various wild wheat
+species native to West Asia show almost no response to
+Pleistocene/Holocene climate change, even within the Levant, and in the
+archaeobotanical record wheat displays the opposite trend to barley and
+pistachio -- becoming gradually more abundant through the course of the
+Neolithic and dominant by its end \citep{ArranzOtaeguiRoe2023}.
 
 \begin{figure}
 
@@ -1379,47 +1173,103 @@ events \citep{LevyFeldman2022}: most recently between domestic emmer
 (\emph{Triticum turgidum dicoccum}) and a goatgrass (\emph{Aegilops
 tauschii}) c.~9 ka, and before that, in emmer, between wild red einkorn
 (\emph{T. urartu}) and another goatgrass (\emph{Aegilops speltoides}).
-Although there is fairly wide overlap between these species today,
-according to our modelling the only place all four (or even just three)
-are predicted to have coincided or been found in close proximity to each
-other in the time frame of domestication is a narrow area around the
-Orontes river in the northern Levant
-(Figure~\ref{fig-palaeodist-bread}). This area is c.~200 km from the
-only two sites in our archaeobotanical database where bread wheat
-(\emph{T. aestivum}) co-occurs with both of its recent progenitors
-(\emph{A. tauschii} and \emph{T. turgidum dicoccum}) or both species of
-wheat and the goatgrasses are found together: Tell Abu Hureyra and El
-Kowm II \citep{ArranzOtaeguiRoe2023}.\footnote{We are grateful to
-  Benjamin Nowak for pointing this out to us.} Taken together this
-suggests an origin of domesticated bread wheat, otherwise only loosely
-geographically constrained to the Levant--Upper Euphrates corridor
-\citep{LevyFeldman2022}, is possibly occurred in this vicinity.
+The predicted potential niches of the two recent progenitors---\emph{T.
+turgidum dicoccum} and \emph{A. tauschii}---have relateively limited
+areas of overlap. These include the Syrian Jazira
+(Figure~\ref{fig-palaeodist-bread}), close to the only two sites in our
+archaeobotanical database where bread wheat (\emph{T. aestivum})
+co-occurs with both of the recent progenitors (\emph{A. tauschii} and
+\emph{T. turgidum dicoccum}): Tell Abu Hureyra and El Kowm II
+\citep{ArranzOtaeguiRoe2023}.\footnote{We are grateful to Benjamin Nowak
+  for pointing this out to us.} Taken together this suggests an origin
+of domesticated bread wheat, otherwise only loosely geographically
+constrained to the Levant--Upper Euphrates corridor
+\citep{LevyFeldman2022}, in this vicinity.
 
-\subsection{Hindcast models do not predict archaeobotanical
+\subsection{Disagreement between hindcast models and archaeobotanical
 composition}\label{sec-discuss-hindcasting}
 
-The failure of our hindcast models to predict the occurrence of species
-in archaeobotanical assemblages has several possible explanations. Since
-they do accurately predict the test dataset, a likely culprit is
-overfitting of the models to the present environment. This implies that
-the modelled palaeodistributions should be seen as conservative
-estimates or a minimal range. Another obvious flaw in our methodology is
-that the time slices used for palaeoclimatic reconstruction are very
-broad---each covering around two millennia---and therefore potentially
-unrepresentative of the environment around sites at the specific time at
-which they were occupied. The variable quality of the archaeological
-test dataset, especially in terms of chronology, is also a plausible
-factor.
+In general there is middling to low agreement between our hindcast
+predictions of species niches and observed archaeological occurrences of
+the same species \citep{tlb-results-summary}.
 
-For a variety of reasons, our models almost certainly underestimate the
-\emph{fundamental} niche or potential distribution of the target taxon.
-These include:
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{paper_files/figure-pdf/fig-archaeo-sensitivity-1.pdf}}
+
+}
+
+\caption{\label{fig-archaeo-sensitivity}Summary of hindcasting
+performance of models in relation to model performance and available
+archaeological test data}
+
+\end{figure}%
+
+The hindcasting performance of models is not strongly correlated with
+either the number of occurrences in the training dataset, the
+performance of the model on test data, or the number of attested
+archaeological occurrences (Figure~\ref{fig-archaeo-sensitivity}). This
+indicates against a single, simple explanation for the discrepancy,
+i.e.~that one or the other signal is `wrong'.
+
+The core issue is that the two sets of evidence discussed
+here---modelled palaeodistributions and archaeologically-attested
+palaeooccurrences---are signals of related but distinct phenomena. The
+hindcast niche models are projections of the species' present realised
+niche into a reconstructed past climatology. The archaeobotanical record
+is an incomplete sample of a past realised niche passed through various
+anthropic and taphonomic filters. Neither can be assumed to be fully
+accurate representations of the ultimate aim of this study, which is the
+\emph{fundamental} niche of the species in relation to reconstructable
+climate and environmental factors -- though both carry information about
+it.
+
+For each specific species there are a variety of potential explanations
+for why the signals differ, but without further lines of evidence we are
+not in a position to distinguish them. In general, our models probably
+underestimate the fundamental niche or potential distribution of the
+target taxon for a variety of reasons:
 
 \begin{itemize}
 \tightlist
 \item
-  The uneven coverage of the GBIF occurrence dataset (see
-  Section~\ref{sec-occ-data})
+  The inherent tendency of machine learning models to overfit to the
+  training scenario, despite our efforts to mitigate this;
+\item
+  Uneven spatial sampling intensity of the GBIF occurrence dataset (see
+  Section~\ref{sec-occ-data}), meaning that some parts of the species'
+  niche are probably either over- and under-represented in the training
+  data;
+\item
+  Use of fairly coarse (2000 year) time-averaged climate slices, which
+  capture a general trend but are probably unrepresentative of the
+  environment around sites at the specific time at which they were
+  occupied.
+\end{itemize}
+
+At the same time, there are several reasons to believe that the
+archaeobotanical data (at least as it has been compiled for this study)
+\emph{overestimates} the fundamental niche:
+
+\begin{itemize}
+\tightlist
+\item
+  Archaeological deposits are also time-averaged signals, in some cases
+  over quite large spans of time;
+\item
+  The chronology attached to our archaeobotanical data is imprecise,
+  e.g.~primarily based on point estimates of radiocarbon dates
+  \citep{Michczynski2007}, producing a further averaging effect;
+\item
+  Archaeological occurences could be the result of human transplanting,
+  range expansion and/or transport, especially considering this is the
+  period where agriculture began to be practiced;
+\item
+  Most archaeobotanical samples in our archaeological test dataset were
+  small, so individual errors and misidentifications have a
+  correspondingly large impact on quantification of model performance.
 \end{itemize}
 
 At the same time, we cannot rule out more substantive reasons for the
@@ -1429,16 +1279,27 @@ Holocene, which would not be captured in a model trained purely on
 modern specimens. Human economic choices---mobility, foraging
 strategies, cultivation, etc.---could also produce archaeobotanical
 assemblages whose composition depart significantly from that of the
-surrounding local flora. Further refinement of the methodology for
-hindcast palaeoecological niche models, for example using more finely
-resolved palaeoclimate sequences \citep[e.g.][]{KargerEtAl2023},
-hyperparameter tuning to avoid overfitting, and improved archaeological
-datasets, would help disentangle these potential explanations.
+surrounding local flora.
+
+What are the implications of this assessment? In the immediate term, the
+modelled palaeodistributions presented here should be taken as
+conservative estimates -- a minimal likely potential niche of the
+species. Closer inspection of discrepencies between the modelled and
+attested distributions of particular species in relation to specific
+environmental, taphonomic and cultural factors could yield further
+insights. Future applications of hindcast palaeoecological niche models
+in archaeology could refine the methodology in several ways: using more
+finely resolved palaeoclimate sequences \citep[e.g.][]{KargerEtAl2023};
+building more refined archaeological chronologies; performing
+hyperparameter tuning to further mitigate overfitting;\footnote{We did
+  not perform hyperparameter tuning in this study due to computational
+  limitations.} and compiling expanded archaeological datasets that
+could be use to calibrate binary classification.
 
 \section{Conclusion}\label{conclusion}
 
 We present the first continuous, spatially explicit models of the
-palaeodistributions of 63 plant species found regularly in association
+palaeodistributions of 65 plant species found regularly in association
 with Late Epipalaeolithic and Early Neolithic sites in West Asia. This
 deductive approach---modelling the niche of a species based on its
 occurrence in relation to environmental factors today, and using this
@@ -1449,17 +1310,21 @@ picture to that gleaned from environmental archaeology and
 climatological archives because it is independent of the taphonomic,
 anthropic, and recovery-related processes that affect these records.
 
-``All models are wrong'' \citep{Box1976}, but the performance of our
-models on independent test datasets give confidence in its predictions,
-which are plausible and consistent with broad-scale patterns in the
-archaeological record. Results with regard to specific
-archaeologically-attested species are not as promising, but this also
-reflects the incomplete and coarsely temporally-resolved nature of the
-archaeobotanical verification dataset. Discrepancies between the
-modelled distribution, whether on the broad scale (e.g.~the restricted
-geographic range of most species compared to their attestation in the
-archaeological record), or relating to specific species (i.e.~false
-positives and false negatives), suggest several avenues for future
+The modelled palaeodistributions of the species presented here (see
+appendix) represent plausible minimum potential niche under the average
+climatic conditions of the Bølling-Allerød, Younger Dryas, and Early
+Holocene periods. The models' generally high performance as assessed
+against independent contemporary test datasets lend confidence to these
+predictions. Their application as a binary predictor of archaeological
+presence or absence is significantly less promising, which likely
+reflects a combination of methodological limitations of our modelling
+approach, the incomplete and coarsely temporally-resolved nature of the
+archaeobotanical test dataset, and genuine discrepencies between the
+species' fundamental niche and its occurrence in the archaeological
+record. Whether on the broad scale (e.g.~the restricted geographic range
+of most species compared to their attestation in the archaeological
+record), or relating to specific species (i.e.~false positives and false
+negatives), these discrepencies suggest several avenues for future
 investigation.
 
 Modelling a large number of species using machine learning, the
@@ -1469,9 +1334,11 @@ advance in the methodology of palaeoecological niche modelling. This
 approach is enabled by the availability of high quality, global open
 datasets in ecology \citep{GBIF2025, GBIFSecretariat2023}, earth science
 \citep{SRTM}, and climatology \citep{KargerEtAl2017, BrownEtAl2018}.
-Unfortunately in relation to these fields open data in archaeology lags
-conspiciously behind. Though we have benefited from the relatively long
-tradition of compiling archaeobotanical data in our region of study
+However, several areas of methodological improvement are evident.
+Notably, the state of open data availability in archaeology lags
+conspiciously behind the fields mentioned above. Though we have
+benefited from the relatively long tradition of compiling
+archaeobotanical data in our region of study
 \citep{ColledgeEtAl2004, ShennanConolly2007, ADEMNES, LucasFuller2018, FullerEtAl2018, WallaceEtAl2018, ORIGINS},
 further development of open, comprehensive and up-to-date `backbone'
 datasets on site locations and chronologies is needed to advance
@@ -1479,8 +1346,10 @@ archaeoecological modelling to the same level.
 
 \section{Data availability}\label{data-availability}
 
-The data and R code used to produced is archived with Zenodo at
-\url{https://doi.org/10.5281/zenodo.14629984}
+The data and R code used to produce this study is archived with Zenodo
+at \url{https://doi.org/10.5281/zenodo.14629984}. Modelled
+palaeodistributions in raster format (.TIF) can be found in the same
+repository.
 
 \section{Acknowledgements}\label{acknowledgements}
 
@@ -1493,7 +1362,7 @@ Epipalaeolithic origins of plant management in southwest Asia}).
 
 
 \renewcommand\refname{References}
-  \bibliography{references.bib}
+\bibliography{references.bib,gbif.bib}
 
 
 

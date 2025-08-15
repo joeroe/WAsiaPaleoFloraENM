@@ -5,7 +5,7 @@ author:
 - name: Joe Roe
   id: jr
   orcid: 0000-0002-1011-1244
-  email: joeroe@hey.com
+  email: jar@hum.ku.dk
   url: https://joeroe.io
   affiliations:
     - name: University of Bern
@@ -21,32 +21,28 @@ author:
       country: Spain
 abstract: |
   This paper presents the first continuous, spatially-explicit reconstructions 
-  of the palaeodistributions of 82 plant species found regularly in association 
+  of the palaeodistributions of 65 plant species found regularly in association 
   with early agricultural archaeological sites in West Asia, including the 
   progenitors of the first crops. We used machine learning to train an 
   ecological niche model of each species based on its present-day distribution 
   in relation to climate and environmental variables. Predictions of the 
-  potential ranges of these species at key stages of the Pleistocene–Holocene 
+  potential niches of these species at key stages of the Pleistocene–Holocene 
   transition could then be derived from these models using downsampled data from 
   palaeoclimate simulations.
-  <!-- TODO: rewrite following reviews. Highlight BA to EH decline vs. 'amelioration' concept -->
-  The models predict significant reductions and/or shifts in species ranges in
-  the terminal Pleistocene and Early Holocene compared to present conditions. 
-  Many species that are found throughout the region's 'hilly flanks' today 
-  are indicated to have much more restricted distributions centered on the 
-  Levant, Cyprus and Western Anatolia. In addition, overall ranges shrunk by an 
-  average of c. 25% from the terminal Pleistocene to the Early Holocene. 
-  The models performance in predicting the occurrence of specific species at 
-  archaeological sites is highly variable, but in aggregate the predictions are
-  coherent and align with broad-scale trends in the ubiquity and relative 
-  abundance of species in the archaeological record.<!--
-  however [...]
-  The regional ubiquity of species in the archaeological record is [not] correlated with the 
-  predicted size of its range and the diversity of archaeobotanical assemblages is [not] 
-  correlated with the predicted diversity of its environs. This indicates that 
-  trends in taxonomic composition of the archaeobotanical record is [not] likely 
-  to have been influenced by environmental change and species turnover, in
-  addition to human economic choices.-->
+  Our models performed well against independent contemporary test data, but 
+  their ability to predict the occurrence of specific species at 
+  archaeological sites was much more variable, probably reflecting a tendency of 
+  the method to underestimate the species' fundamental niche. Nevertheless, the 
+  majority of species are predicted to have had more restricted geographic 
+  distributions under past climate conditions compared to today. Crop 
+  progenitors and several wild food species modelled are modelled to have been 
+  concentrated in the Levant and, to a lesser extent, Cyprus and Western 
+  Anatolia, suggesting these regions may have served as glacial *refugia*. 
+  The average size of species' niche shrunk by an average of c. 25% from the 
+  terminal Pleistocene to the Early Holocene, indicating that economically
+  significant plants were adapted to cryo-arid conditions and did not, as often
+  assumed, initially respond positively to the 'ameliorated' climate of the 
+  Holocene.
 format: 
   elsevier-pdf:
     keep-tex: true
@@ -55,7 +51,12 @@ format:
       name: Open Quaternary
       formatting: preprint
       cite-style: authoryear
-bibliography: references.bib
+  docx:
+    toc: true
+    number-sections: true
+bibliography: 
+  - references.bib
+  - gbif.bib
 execute: 
   echo: false
   cache: true
@@ -63,14 +64,8 @@ execute:
 
 <!--
 TODO before publication:
-- [ ] Revise discussion of archaeo verification
-- [ ] Outstanding TODOs
-- [ ] Add missing references
-- [x] Appendix with all hindcast predictions (HTML?)
--   [] TIFs?
-- [ ] Clean up package code
 - [ ] Zenodo release
-- [ ] Final proofread
+- [ ] Clean up package code
 -->
 
 ```{r dependencies, cache=FALSE, message=FALSE}
@@ -87,6 +82,7 @@ library("ggspatial")
 library("gt")
 library("here")
 library("khroma")
+library("patchwork")
 library("probably")
 library("progressr")
 library("purrr")
@@ -180,11 +176,11 @@ The majority are also filtered through human action, producing a mixed single th
 
 In this paper we present a complementary, deductive approach based on ecological niche modelling.
 Rather than inferring environmental conditions from preserved physical evidence, 
-we predict the ranges of individual species relevant to human subsistence based on a model of their current environmental niche and simulations of past palaeoclimate. 
+we predict the potential niche of individual species relevant to human subsistence based on a model of their current environmental niche and simulations of past palaeoclimate. 
 Though hypothetical, this gives us an independent line of evidence on past ecologies that is independent of the environmental archaeological and palaeoclimatic records.
 This means that the ancient data can be reserved for assessing the model's ability to 'hindcast' past conditions.
 In this sense, discrepencies between the two records are perhaps the most interesting result, as they indicate processes affecting one or both records that are not fully accounted for and therefore generate new questions.
-Our computational approach is also readily scaled up, allowing us to model spatially-explicit palaeodistributions for a large number of species, for the whole region, under multiple past climatologies.
+Our computational approach is also readily scaled up, allowing us to model spatially-explicit palaeodistributions for a large number of species, for the whole region, under multiple reconstructed climate scenarios.
 
 # Background {#sec-bg}
 
@@ -249,18 +245,16 @@ Reconstructions of broader environments have attempted to trace their fluctuatio
 They also invariably rely on what might be called 'expert interpolation' (where the author composes a map based on his or her own knowledge of the relevant data) rather than an explicit modelling process.
 This makes it difficult, if not impossible, for users of such reconstructions to understand exactly how they were derived or what could explain, for example, the significant discrepencies between the predictions of different experts.
 
-<!-- TODO: figure highlighting discrepencies between 'expert interpolation' -->
-
 ## Ecological niche modelling in archaeology
 
-Ecological niche modelling or species distribution modelling is widely used by ecologists to predict the geographic range of a species based on a set of environmental predictors [@FranklinMiller2009].
+Ecological niche modelling or species distribution modelling is widely used by ecologists to mathematically predict the geographic distribution of a species from a sample of occurrences [@FranklinMiller2009; @SilleroEtAl2021].
 Essentially, it involves combining records of where an organism has been observed with environmental data (climate, topography, etc.) for those locations to model the range of environmental values at which that species  – its environmental niche.
-This model can then be used to predict the range of the organism in question either in the same or a different environment.
-@TownsendPetersonSoberon2012 suggests reserving the term 'species distribution modelling' for when the method is used to recover the verifiable range of a species in a real and existing environment, and using 'ecological niche modelling' as the broader term covering hypothetical or predictive applications – a convention we follow here when referring to predictive or 'hindcast' models of past ranges.
+This model can then be used to predict the potential niche of the organism in question either in the same or a different environment.
+@TownsendPetersonSoberon2012 suggests reserving the term 'species distribution modelling' for when the method is used to recover the verifiable range of a species in a real and existing environment, and using 'ecological niche modelling' as the broader term covering hypothetical or predictive applications – a convention we follow here when referring to predictive or 'hindcast' models of past niches.
 Within this overarching framework, ecological niche modelling encompasses a wide range of applications and a variety of potential environmental predictors, modelling approaches, and methodologies, which we will not attempt to review here.
 
 Ecological niche modelling has long been of interest to archaeologists as both a means of exploring the biological niche of humans and for reconstructing the past environments they inhabited [@DavidPollyEronen2011; @FranklinEtAl2015].
-In the first sense, it has been used most extensively to model the range of humans and other hominin species [e.g. @BenitoEtAl2017; @YousefiEtAl2020; @BanksEtAl2021; @YaworskyEtAl2024a; @YaworskyEtAl2024b; @GuranEtAl2024], especially in the Palaeolithic.
+In the first sense, it has been used most extensively to model the niche of humans and other hominin species [e.g. @BenitoEtAl2017; @YousefiEtAl2020; @BanksEtAl2021; @YaworskyEtAl2024a; @YaworskyEtAl2024b; @GuranEtAl2024], especially in the Palaeolithic.
 This overlaps with what archaeologists usually call generically 'predictive modelling' [@VerhagenWhitley2020]—or more precisely 'site distribution modelling'—which is essentially the same approach as (and often borrows methodologies from) ecological niche modelling but applied to the occurrence of archaeological sites.
 Here what is modelled is not strictly a biological niche alone, but also aspects of human geography, taphonomy, and archaeological visibility.
 These applications can be distinguished from 'palaeoecological niche modelling', where the object of model remains, as in ecology, a non-human biological niche.
@@ -307,7 +301,7 @@ ne_ocean <- read_sf(raw_data("ne"), "ne_10m_ocean") |>
 
 ne_land <- read_sf(raw_data("ne"), "ne_10m_land") |> 
   st_geometry() |>
-  st_crop(buffer_bbox(w_eurasia, 10)) |>
+#  st_crop(buffer_bbox(w_eurasia, 10)) |>
   st_difference(ne_ocean) |>
   # st_difference(ne_lakes) |>
   st_union()
@@ -419,12 +413,12 @@ if (!file_exists(derived_data("flora.Rdata"))) {
     ) |>
     # Drop taxons not matched
     drop_na(taxon) |>
+    filter(taxon != "Medicago astroites") |> # Not reliably identifiable
     # Regroup by canonical taxon
     select(-taxon_gbif) |>
     summarise(
       gbif_key = first(gbif_key),
       taxon_aliases = list(taxon_original[taxon_original != taxon]),
-      # TODO: this creates duplicate rows
       archaeo = list(bind_rows(archaeo)),
       .by = taxon
     ) |>
@@ -458,8 +452,7 @@ archaeo_sites <- flora |>
 ```
 
 ```{r fig-region}
-#| fig-cap: Late Epipalaeolithic & Pre-Pottery Neolithic archaeological sites used to generate modelled flora
-# TODO: Update to show Eurasia (with zoom-in for sites?)
+#| fig-cap: Map of the study region (West Asia, grey box) with locations of Late Epipalaeolithic and Pre-Pottery Neolithic archaeobotanical assemblages.
 ggplot() + 
   annotation_spatial(ne_land, fill = "#ffffff") +
   annotation_spatial(ne_rivers, aes(linewidth = strokeweig), colour = "lightblue") +
@@ -483,9 +476,6 @@ Archaeologically-attested domestic species meeting our inclusion criteria were s
 
 ## Occurrence data {#sec-occ-data}
 
-<!-- TODO generate GBIF occurrence citation:
-https://docs.ropensci.org/rgbif/articles/getting_occurrence_data.html -->
-
 ```{r data-occ}
 # Download occurrence data from GBIF, generating a citable derived dataset
 if (length(dir_ls(derived_data("gbif"))) == 0) {
@@ -496,7 +486,7 @@ if (length(dir_ls(derived_data("gbif"))) == 0) {
     pred_in("taxonKey", flora$gbif_key),
     pred_within(wk::as_wkt(w_eurasia)),
     pred_default(), # Filter common data quality issues, see ?rgbif::pred_default() for details
-    # pred_lt("coordinateUncertaintyInMeters", 1000), # to strict for W. Asia!
+    # pred_lt("coordinateUncertaintyInMeters", 1000), # too strict for W. Asia!
     format = "SIMPLE_CSV"
   ) |>
     occ_download_wait() # wait for dataset to be prepared
@@ -524,7 +514,19 @@ flora_occ <- dir_ls(derived_data("gbif"), glob = "*.zip")[1] |> # assume only on
   group_by(taxon_key) |>
   distinct(latitude, longitude, .keep_all = TRUE)
 
-flora_occ_meta <- read_csv(dir_ls(derived_data("gbif"), glob = "*.csv")[1])
+flora_occ_meta <- read_csv(dir_ls(derived_data("gbif"), glob = "*.csv")[1],
+                           show_col_types = FALSE)
+
+# Generate GBIF citation
+writeLines(paste0(r"(
+@misc{GBIFDataDownload,
+  title = {GBIF {Occurrence} {Download}},
+  author = {{GBIF}},
+	publisher = {The Global Biodiversity Information Facility},
+  date = {2025-08-08},
+  year = {2025},
+  url = {https://doi.org/)", flora_occ_meta$doi, r"(}
+})"), here("analysis/gbif.bib"))
 
 # Join to archaeo data
 flora <- flora_occ |>
@@ -539,47 +541,54 @@ flora <- flora |>
   filter(n_occ >= min_n_occ)
 ```
 
-<!-- TODO: cite dataset -->
 Georeferenced occurrence data for West Eurasia between 0 and 60° of latitude was obtained from the Global Biodiversity Information Facility (GBIF) using via and the R package 'rgbif' [@ChamberlainBoettiger2017; @rgbif].
-The GBIF dataset [@GBIFDerivedData] excluded fossil occurrences, recorded absences, and records with missing or dubious coordinates.
+The GBIF dataset [@GBIFDataDownload] excluded fossil occurrences, recorded absences, and records with missing or dubious coordinates.
 Although niche models have reasonable predictive power even with small training samples [@StockwellPeterson2002; @HernandezEtAl2006; @WiszEtAl2008], we did not attempt to model `r english(nrow(filter(flora_all, n_occ < min_n_occ)))` taxa with less than `r min_n_occ` usable occurrences, following recommendations for niche models generally and Random Forest-based models specifically [@StockwellPeterson2002; @LuanEtAl2020].
 Multiple records of the same taxon at the same coordinate were discarded because they do not impart information to the model.
-The resulting cleaned dataset used to train our niche models comprises `r flora_occ_meta$totalRecords` from `r flora_occ_meta$numberDatasets` constituent datasets.
+The resulting cleaned dataset used to train our niche models comprises `r format(flora_occ_meta$totalRecords, scientific = FALSE)` occurrences from `r flora_occ_meta$numberDatasets` constituent datasets.
 
-```{r fig-occ-map, fig.cap=paste0("Georeferenced occurrence records from West Asia used to train models (N=", nrow(unnest(flora, occ)))}
-# TODO: Update, Eurasia
-flora |>
+```{r fig-occ-map, message=FALSE, fig.cap=paste0("Georeferenced occurrence records from West Eurasia used to train models (N=", nrow(unnest(flora, occ)), "). Inset, right: prediction region (West Asia).")}
+fig_occ_map <- flora |>
  unnest(occ) |>
  distinct(latitude, longitude) |>
  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) |>
  ggplot() +
  annotation_spatial(ne_land, fill = "#ffffff") +
  geom_sf(shape = ".") +
- layer_spatial(w_asia, fill = NA) +
  coord_sf(crs = w_asia_albers, default_crs = latlong)
+
+fig_occ_map_inset <- fig_occ_map +
+  coord_sf(
+    crs = w_asia_albers, default_crs = latlong,
+    xlim = w_asia[c(1,3)], ylim = w_asia[c(2,4)], expand = FALSE
+  )
+
+fig_occ_map <- fig_occ_map +
+ layer_spatial(w_asia, fill = NA)
+
+fig_occ_map + fig_occ_map_inset
 ```
 
 GBIF is currently the best available general-purpose occurrence dataset for the West Asia region, its coverage is uneven both geographically and from species to species.
-@fig-occ-map shows clearly that the Southern Levant, and Israel specifically, is significantly more densely sampled than other parts of West Asia.
+The Southern Levant, and Israel specifically, is significantly more densely sampled than other parts of West Asia (@fig-occ-map).
 
 ```{r data-background}
-# TODO: slow - cache
 if (!file_exists(derived_data("flora_background.Rdata"))) {
-flora <- flora |>
-  mutate(
-    occ = map(occ, mutate, present = TRUE, weight = 1),
-    bg = map(occ, function(x, region, n) { 
-      background_sample(
-        region = region, 
-        N = n,
-        coord_x = "longitude", coord_y = "latitude",
-        present = FALSE,
-        weight = (1 / n) * nrow(x) # weight presences and background equally
-      )
-    }, region = w_eurasia_land, n = n_background),
-    occ = map2(occ, bg, bind_rows)
-  ) |>
-  select(-bg)
+  flora <- flora |>
+    mutate(
+      occ = map(occ, mutate, present = TRUE, weight = 1),
+      bg = map(occ, function(x, region, n) { 
+        background_sample(
+          region = region, 
+          N = n,
+          coord_x = "longitude", coord_y = "latitude",
+          present = FALSE,
+          weight = (1 / n) * nrow(x) # weight presences and background equally
+        )
+      }, region = w_eurasia_land, n = n_background),
+      occ = map2(occ, bg, bind_rows)
+    ) |>
+    select(-bg)
   saveRDS(flora, derived_data("flora_background.Rdata"))
 }
 flora <- readRDS(derived_data("flora_background.Rdata"))
@@ -598,7 +607,7 @@ These points are then weighted equally against the presences in the regression t
 We modelled the occurrence of species as a function of 24 geospatial predictor variables.
 These included:
 
-```{r data-climate}
+```{r data-climate, warning=FALSE, message=FALSE}
 # Reacquire paleoclim data if needed:
 if (!file_exists(derived_data("climate.nc"))) {
   if (length(dir_ls(derived_data("paleoclim"), glob = "*.tif")) < 1) {
@@ -624,7 +633,7 @@ if (!file_exists(derived_data("climate.nc"))) {
   write_mdim(climate, derived_data("climate.nc"))
 }
 
-climate <- read_stars(derived_data("climate.nc"), proxy = TRUE)
+climate <- read_stars(derived_data("climate.nc"), proxy = TRUE, quiet = TRUE)
 # Recover dimension values lost in NC conversion
 climate <- st_set_dimensions(climate, "period", values = climate_periods$code)
 ```
@@ -705,14 +714,12 @@ It is unlikely that either macroscale topography or soil characteristics have al
 For training, test predictions, and archaeological predictions predictor data was left in its native projection and resolution.
 For hindcast palaeodistributions, it was transformed to common equal-area projection and resolution of `r pred_res / 1000` km.
 
-```{r data-flora-predictors}
-# TODO: factor out
+```{r data-flora-predictors, warning = FALSE}
 bind_extract <- function(x, y) {
   extract <- st_extract(y, st_transform(x, st_crs(y)))
   cbind(x, select(tibble(extract), -geometry))
 }
 
-# TODO: slow, cache
 flora <- flora |> 
   mutate(
     occ = map(occ, st_as_sf, coords = c("longitude", "latitude"), crs = latlong, 
@@ -728,18 +735,9 @@ flora <- flora |>
 ```{r niche-data}
 # Split training and test sets for model assessment 
 flora <-  flora |>
-  # Manually impute some problematic cases
-  # mutate(
-  #   occ = case_when(
-  #     taxon_key %in% c(12225945, 7405743) ~ map(occ, function(x) {
-  #       mutate(x, across())
-  #     })
-  #   )
-  # ) |>
   mutate(
     # De-sf
     occ = map(occ, \(x) select(tibble(x), -geometry)),
-    # TODO: can this happen earlier?
     occ = map(occ, \(x) mutate(x, present = factor(present, c(FALSE, TRUE)))),
     occ = map(occ, \(x) mutate(x, weight = importance_weights(weight))),
     occ_split = map(occ, \(x) initial_split(x, strata = present)),
@@ -817,10 +815,19 @@ if (!file_exists(derived_data("flora_niche_predictions.Rdata"))) {
       palaeodist = map(palaeodist, mutate, present = prediction.TRUE. > 0.5),
     )
   saveRDS(flora, derived_data("flora_niche_predictions.Rdata"))
+
+  # Write predictions in TIF format
+  palaeodist_dir <- dir_create(here("analysis", "palaeodist"))
+  walk2(flora$taxon, flora$palaeodist, function(taxon, palaeodist) {
+    filename <- paste0(str_replace(taxon, " ", "_"), ".tif")
+    write_stars(
+      select(palaeodist, "prediction.TRUE."), 
+      path(palaeodist_dir, filename)
+    )
+  })
 }
 flora <- readRDS(derived_data("flora_niche_predictions.Rdata"))
 
-# TODO write TIFs
 ```
 
 # Model assessment
@@ -867,16 +874,15 @@ flora |>
   theme_minimal_grid() 
 ```
 
-We assessed the predictive performance of the fitted niche models in the contemporary environment based on the reserved test partition [@tbl-results-summary].
+We assessed the predictive performance of the fitted niche models in the contemporary environment based on the reserved test partition (@tbl-results-summary).
 Model accuracy (proportion of correctly classified presence and background samples) ranged between `r percent(filter(niche_test_summary, .metric == "accuracy")$min)` and `r percent(filter(niche_test_summary, .metric == "accuracy")$max)`, with an average of `r percent(filter(niche_test_summary, .metric == "accuracy")$mean)`.
 Sensitivity (proportion of correctly classified presence samples) ranged between `r percent(filter(niche_test_summary, .metric == "sens")$min)` and `r percent(filter(niche_test_summary, .metric == "sens")$max)`, with an average of `r percent(filter(niche_test_summary, .metric == "sens")$mean)`.
-The area under the models' receiver operating characteristic curves (ROC-AUC) was on average `r round(filter(niche_test_summary, .metric == "roc_auc")$mean, 3)`±`r round(filter(niche_test_summary, .metric == "accuracy")$sd, 3)`
-Model sensitivity is loosely correlated with the number of occurrences available for training (@fig-model-sensitivity-vs-n_occ), with the worst-performing models all having less than 300 recorded occurrences: `r knitr::combine_words(paste0("*", filter(unnest(flora, niche_test_metrics), .metric == "sens" & .estimate < 0.85)$taxon, "*"))`.
+The area under the models' receiver operating characteristic curves (ROC-AUC) was on average `r round(filter(niche_test_summary, .metric == "roc_auc")$mean, 3)`±`r round(filter(niche_test_summary, .metric == "accuracy")$sd, 3)`.
+Model sensitivity is loosely correlated with the number of occurrences available for training (@fig-model-sensitivity-vs-n_occ), with the worst-performing models all having less than 1000 recorded occurrences: `r knitr::combine_words(paste0("*", filter(unnest(flora, niche_test_metrics), .metric == "sens" & .estimate < 0.50)$taxon, "*"))`.
 Test metrics and ROC curves for the individual models are included in the appendix.
 
 ```{r niche-predict-archaeo, cache.lazy=FALSE}
 # Extract predictors and make predictions for archaeobotanical occurrences
-# TODO: what about negatives?
 if (!file.exists(derived_data("archaeo_pred.Rdata"))) {
   archaeo_pred <- flora |>
     unnest(archaeo) |>
@@ -896,7 +902,6 @@ if (!file.exists(derived_data("archaeo_pred.Rdata"))) {
     nest(.by = any_of(colnames(flora)), .key = "archaeo") |> # Restore original nesting
     mutate(
       archaeo_pred = map2(niche, archaeo, function(x, y) {
-        # TODO: shouldn't be necessary - remove from workflow
         y <- mutate(y, gbif_key = NA, scientific_name = NA, species = NA)
         augment(extract_workflow(x), new_data = y)
       })
@@ -921,10 +926,16 @@ archaeo_pred_summary <- archaeo_pred |>
 flora <- left_join(flora, archaeo_pred, join_by(taxon))
 ```
 
-The ability of the hindcast models to predict the occurrence of specific species at archaeological sites is worse, with `r percent(p_archaeo_pred_correct)` of presences in archaeobotanical assemblages successfully predicted.
-Model sensitivity (proportion of corrected predicted presenses) in relation to the archaeological data is on average `r round(mean(archaeo_pred_summary$p_predicted, na.rm=TRUE), 2)`±`r round(sd(archaeo_pred_summary$p_predicted, na.rm=TRUE), 2)` [@tbl-results-summary].
+The ability of the hindcast models to predict the occurrence of specific species at archaeological sites is worse, with just `r percent(p_archaeo_pred_correct)` of presences in archaeobotanical assemblages successfully predicted at a threshold of 0.5.
+Model sensitivity (proportion of corrected predicted presenses) in relation to the archaeological data is on average `r round(mean(archaeo_pred_summary$p_predicted, na.rm=TRUE), 2)`±`r round(sd(archaeo_pred_summary$p_predicted, na.rm=TRUE), 2)` (@tbl-results-summary).
 A full assessment of the hindcasting performance of the individual models can be found in the appendix.
-<!-- TODO: negative -->
+
+In summary, the majority of our models perform poorly as simple binary classifiers with a threshold of `P(present)>0.5`.
+However, this is an arbitrary threshold; lowering it can improve sensitivity (proportion of occurrences correctly predicted) at the cost of specificity (proportion of non-occurrences incorrectly predicted).
+There are several approaches to selecting informative thresholds for binary classification in the ENM literature [@LiuEtAl2005; @LiuEtAl2013; @LiuEtAl2015], with most aiming for an optimum compromise between sensitivity and specificity.
+We were unable to find a thresholding technique that significantly improved the hindcast models' performance as binary classifiers.
+By definition, binarizing model output also discards information from the underlying probabilistic prediction, so we have opted to present results probabilistically as far as possible.
+In principle the archaeological occurrences themselves could be used to 'calibrate' the hindcast models and select an optimum threshold, but there aren't enough archaeological attestations of most of the modelled species for this to be practicable at this time.
 
 ```{r niche-pred-range, cache.lazy=FALSE}
 area_present <- function(pred, res = pred_res) {
@@ -953,9 +964,6 @@ add_taxon_alias_footnotes <- function(tab, taxon_aliases) {
   tab
 }
 
-# TODO:
-# - alt. taxons as footnotes
-# - check boxes of which (climate?) periods observed in ?
 results_summary <- flora_all |>
   left_join(flora, join_by(taxon, taxon_aliases, archaeo, n_archaeo)) |>
   left_join(archaeo_pred_summary, join_by(taxon)) |>
@@ -1008,7 +1016,7 @@ results_summary |>
 
 # Discussion
 
-## Reduction in range sizes over the Pleistocene/Holocene boundary
+## Reduction in potential niche sizes over the Pleistocene/Holocene boundary
 
 ```{r data-pred-range-summary}
 flora_pred_area_present_summary <- flora |>
@@ -1033,7 +1041,7 @@ n_reduced_range_10 <- flora |>
 ```
   
 ```{r fig-pred-range-density, warning=FALSE}
-#| fig-cap: Distribution of predicted species ranges by period. Dashed lines indicate the median range.
+#| fig-cap: Distribution of predicted species niche size by period (logarithmic scale). Dashed lines indicate the median niche size.
 flora |>
   unnest(area_present) |> 
   mutate(
@@ -1045,7 +1053,7 @@ flora |>
   facet_wrap(vars(period_label), ncol = 1, strip.position = "left") + 
   geom_density(aes(area_present)) +
   geom_vline(aes(xintercept = med_area_present), flora_pred_area_present_summary) +
-  scale_x_log10(name = "Predicted range km²", labels = label_number_auto()) + 
+  scale_x_log10(name = "Potential niche km²", labels = label_number_auto()) + 
   scale_y_continuous(name = NULL, labels = NULL) +
   theme_minimal_vgrid() +
   theme(
@@ -1055,10 +1063,10 @@ flora |>
   )
 ```
 
-Our reconstructed palaeodistributions (shown in full in the appendix) indicate that the majority of species had significantly different geographic ranges in the Late Pleistocene/Early Holocene compared today. 
-`r n_reduced_range` of `r nrow(flora)` species are predicted reduced ranges in the past; `r n_reduced_range_10` of more than 10% or more.
-Though the magnitude of the change in range size from prehistory to the present likely reflects a degree of overfitting in the model (discussed further in @sec-discuss-hindcasting), fluctuations in modelled range size between the Bølling-Allerød (14.7–12.9 ka), Younger Dryas (12.9–11.7 ka), and Early Holocene (11.7–8.3 ka) are more directly comparable (@fig-pred-range-density).
-The average range of modelled species was `r percent(1 - (filter(flora_pred_area_present_summary, period == "eh")$med_area_present / filter(flora_pred_area_present_summary, period == "ba")$med_area_present))` in the Early Holocene compared to the Bølling–Allerød, and `r percent(1 - (filter(flora_pred_area_present_summary, period == "yds")$med_area_present / filter(flora_pred_area_present_summary, period == "ba")$med_area_present))` during the Younger Dryas (i.e. ranges recovered slightly between the Younger Dryas and Early Holocene).
+Our reconstructed palaeodistributions (shown in full in the appendix) indicate that the majority of species had significantly different potential geographic niches in the Late Pleistocene/Early Holocene compared today. 
+`r n_reduced_range` of `r nrow(flora)` species are predicted reduced niches in the past; `r n_reduced_range_10` of more than 10% or more.
+Though the magnitude of the change in potential niche size from prehistory to the present likely reflects a degree of overfitting in the model (discussed further in @sec-discuss-hindcasting), fluctuations in modelled niche size between the Bølling-Allerød (14.7–12.9 ka), Younger Dryas (12.9–11.7 ka), and Early Holocene (11.7–8.3 ka) are more directly comparable (@fig-pred-range-density).
+The average potential niche size of modelled species was `r percent(1 - (filter(flora_pred_area_present_summary, period == "eh")$med_area_present / filter(flora_pred_area_present_summary, period == "ba")$med_area_present))` smaller in the Early Holocene compared to the Bølling–Allerød, and `r percent(1 - (filter(flora_pred_area_present_summary, period == "yds")$med_area_present / filter(flora_pred_area_present_summary, period == "ba")$med_area_present))` smaller during the Younger Dryas.
 This perhaps indicates that although this period is considered one of climatatic amelioration globally [@JonesEtAl2019], the colder conditions of the Pleistocene may have supported more extensive plant-based economies in West Asia specifically.
 
 ```{r data-palaeodist-sum}
@@ -1068,7 +1076,6 @@ palaeodist_sum <- do.call(c, c(flora$palaeodist, list(along = "taxon"))) |>
 
 ```{r fig-palaeodist-sum}
 #| fig-cap: Predicted species richness (sum of predicted ranges) by period
-# TODO: expand period facet labels
 ggplot() +
   facet_wrap(vars(factor(period, levels = climate_periods$code, labels = climate_periods$label))) +
   annotation_spatial(ne_land, fill = "white") +
@@ -1092,30 +1099,29 @@ These include *Ficus carica* (fig);
 *Triticum aestivum compactum* (in the N. Levant), *T. monococcum aegilopoides*, *T. durum*, and *Triticum urartu* (but not the other wheat progenitor, *T. turgidum dicoccum* – see @sec-discuss-crops);
 *Aegilops speltoides*, but not *Aegilops tauschii* (goatgrasses);
 and *Vicia* spp. (vetches), including *Vicia faba* (broad beans).
-Most of Anatolia, Northern Mesopotamia, and the Zagros Mountains in particular disappear from the predicted ranges of these species,
+Most of Anatolia, Northern Mesopotamia, and the Zagros Mountains in particular disappear from the predicted niches of these species,
 leaving the Levant and to a lesser extent the Aegean and Cyprus as refugia.
 
-<!-- TODO expand/rewrite -->
 Our results for the Levant are consistent with the current understanding of this region as developing early intensive foraging economies [the Natufian culture, @BarYosef1998] and as a centre of origin of agriculture [@Zeder2011a].
-Within the Levant, many species show moderate reductions in ranges over the Pleistocene/Holocence boundary, retreating from the Badia/transjordan region (e.g. barley, fig. @fig-palaeodist-barely-levant).
+Within the Levant, many species show moderate reductions in potential niche size over the Pleistocene/Holocene boundary, retreating from the Badia/transjordan region (e.g. barley, fig. @fig-palaeodist-barley-levant).
 
-Loss of the Northern Mesopotamia–Anatolia region from the predicted ranges of crop progenitors is interesting in light of the 'golden triangle' hypothesis [@Lev-YadunEtAl2000; @KozlowskiAurenche2005; @AbboEtAl2010], which puts this region at the centre of the development of agriculture and plant domestication.
+Loss of the Northern Mesopotamia–Anatolia region from the predicted potential niches of crop progenitors is interesting in light of the 'golden triangle' hypothesis [@Lev-YadunEtAl2000; @KozlowskiAurenche2005; @AbboEtAl2010], which puts this region at the centre of the development of agriculture and plant domestication.
 Multiple lines of archaeological evidence have emerged that point away from this hypothesis and towards a more geographically diverse origin [@Asouti2006; @FullerEtAl2011; @ArranzOtaeguiEtAl2016], 
 and our reconstructions are also consistent with the late arrival of intensive plant-based foraging economies in this region (cf. the Natufian of the Levant).
 
-The near-absence of the Zagros in any predicted ranges is also surprising, given mounting evidence that animal domestication took place just as early in the eastern *Mashriq* as it did in the west [@Zeder2024].
+The near-absence of the Zagros in any predicted niches is also surprising, given mounting evidence that animal domestication took place just as early in the eastern *Mashriq* as it did in the west [@Zeder2024].
 We consider that the most likely explanation for this is that our flora does not include the species that were most important to plant subsistence in the east.
 Archaeobotanical data on Neolithic sites in the Zagros is limited (compared to the Levant in particular) due to a hiatus in field research there from the 1980s to early 2010s [@Zeder2024].
-Recent research [@RiehlEtAl2013; @WeideEtAl2017; @WeideEtAl2018; @WhitlamEtAl2018; @GonzalezCarreteroEtAl2023] indicates that plant subsistence in this region was based on a distinct set of species, compared to the Levant and Anatolia.
+Recent research [@RiehlEtAl2013; @WeideEtAl2017; @WeideEtAl2018; @WhitlamEtAl2018; @GonzalezCarreteroEtAl2023] indicates that plant subsistence in this region was based on a distinct set of species than that of the Levant and Anatolia.
 
 Cyprus and the Aegean are not conventionally considered part of the primary zone of domestication but rather amongst the first regions that acquired agriculture from West Asia.
-Our analysis complicates this picture, as it indicates that the wild ranges of many crop progenitors included these regions.
+Our analysis complicates this picture, as it indicates that the wild distribution of many crop progenitors included these regions.
 Early examples of several domesticates are recorded at sites on Cyprus, Western Anatolia and Greece [@ArranzOtaeguiRoe2023],
 and the Aegean region was probably connected to West Asia by a land bridge via Anatolia until the Early Holocene [@AksuHiscott2022].
 Were these area part of the same broader 'interaction sphere' that produced Neolithic agriculture in West Asia?
 
-Exceptions to the dominant trend of range reduction include *Cicer reticulatum* (wild chickpea), which has a relatively stable range centered on Northern Mesopotamia;
-and *Triticum turgidum dicoccum* (wild emmer wheat), which is predicted to have two limited ranges centered around the Black Sea Coast of Anatolia and the Palmyra basin.
+Exceptions to the dominant trend of niche size reduction include *Cicer reticulatum* (wild chickpea), which has a relatively stable potential niche centered on Northern Mesopotamia;
+and *Triticum turgidum dicoccum* (wild emmer wheat), which is predicted to occur in two limited zones centered around the Black Sea Coast of Anatolia and the Palmyra basin.
 In the latter case, neither of these areas are part of the predicted (by our model) modern distribution of wild emmer, which is centered around the Caucasus and Northern Mesopotamia.
 But it would be consistent with archaeological evidence for early cultivation at sites in the Upper Euphrates [@Willcox2024].
 
@@ -1147,7 +1153,9 @@ ggplot() +
 ```
 
 Almost all the cereal and legume crop progenitors we modelled are predicted to have only been found in the Levant during the terminal Pleistocene and Early Holocene (see appendix).
-Part of this may be do with the fact that both our initial flora and training occurrence dataset have a strong bias towards the southern Levant, but strikingly the modelled *current* ranges of these plants do tend to include Anatolia and the Zagros, so this cannot be the only factor.
+Part of this may be do with the fact that both our initial flora and training occurrence dataset have a strong bias towards the southern Levant, but the modelled *current* potential niche of these plants do tend to include Anatolia and the Zagros, so this cannot be the only factor.
+It has previously been proposed that the Southern Levant was an "important glacial refuge area for wild cereals" [@RobertsEtAl2018], which accords with these results.
+
 One notable exception is the wild ancestor of chickpea (*Cicer reticulatum*), which is predicted to have a distribution centered on Northern Mesopotamia but encompassing much of the the 'hilly flanks' (except the southern Levant, @fig-palaeodist-chickpea-rye). 
 Another is rye (*Secale cereale*), which is inferred to be primarily Anatolian (@fig-palaeodist-chickpea-rye).
 This is perhaps relevant to rye's unusual domestication history, as a crop of West Asian origin that was intensively exploited [@HillmanEtAl2001; @DoucheWillcox2018] but apparently not first cultivated until much later than the 'founder crops', in Europe [@SchreiberEtAl2021].
@@ -1179,56 +1187,53 @@ ggplot() +
 
 Flax (*Linum bienne*) is predicted to have had a highly concentrated distribution in Cyprus and along the Mediterranean coast of the southern Levant.
 This is consistent with its low ubiquity in archaeobotanical assemblages [@ArranzOtaeguiRoe2023], despite conventionally being considered a 'founder crop', and presumably implies that its domestication was similarly geographically constrained.
-It is the only unambiguous crop progenitor with such a restricted range, though pistachio (*Pistacia atlantica*) and clubrush (*Bolboschoenus maritimus*) are similarly constrained to the Mediterranean coast (and North Africa, in the case of pistachio).
+It is the only unambiguous crop progenitor with such a restricted potential niche, though pistachio (*Pistacia atlantica*) and clubrush (*Bolboschoenus maritimus*) are similarly constrained to the Mediterranean coast (and North Africa, in the case of pistachio).
 This is despite the fact that they are well-attested in the archaeotanical record from across West Asia.
 
-```{r fig-palaeodist-barely-levant, fig.height=10}
-#| fig-cap: Predicted palaeodistribution of wild barleys in the Levant
-# TODO: why OOM?`
-#palaeodist_hordeum <- do.call(c, c(
-#  filter(flora, str_starts(taxon, "Hordeum"))$palaeodist,
-#  list(along = list(taxon = filter(flora, str_starts(taxon, "Hordeum"))$taxon))
-#))
-#
-#ggplot() +
-#  facet_grid(taxon ~ fct_relabel(period, toupper)) +
-#  annotation_spatial(ne_land, fill = "white") +
-#  geom_stars(data = select(palaeodist_hordeum, prediction.TRUE.), 
-#             na.action = na.omit) +
-#  annotation_spatial(ne_land, fill = NA) +
-#  scale_x_continuous(breaks = c(34, 36, 38)) +
-#  scale_fill_batlow(reverse = TRUE) +
-#  coord_sf(
-#    xlim = c(33, 39), ylim = c(30, 38),
-#    crs = w_asia_albers, default_crs = latlong
-#  ) +
-#  labs(fill = "P(present)", x = NULL, y = NULL) +
-#  theme(
-#    strip.background = element_blank(),
-#    strip.text.y = element_text(face = "italic")
-#  )
+```{r fig-palaeodist-barley-levant, fig.height=10}
+#| fig-cap: Predicted palaeodistribution of wild barleys
+palaeodist_hordeum <- do.call(c, c(
+  filter(flora, str_starts(taxon, "Hordeum"))$palaeodist,
+  list(along = list(taxon = filter(flora, str_starts(taxon, "Hordeum"))$taxon))
+))
+
+ggplot() +
+  facet_grid(taxon ~ fct_relabel(period, toupper)) +
+  annotation_spatial(ne_land, fill = "white") +
+  geom_stars(data = select(palaeodist_hordeum, prediction.TRUE.),
+             na.action = na.omit) +
+  annotation_spatial(ne_land, fill = NA) +
+  annotation_spatial(w_asia, fill = NA) +
+  scale_fill_batlow(reverse = TRUE) +
+  coord_sf(crs = w_asia_albers) +
+  labs(fill = "P(present)", x = NULL, y = NULL) +
+  theme(
+    strip.background = element_blank(),
+    strip.text = element_text(face = "italic")
+  )
 ```
 
-Wild barley (*Hordeum spontaneum*) its relatives show a contraction of their predicted ranges from the Pleistocene to the Holocene,
-concurrent with it being brought into cultivation (@fig-palaeodist-barely-levant).
+Wild barley (*Hordeum spontaneum*) its relatives show a contraction of their predicted potential niche from the Pleistocene to the Holocene,
+concurrent with it being brought into cultivation (@fig-palaeodist-barley-levant).
 It also sees a marked decline in the archaeobotanical record from the Early PPNA/Early PPNB (where it was amongst the most common taxa) to the Late PPNB and Late Neolithic [@ArranzOtaeguiRoe2023].
 Pistachio (*Pistacia atlantica*) shows similar trends, but it is less certain that this species was managed in the Neolithic.
 Conversely, the various wild wheat species native to West Asia show almost no response to Pleistocene/Holocene climate change, even within the Levant, and in the archaeobotanical record wheat displays the opposite trend to barley and pistachio – becoming gradually more abundant through the course of the Neolithic and dominant by its end [@ArranzOtaeguiRoe2023].
 
 ```{r fig-palaeodist-bread}
 #| fig-cap: Combined predicted palaeodistributions of bread wheat progenitors
-bread <- c("Aegilops tauschii", "Triticum aestivum", "Triticum turgidum")
+bread <- c("Aegilops tauschii", "Triticum turgidum")
 palaeodist_bread <- do.call(c, c(
   filter(flora, taxon %in% bread)$palaeodist,
   list(along = list(taxon = filter(flora, taxon %in% bread)$taxon))
 )) |>
+  mutate(present2 = prediction.TRUE. > 0.2) |> # Need lower threshold for wheat
   st_apply(c("x", "y", "period"), sum, na.rm = FALSE) |>
-  mutate(present = factor(present))
+  mutate(present2 = factor(present2))
 
 ggplot() +
   facet_wrap(vars(fct_relabel(period, toupper))) +
   annotation_spatial(ne_land, fill = "white") +
-  geom_stars(data = select(palaeodist_bread, present), na.action = na.omit) +
+  geom_stars(data = select(palaeodist_bread, present2), na.action = na.omit) +
   annotation_spatial(ne_land, fill = NA) +
   annotation_spatial(w_asia, fill = NA) +
   scale_fill_batlow(reverse = TRUE, discrete = TRUE) +
@@ -1242,23 +1247,17 @@ ggplot() +
 
 Bread wheat (*Triticum aestivum*), the most common wheat cultivar today, has a complex ancestry that involves two recent hybridisation events [@LevyFeldman2022]:
 most recently between domestic emmer (*Triticum turgidum dicoccum*) and a goatgrass (*Aegilops tauschii*) c. 9 ka, and before that, in emmer, between wild red einkorn (*T. urartu*) and another goatgrass (*Aegilops speltoides*).
-Although there is fairly wide overlap between these species today, according to our modelling the only place all four (or even just three) are predicted to have coincided or been found in close proximity to each other in the time frame of domestication is a narrow area around the Orontes river in the northern Levant (@fig-palaeodist-bread).
-This area is c. 200 km from the only two sites in our archaeobotanical database where bread wheat (*T. aestivum*) co-occurs with both of its recent progenitors (*A. tauschii* and *T. turgidum dicoccum*) or both species of wheat and the goatgrasses are found together: Tell Abu Hureyra and El Kowm II [@ArranzOtaeguiRoe2023].^[We are grateful to Benjamin Nowak for pointing this out to us.]
-Taken together this suggests an origin of domesticated bread wheat, otherwise only loosely geographically constrained to the Levant–Upper Euphrates corridor [@LevyFeldman2022], is possibly occurred in this vicinity.
+The predicted potential niches of the two recent progenitors—*T. turgidum dicoccum* and *A. tauschii*—have relateively limited areas of overlap.
+These include the Syrian Jazira (@fig-palaeodist-bread), close to the only two sites in our archaeobotanical database where bread wheat (*T. aestivum*) co-occurs with both of the recent progenitors (*A. tauschii* and *T. turgidum dicoccum*): Tell Abu Hureyra and El Kowm II [@ArranzOtaeguiRoe2023].^[We are grateful to Benjamin Nowak for pointing this out to us.]
+Taken together this suggests an origin of domesticated bread wheat, otherwise only loosely geographically constrained to the Levant–Upper Euphrates corridor [@LevyFeldman2022], in this vicinity.
 
 ## Disagreement between hindcast models and archaeobotanical composition {#sec-discuss-hindcasting}
 
 In general there is middling to low agreement between our hindcast predictions of species niches and observed archaeological occurrences of the same species [@tlb-results-summary].
 
-The majority of our models perform poorly as a binary classification with a threshold of `P(present)>0.5`.
-However, this is an arbitrary threshold; lowering it can improve sensitivity at the cost of specificity.
-<!-- TODO: so why didn't we threshold? Losing information - stick with the probabilities. -->
-In principle archaeological occurrences—as true presences—could be used to 'calibrate' the threshold, but there aren't enough archaeological attestations of most of the modelled species.
-
-<!-- TODO: What about not binary? Mean P(T) and P(F) for example? -->
-
-```{r fig-archaeo-sensitivity}
+```{r fig-archaeo-sensitivity, message=FALSE, warning=FALSE}
 #| fig-cap: Summary of hindcasting performance of models in relation to model performance and available archaeological test data
+#| fig-height: 10
 results_summary |>
   pivot_longer(c(n_archaeo, sens, n_occ), names_to = "metric") |>
   mutate(
@@ -1281,44 +1280,36 @@ results_summary |>
   theme(strip.placement = "outside")
 ```
 
-At this point we cannot explain precisely why this discrepency exists, though assessments of model performance offer some clues.
-
-The hindcasting performance of models is not strongly correlated with either the number of occurrences in the training dataset, the performance of the model on test data, or the number of attested archaeological occurrences [@fig-archaeo-sensitivity].
+The hindcasting performance of models is not strongly correlated with either the number of occurrences in the training dataset, the performance of the model on test data, or the number of attested archaeological occurrences (@fig-archaeo-sensitivity).
 This indicates against a single, simple explanation for the discrepancy, i.e. that one or the other signal is 'wrong'.
 
-<!-- TODO: core issue - fundamental and realised niches, different but related signals -->
+The core issue is that the two sets of evidence discussed here—modelled palaeodistributions and archaeologically-attested palaeooccurrences—are signals of related but distinct phenomena.
+The hindcast niche models are projections of the species' present realised niche into a reconstructed past climatology.
+The archaeobotanical record is an incomplete sample of a past realised niche passed through various anthropic and taphonomic filters.
+Neither can be assumed to be fully accurate representations of the ultimate aim of this study, which is the *fundamental* niche of the species in relation to reconstructable climate and environmental factors – though both carry information about it.
 
-For a variety of reasons, our models probably underestimate the *fundamental* niche or potential distribution of the target taxon.
-These include:
+For each specific species there are a variety of potential explanations for why the signals differ, but without further lines of evidence we are not in a position to distinguish them.
+In general, our models probably underestimate the fundamental niche or potential distribution of the target taxon for a variety of reasons:
 
-* The uneven coverage of the GBIF occurrence dataset (see @sec-occ-data)
-* Use of time-averaged climate slices
+* The inherent tendency of machine learning models to overfit to the training scenario, despite our efforts to mitigate this;
+* Uneven spatial sampling intensity of the GBIF occurrence dataset (see @sec-occ-data), meaning that some parts of the species' niche are probably either over- and under-represented in the training data;
+* Use of fairly coarse (2000 year) time-averaged climate slices, which capture a general trend but are probably unrepresentative of the environment around sites at the specific time at which they were occupied.
 
 At the same time, there are several reasons to believe that the archaeobotanical data (at least as it has been compiled for this study) *overestimates* the fundamental niche:
 
-* Time-averaged, sometimes quite severely
-* (Understudied) possibility for human transplanting and transport; we know this is the dawn of agriculture!
-* Generally small sample sizes, so individual misidentifications have a large impact 
-
-So what can we do about it???
-
-<!-- TODO: rewrite following reviews -->
-The failure of our hindcast models to predict the occurrence of species in archaeobotanical assemblages has several possible explanations. 
-Since they do accurately predict the test dataset<!-- TODO: and past negatives? -->, a likely culprit is overfitting of the models to the present environment.
-This implies that the modelled palaeodistributions should be seen as conservative estimates or a minimal range.
-Another obvious flaw in our methodology is that the time slices used for palaeoclimatic reconstruction are very broad—each covering around two millennia—and therefore potentially unrepresentative of the environment around sites at the specific time at which they were occupied.
-The variable quality of the archaeological test dataset, especially in terms of chronology, is also a plausible factor.
+* Archaeological deposits are also time-averaged signals, in some cases over quite large spans of time;
+* The chronology attached to our archaeobotanical data is imprecise, e.g. primarily based on point estimates of radiocarbon dates [@Michczynski2007], producing a further averaging effect;
+* Archaeological occurences could be the result of human transplanting, range expansion and/or transport, especially considering this is the period where agriculture began to be practiced;
+* Most archaeobotanical samples in our archaeological test dataset were small, so individual errors and misidentifications have a correspondingly large impact on quantification of model performance.
 
 At the same time, we cannot rule out more substantive reasons for the discrepency between predicted and observed archaeological occurrences.
 The niches of the modelled species could have changed since the Early Holocene, which would not be captured in a model trained purely on modern specimens.
 Human economic choices—mobility, foraging strategies, cultivation, etc.—could also produce archaeobotanical assemblages whose composition depart significantly from that of the surrounding local flora.
-Further refinement of the methodology for hindcast palaeoecological niche models, for example using more finely resolved palaeoclimate sequences [e.g. @KargerEtAl2023], hyperparameter tuning to avoid overfitting, and improved archaeological datasets, would help disentangle these potential explanations.
 
-<!-- TODO not Bolboschoenus issue - another cause of potential discrepencies? -->
-
-<!--
-It is consistent with more "macro" trends such as the reduced range of Hordeum and Pistacia correlating with its reduced abundance in the archaeobotanical record.
-TODO: do model predictions match more aggregated stats e.g. biodiversity? -->
+What are the implications of this assessment?
+In the immediate term, the modelled palaeodistributions presented here should be taken as conservative estimates – a minimal likely potential niche of the species.
+Closer inspection of discrepencies between the modelled and attested distributions of particular species in relation to specific environmental, taphonomic and cultural factors could yield further insights.
+Future applications of hindcast palaeoecological niche models in archaeology could refine the methodology in several ways: using more finely resolved palaeoclimate sequences [e.g. @KargerEtAl2023]; building more refined archaeological chronologies; performing hyperparameter tuning to further mitigate overfitting;^[We did not perform hyperparameter tuning in this study due to computational limitations.] and compiling expanded archaeological datasets that could be use to calibrate binary classification.
 
 # Conclusion
 
@@ -1326,19 +1317,22 @@ We present the first continuous, spatially explicit models of the palaeodistribu
 This deductive approach—modelling the niche of a species based on its occurrence in relation to environmental factors today, and using this together with palaeoclimate simulations to infer its past distribution—represents a new line of evidence on the archaeoecology of the world's first agricultural societies.
 It provides a complementary picture to that gleaned from environmental archaeology and climatological archives because it is independent of the taphonomic, anthropic, and recovery-related processes that affect these records.
 
-"All models are wrong" [@Box1976], but the performance of our models on independent test datasets give confidence in its predictions, which are plausible and consistent with broad-scale patterns in the archaeological record.
-Results with regard to specific archaeologically-attested species are not as promising, but this also reflects the incomplete and coarsely temporally-resolved nature of the archaeobotanical verification dataset.
-Discrepancies between the modelled distribution, whether on the broad scale (e.g. the restricted geographic range of most species compared to their attestation in the archaeological record), or relating to specific species (i.e. false positives and false negatives), suggest several avenues for future investigation.
+The modelled palaeodistributions of the species presented here (see appendix) represent plausible minimum potential niche under the average climatic conditions of the Bølling-Allerød, Younger Dryas, and Early Holocene periods.
+The models' generally high performance as assessed against independent contemporary test datasets lend confidence to these predictions.
+Their application as a binary predictor of archaeological presence or absence is significantly less promising, which likely reflects a combination of methodological limitations of our modelling approach, the incomplete and coarsely temporally-resolved nature of the archaeobotanical test dataset, and genuine discrepencies between the species' fundamental niche and its occurrence in the archaeological record.
+Whether on the broad scale (e.g. the restricted geographic range of most species compared to their attestation in the archaeological record), or relating to specific species (i.e. false positives and false negatives), these discrepencies suggest several avenues for future investigation.
 
 Modelling a large number of species using machine learning, the substantial occurrence datasets available for the present day, and a hindcasting approach to past distributions also represents a significant advance in the methodology of palaeoecological niche modelling. 
 This approach is enabled by the availability of high quality, global open datasets in ecology [@GBIF2025; @GBIFSecretariat2023], earth science [@SRTM], and climatology [@KargerEtAl2017; @BrownEtAl2018].
-Unfortunately in relation to these fields open data in archaeology lags conspiciously behind.
+However, several areas of methodological improvement are evident.
+Notably, the state of open data availability in archaeology lags conspiciously behind the fields mentioned above.
 Though we have benefited from the relatively long tradition of compiling archaeobotanical data in our region of study [@ColledgeEtAl2004; @ShennanConolly2007; @ADEMNES; @LucasFuller2018; @FullerEtAl2018; @WallaceEtAl2018; @ORIGINS], 
 further development of open, comprehensive and up-to-date 'backbone' datasets on site locations and chronologies is needed to advance archaeoecological modelling to the same level.
 
 # Data availability
 
-The data and R code used to produced is archived with Zenodo at <https://doi.org/10.5281/zenodo.14629984>
+The data and R code used to produce this study is archived with Zenodo at <https://doi.org/10.5281/zenodo.14629984>.
+Modelled palaeodistributions in raster format (.TIF) can be found in the same repository.
 
 # Acknowledgements
 

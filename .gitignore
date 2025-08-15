@@ -4,3 +4,5 @@
 .env
 analysis/paper_cache/
 analysis/data/derived_data/
+analysis/paper.pdf
+analysis/appendix.html
