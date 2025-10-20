@@ -54,6 +54,8 @@ format:
   docx:
     toc: true
     number-sections: true
+    citeproc: true
+    csl: jcaa.csl
 bibliography: 
   - references.bib
   - gbif.bib
@@ -61,12 +63,6 @@ execute:
   echo: false
   cache: true
 ---
-
-<!--
-TODO before publication:
-- [ ] Zenodo release
-- [ ] Clean up package code
--->
 
 ```{r dependencies, cache=FALSE, message=FALSE}
 library("cowplot")
@@ -1253,7 +1249,7 @@ Taken together this suggests an origin of domesticated bread wheat, otherwise on
 
 ## Disagreement between hindcast models and archaeobotanical composition {#sec-discuss-hindcasting}
 
-In general there is middling to low agreement between our hindcast predictions of species niches and observed archaeological occurrences of the same species [@tlb-results-summary].
+In general there is middling to low agreement between our hindcast predictions of species niches and observed archaeological occurrences of the same species [@tbl-results-summary].
 
 ```{r fig-archaeo-sensitivity, message=FALSE, warning=FALSE}
 #| fig-cap: Summary of hindcasting performance of models in relation to model performance and available archaeological test data
